@@ -41,6 +41,21 @@
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
   </style>
+   <script>
+    function agregarFila() {
+        const tabla = document.getElementById("detalle-compra");
+        const fila = tabla.rows[1].cloneNode(true);
+        fila.querySelectorAll("input, select").forEach(el => el.value = "");
+        tabla.appendChild(fila);
+    }
+
+    function eliminarFila(btn) {
+        const tabla = document.getElementById("detalle-compra");
+        if (tabla.rows.length > 2) {
+            btn.closest("tr").remove();
+        }
+    }
+    </script>
 </head>
 
 <body>
