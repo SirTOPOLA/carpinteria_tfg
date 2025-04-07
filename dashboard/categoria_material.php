@@ -2,7 +2,7 @@
 require_once("../includes/conexion.php");
 
 $busqueda = isset($_GET['buscar']) ? trim($_GET['buscar']) : '';
-$sql = "SELECT * FROM categorias_material WHERE 1";
+$sql = "SELECT * FROM categorias_materiales WHERE 1";
 
 $params = [];
 if ($busqueda !== '') {

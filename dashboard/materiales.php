@@ -32,7 +32,7 @@ $sql = "SELECT
     m.id,
     m.nombre,
     m.descripcion,
-    m.stock,
+    m.stock_actual,
     c.nombre AS categoria,
     (
         SELECT dc.precio_unitario 
@@ -42,7 +42,7 @@ $sql = "SELECT
         LIMIT 1
     ) AS precio_unitario
 FROM materiales m
-LEFT JOIN categorias_material c ON m.categoria_id = c.id
+LEFT JOIN categorias_materiales c ON m.categoria_id = c.id
 $where
 ORDER BY m.nombre DESC
 LIMIT :offset, :limite";
@@ -107,7 +107,7 @@ include '../includes/conexion.php'; // Asegúrate de tener la conexión a base d
                             <th>Nombre</th>
                             <th>Descripción</th>
                             <th>Categoría</th> 
-                            <th>Stock</th>
+                            <th>stock_actual</th>
                             <th>Precio</th>
                             <th class="text-center">Acciones</th>
                         </tr>
@@ -121,7 +121,7 @@ include '../includes/conexion.php'; // Asegúrate de tener la conexión a base d
                                     <td><?= htmlspecialchars($material['descripcion']) ?></td>
                                     <td><?= htmlspecialchars($material['categoria'] ?? 'Sin categoría') ?></td>
                                     
-                                    <td><?= number_format($material['stock'], 2) ?></td>
+                                    <td><?= number_format($material['stock_actual'], 2) ?></td>
                                     <td>€<?= number_format($material['precio_unitario'], 2) ?></td>
 
                                     <td class="text-center">
