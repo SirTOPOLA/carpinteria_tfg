@@ -55,9 +55,15 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!-- Continúa igual a partir de aquí con el HTML... -->
-
-<?php include_once("../includes/header.php"); ?> 
-<div class="container mt-4">
+<?php
+// dashboard.php principal
+include '../includes/header.php';
+include '../includes/nav.php';
+include '../includes/sidebar.php';
+include '../includes/conexion.php'; // Asegúrate de tener la conexión a base de datos aquí
+?>
+<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
+    <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="mb-0">Usuarios Registrados</h4>
         <div>
@@ -143,5 +149,5 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </nav>
     <?php endif; ?>
 </div>
-
+</main>
 <?php include_once("../includes/footer.php"); ?>

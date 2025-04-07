@@ -77,11 +77,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 ?>
 
-<?php include_once("../includes/header.php"); ?>
-
-
-<div class="container mt-4">
-    <div class="row justify-content-center">
+<?php
+// dashboard.php principal
+include '../includes/header.php';
+include '../includes/nav.php';
+include '../includes/sidebar.php';
+include '../includes/conexion.php'; // Asegúrate de tener la conexión a base de datos aquí
+?>
+<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
+    <div class="container-fluid">
         <div class="col-md-6">
             <h4>Editar Producto</h4>
 
@@ -136,5 +140,5 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </div>
     </div>
 </div>
-
+</main>
 <?php include_once("../includes/footer.php"); ?>

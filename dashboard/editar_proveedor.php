@@ -29,7 +29,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // Validaciones
     if (empty($nombre)) $errores[] = "El nombre es obligatorio.";
-    if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) $errores[] = "Correo inválido.";
+    if(!empty($correo)){
+
+        if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) $errores[] = "Correo inválido.";
+    }else{
+        $correo = '';
+    }
     if (!preg_match('/^[0-9]{7,15}$/', $telefono)) $errores[] = "Teléfono inválido (7-15 dígitos).";
 
     if (empty($errores)) {
@@ -48,9 +53,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 ?>
 
-<?php include_once("../includes/header.php"); ?>
-
-<div class="container mt-4">
+<?php
+// dashboard.php principal
+include '../includes/header.php';
+include '../includes/nav.php';
+include '../includes/sidebar.php';
+include '../includes/conexion.php'; // Asegúrate de tener la conexión a base de datos aquí
+?>
+<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
+    <div class="container-fluid">
     <h4>Editar Proveedor</h4>
 
     <?php if (!empty($errores)): ?>
@@ -74,17 +85,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </div>
         <div class="col-md-6">
             <label class="form-label">Correo</label>
-            <input type="email" name="correo" class="form-control" value="<?= htmlspecialchars($proveedor['correo']) ?>" required>
+            <input type="email" name="correo" class="form-control" value="<?= htmlspecialchars($proveedor['correo']) ?>" >
         </div>
         <div class="col-md-6">
             <label class="form-label">Dirección</label>
             <input type="text" name="direccion" class="form-control" value="<?= htmlspecialchars($proveedor['direccion']) ?>">
         </div>
         <div class="col-12 text-end">
-            <a href="proveedores.php" class="btn btn-secondary">Cancelar</a>
-            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <a href="proveedores.php" class="btn btn-secondary"><i class="bi bi-arrow-left"></i>Cancelar</a>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i>Guardar Cambios</button>
         </div>
     </form>
 </div>
-
+                </main>
 <?php include_once("../includes/footer.php"); ?>

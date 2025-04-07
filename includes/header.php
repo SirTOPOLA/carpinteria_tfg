@@ -4,73 +4,84 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Administrador</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <title>Dashboard Carpintería</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: row;
+      overflow: hidden;
     }
 
     .sidebar {
-      width: 250px;
+      width: 200px;
       background-color: #343a40;
-      color: white;
-      padding-top: 1rem;
     }
 
     .sidebar a {
-      color: white;
-      text-decoration: none;
-      padding: 0.75rem 1rem;
-      display: block;
+      color: #ffffff;
     }
 
-    .sidebar a:hover {
+    .sidebar .nav-link.active {
       background-color: #495057;
     }
 
-    .main {
-      flex-grow: 1;
-      padding: 2rem;
+    @media (max-width: 768px) {
+      .sidebar-overlay {
+        position: fixed;
+        z-index: 1050;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        display: none;
+      }
+
+      .sidebar.mobile-show {
+        display: block !important;
+        z-index: 1060;
+        height: 100vh;
+        overflow-y: auto;
+      }
+
+      main {
+        margin-left: 0px;
+        "
+
+      }
     }
 
-    .card {
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    @media (min-width: 768px) {
+      main {
+        margin-left: 200px;
+        "
+
+      }
+
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+
+      .container,
+      .container * {
+        visibility: visible;
+      }
+
+      .container {
+        margin: 0;
+        padding: 0;
+      }
+
+      .btn,
+      nav,
+      .no-print {
+        display: none !important;
+      }
     }
   </style>
-   <script>
-    function agregarFila() {
-        const tabla = document.getElementById("detalle-compra");
-        const fila = tabla.rows[1].cloneNode(true);
-        fila.querySelectorAll("input, select").forEach(el => el.value = "");
-        tabla.appendChild(fila);
-    }
 
-    function eliminarFila(btn) {
-        const tabla = document.getElementById("detalle-compra");
-        if (tabla.rows.length > 2) {
-            btn.closest("tr").remove();
-        }
-    }
-    </script>
 </head>
 
-<body>
-
-
-
-
-
-  <div id="sidebarContainer" class="d-none d-md-block">
-    <?php include_once("sidebar.php"); ?>
-  </div>
-  <div class="container ">
-
-    <!-- Botón para mostrar/ocultar sidebar en dispositivos pequeños -->
-    <button class="btn btn-dark d-md-none mt-3" id="toggleSidebar">☰</button>
-
-  
- 
+<body class="d-flex flex-column vh-100">

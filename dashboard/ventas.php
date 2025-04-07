@@ -46,86 +46,86 @@ $stmt->execute();
 $ventas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<?php include_once("../includes/header.php"); ?>
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="mb-0">Listado de Ventas</h4>
-        <a href="registrar_venta.php" class="btn btn-success">
-            <i class="bi bi-plus-circle"></i> Nueva Venta
-        </a>
-    </div>
+<?php
 
-    <!-- BUSCADOR -->
-    <form method="GET" class="row g-2 mb-3">
-        <div class="col-md-10 col-8">
-            <input type="text" name="buscar" class="form-control" placeholder="Buscar por cliente"
-                value="<?= htmlspecialchars($buscar) ?>">
+include '../includes/header.php';
+include '../includes/nav.php';
+include '../includes/sidebar.php';
+
+// Obtener ventas con nombre del cliente
+$sql = "SELECT v.id, v.fecha, v.tipo_pago, v.total, c.nombre AS cliente
+        FROM ventas v
+        JOIN clientes c ON v.cliente_id = c.id
+        ORDER BY v.fecha DESC";
+$stmt = $pdo->query($sql);
+$ventas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+
+<main class="flex-grow-1 overflow-auto p-4">
+    <div class="container ">
+        <h4 class="mb-4"><i class="bi bi-cart-fill me-1"></i> Listado de Ventas</h4>
+
+        <?php if (isset($_GET['exito'])): ?>
+            <div class="alert alert-success">
+                <i class="bi bi-check-circle-fill me-1"></i> Venta registrada correctamente.
+            </div>
+        <?php endif; ?>
+
+        <div class="mb-3">
+            <a href="registrar_ventas.php" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i> Nueva Venta
+            </a>
         </div>
-        <div class="col-md-2 col-4">
-            <button type="submit" class="btn btn-primary w-100">Buscar</button>
-        </div>
-    </form>
 
-    <!-- TABLA -->
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover align-middle">
-            <thead class="table-light">
-                <tr>
-                    <th>ID</th>
-                    <th>Cliente</th>
-                    <th>Fecha</th>
-                    <th>Total (€)</th>
-                    <th class="text-center">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (count($ventas) > 0): ?>
-                    <?php foreach ($ventas as $venta): ?>
+        <?php if (count($ventas) > 0): ?>
+            <div class="table-responsive">
+                <table class="table table-striped align-middle">
+                    <thead class="table-light">
                         <tr>
-                            <td><?= $venta['id'] ?></td>
-                            <td><?= htmlspecialchars($venta['cliente_id']) ?></td>
-                            <td><?= date("d/m/Y H:i", strtotime($venta['fecha'])) ?></td>
-                            <td><?= number_format($venta['total'], 2) ?></td>
-                            <td class="text-center">
-                                <a href="detalles_ventas.php?id=<?= $venta['id'] ?>" class="btn btn-sm btn-info"
-                                    title="Ver Detalles">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                                <a href="editar_venta.php?id=<?= $venta['id'] ?>" class="btn btn-sm btn-warning" title="Editar">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                <a href="eliminar_venta.php?id=<?= $venta['id'] ?>" class="btn btn-sm btn-danger"
-                                    title="Eliminar" onclick="return confirm('¿Está seguro de eliminar esta venta?');">
-                                    <i class="bi bi-trash"></i>
-                                </a>
-                            </td>
-
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Fecha</th>
+                            <th>Tipo de Pago</th>
+                            <th>Total (€)</th>
+                            <th>Acciones</th>
                         </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="5" class="text-center">No se encontraron ventas.</td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($ventas as $venta): ?>
+                            <tr>
+                                <td><?= $venta['id'] ?></td>
+                                <td><?= htmlspecialchars($venta['cliente']) ?></td>
+                                <td><?= date('d/m/Y', strtotime($venta['fecha'])) ?></td>
+                                <td><?= ucfirst($venta['tipo_pago']) ?></td>
+                                <td><?= number_format($venta['total'], 2) ?></td>
+                                <td>
+
+                                    <a href="detalles_ventas.php?id=<?= $venta['id'] ?>" class="btn btn-sm btn-info mb-1">
+                                        <i class="bi bi-eye"></i>  
+                                    </a>
+                                    <a href="editar_venta.php?id=<?= $venta['id'] ?>" class="btn btn-sm btn-warning mb-1">
+                                        <i class="bi bi-pencil"></i>  
+                                    </a>
+                                    <a href="eliminar_venta.php?id=<?= $venta['id'] ?>" class="btn btn-sm btn-danger mb-1"
+                                        onclick="return confirm('¿Estás seguro de eliminar esta venta? Esta acción no se puede deshacer.')">
+                                        <i class="bi bi-trash"></i>  
+                                    </a>
+
+
+                                    <!-- Puedes agregar botones de editar/eliminar si deseas -->
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php else: ?>
+            <div class="alert alert-warning">
+                No hay ventas registradas aún.
+            </div>
+        <?php endif; ?>
     </div>
+</main>
 
-    <!-- PAGINACIÓN -->
-    <?php if ($total_paginas > 1): ?>
-        <nav>
-            <ul class="pagination justify-content-center">
-                <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
-                    <li class="page-item <?= ($i == $pagina) ? 'active' : '' ?>">
-                        <a class="page-link" href="?buscar=<?= urlencode($buscar) ?>&pagina=<?= $i ?>">
-                            <?= $i ?>
-                        </a>
-                    </li>
-                <?php endfor; ?>
-            </ul>
-        </nav>
-    <?php endif; ?>
-</div>
-
-<?php include_once("../includes/footer.php"); ?>
+<?php include '../includes/footer.php'; ?>

@@ -29,9 +29,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-<?php include("../includes/header.php"); ?>
-
-<div class="container mt-4">
+<?php
+// dashboard.php principal
+include '../includes/header.php';
+include '../includes/nav.php';
+include '../includes/sidebar.php';
+include '../includes/conexion.php'; // Asegúrate de tener la conexión a base de datos aquí
+?>
+<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
+    <div class="container-fluid">
     <h4>Editar Rol</h4>
     <?php if (isset($error)): ?>
         <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
@@ -47,5 +53,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </form>
 </div>
-
+</main>
 <?php include("../includes/footer.php"); ?>
