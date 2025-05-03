@@ -1,106 +1,119 @@
 <?php
-include '../includes/header.php';
-include '../includes/sidebar.php';
-include '../includes/nav.php';
-include '../includes/conexion.php';
+require_once("../includes/conexion.php");
 
-// Validar ID
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    echo "<div class='alert alert-danger'>ID de usuario inválido.</div>";
-    exit;
-}
-
-$id = (int) $_GET['id'];
-
-// Obtener usuario actual
-$stmt = $pdo->prepare("SELECT * FROM usuarios WHERE id = ?");
-$stmt->execute([$id]);
-$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$usuario) {
-    echo "<div class='alert alert-danger'>Usuario no encontrado.</div>";
-    exit;
-}
-
-// Procesar formulario
 $mensaje = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nombre = trim($_POST['nombre']);
-    $correo = trim($_POST['correo']);
-    $rol_id = (int) $_POST['rol_id'];
-    $password_nueva = trim($_POST['password']);
+$usuario = [];
+$empleado = [];
 
-    if ($nombre === '' || $correo === '' || !filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-        $mensaje = "<div class='alert alert-danger'>Por favor, completa todos los campos correctamente.</div>";
-    } else {
-        // Actualizar con o sin contraseña
-        if ($password_nueva !== '') {
-            $password_hash = password_hash($password_nueva, PASSWORD_DEFAULT);
-            $sql = "UPDATE usuarios SET nombre = ?, correo = ?, rol_id = ?, password = ? WHERE id = ?";
-            $params = [$nombre, $correo, $rol_id, $password_hash, $id];
-        } else {
-            $sql = "UPDATE usuarios SET nombre = ?, correo = ?, rol_id = ? WHERE id = ?";
-            $params = [$nombre, $correo, $rol_id, $id];
-        }
+if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+    $usuario_id = (int)$_GET['id'];
 
-        $stmt = $pdo->prepare($sql);
-        if ($stmt->execute($params)) {
-            $mensaje = "<div class='alert alert-success'>Usuario actualizado correctamente.</div>";
-            // Refrescar datos
-            $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE id = ?");
-            $stmt->execute([$id]);
-            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+    // Obtener usuario y su empleado asociado
+    $stmt = $pdo->prepare("
+        SELECT u.*, e.nombre AS emp_nombre, e.apellido AS emp_apellido
+        FROM usuarios u
+        LEFT JOIN empleados e ON u.empleado_id = e.id
+        WHERE u.id = :id
+    ");
+    $stmt->bindParam(':id', $usuario_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$usuario) {
+        header("Location: usuarios.php?error=Usuario no encontrado");
+        exit;
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $usuario_nombre = trim($_POST['usuario']);
+        $rol = $_POST['rol'] ?? '';
+        $nueva_password = trim($_POST['password']);
+
+        // Validaciones
+        if (empty($usuario_nombre) || empty($rol)) {
+            $mensaje = "Por favor, complete todos los campos obligatorios.";
         } else {
-            $mensaje = "<div class='alert alert-danger'>Ocurrió un error al actualizar.</div>";
+            // Preparar SQL
+            $sql_update = "UPDATE usuarios SET usuario = :usuario, rol = :rol";
+            if (!empty($nueva_password)) {
+                $sql_update .= ", password = :password";
+            }
+            $sql_update .= " WHERE id = :id";
+
+            $stmt_update = $pdo->prepare($sql_update);
+            $stmt_update->bindParam(':usuario', $usuario_nombre, PDO::PARAM_STR);
+            $stmt_update->bindParam(':rol', $rol, PDO::PARAM_STR);
+            $stmt_update->bindParam(':id', $usuario_id, PDO::PARAM_INT);
+            if (!empty($nueva_password)) {
+                $password_hash = password_hash($nueva_password, PASSWORD_DEFAULT);
+                $stmt_update->bindParam(':password', $password_hash, PDO::PARAM_STR);
+            }
+
+            if ($stmt_update->execute()) {
+                header("Location: usuarios.php?mensaje=Usuario actualizado correctamente");
+                exit;
+            } else {
+                $mensaje = "Error al actualizar el usuario.";
+            }
         }
     }
+} else {
+    header("Location: usuarios.php?error=ID de usuario no válido");
+    exit;
 }
-
-// Obtener roles
-$roles = $pdo->query("SELECT id, nombre FROM roles")->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
+<?php
+include '../includes/header.php';
+include '../includes/nav.php';
+include '../includes/sidebar.php';
+?>
 <main class="flex-grow-1 overflow-auto p-3" id="mainContent">
     <div class="row d-flex justify-content-center">
-        <div class="col-md-7 ">
+        <div class="col-md-7">
             <h2 class="mb-4">Editar Usuario</h2>
 
-            <?= $mensaje ?>
+            <?php if ($mensaje): ?>
+                <div class="alert alert-info"><?= htmlspecialchars($mensaje) ?></div>
+            <?php endif; ?>
 
-            <form method="POST" class="  p-4">
+            <form method="POST" class="p-4">
                 <div class="mb-3">
-                    <label for="nombre" class="form-label">Nombre</label>
-                    <input type="text" name="nombre" id="nombre" class="form-control"
-                        value="<?= htmlspecialchars($usuario['nombre']) ?>" required>
+                    <label class="form-label">Empleado</label>
+                    <input type="text" class="form-control" disabled
+                        value="<?= htmlspecialchars($usuario['emp_nombre'] . ' ' . $usuario['emp_apellido']) ?>">
                 </div>
+
                 <div class="mb-3">
-                    <label for="correo" class="form-label">Correo Electrónico</label>
-                    <input type="email" name="correo" id="correo" class="form-control"
-                        value="<?= htmlspecialchars($usuario['correo']) ?>" required>
+                    <label for="usuario" class="form-label">Usuario</label>
+                    <input type="text" name="usuario" id="usuario" class="form-control"
+                        value="<?= htmlspecialchars($usuario['usuario']) ?>" required>
                 </div>
+
                 <div class="mb-3">
-                    <label for="rol_id" class="form-label">Rol</label>
-                    <select name="rol_id" id="rol_id" class="form-select" required>
-                        <?php foreach ($roles as $rol): ?>
-                            <option value="<?= $rol['id'] ?>" <?= $rol['id'] == $usuario['rol_id'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($rol['nombre']) ?>
-                            </option>
-                        <?php endforeach; ?>
+                    <label for="rol" class="form-label">Rol <span class="text-danger">*</span></label>
+                    <select name="rol" id="rol" class="form-select" required>
+                        <?php
+                        $roles = ['administrador', 'vendedor', 'operario', 'diseñador'];
+                        foreach ($roles as $r) {
+                            $selected = ($usuario['rol'] === $r) ? 'selected' : '';
+                            echo "<option value=\"$r\" $selected>" . ucfirst($r) . "</option>";
+                        }
+                        ?>
                     </select>
                 </div>
+
                 <div class="mb-3">
                     <label for="password" class="form-label">Nueva Contraseña (opcional)</label>
                     <input type="password" name="password" id="password" class="form-control">
                     <div class="form-text">Solo completa este campo si deseas cambiar la contraseña.</div>
                 </div>
+
                 <div class="d-flex justify-content-between">
                     <a href="usuarios.php" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Cancelar</a>
-
                     <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Guardar Cambios</button>
                 </div>
             </form>
         </div>
     </div>
 </main>
-
-<?php include '../includes/footer.php'; ?>
+<?php include_once("../includes/footer.php"); ?>

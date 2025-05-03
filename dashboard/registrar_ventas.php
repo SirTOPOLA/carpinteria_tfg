@@ -76,6 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     VALUES (:venta_id, :tipo_item, :item_id, :cantidad, :precio_unitario)";
         $stmtItem = $pdo->prepare($sqlItem);
 
+
         foreach ($items as $item) {
             $stmtItem->execute([
                 ':venta_id' => $venta_id,
@@ -104,10 +105,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 $stmtClientes = $pdo->query("SELECT id, nombre FROM clientes ORDER BY nombre");
 $clientes = $stmtClientes->fetchAll(PDO::FETCH_ASSOC);
 
-$stmtProductos = $pdo->query("SELECT id, nombre, precio FROM productos ORDER BY nombre");
+$stmtProductos = $pdo->query("SELECT id, nombre, precio, categoria_id FROM productos ORDER BY nombre");
 $productos = $stmtProductos->fetchAll(PDO::FETCH_ASSOC);
 
-$stmtProyectos = $pdo->query("SELECT id, nombre, costo_estimado AS precio FROM proyectos ORDER BY nombre");
+$stmtProyectos = $pdo->query("SELECT id, nombre , categoria_id FROM proyectos ORDER BY nombre");
 $proyectos = $stmtProyectos->fetchAll(PDO::FETCH_ASSOC);
 
 $stmtServicios = $pdo->query("SELECT id, nombre, precio FROM servicios ORDER BY nombre");
@@ -191,6 +192,7 @@ $servicios = $stmtServicios->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </main>
 
+
 <script>
 const productos = <?= json_encode($productos) ?>;
 const proyectos = <?= json_encode($proyectos) ?>;
@@ -216,7 +218,7 @@ tipoItem.addEventListener('change', () => {
             <div class="row g-2">
                 <div class="col-md-5">
                     <label class="form-label">
-                        <i class="bi bi-list-check me-1"></i> Ítem:
+                        <i class="bi bi-list-check me-1"></i> Ítem: ${tipo}
                     </label>
                     <select name="items[${index}][id]" class="form-select" onchange="actualizarPrecio(this, ${index})">
                         <option value="">Seleccionar</option>

@@ -1,18 +1,4 @@
-<!-- 
-<div class="sidebar bg-dark d-none d-md-block p-3 vh-100 overflow-auto  " style="position: fixed"   id="sidebar">
-  <h5 class="text-white">Menú</h5>
-  <ul class="nav flex-column">
-    <li class="nav-item"><a href="#" class="nav-link text-white">Dashboard</a></li>
-    <li class="nav-item"><a href="#" class="nav-link text-white">Usuarios</a></li>
-    <li class="nav-item"><a href="#" class="nav-link text-white">Clientes</a></li>
-    <li class="nav-item"><a href="#" class="nav-link text-white">Proveedores</a></li>
-    <li class="nav-item"><a href="#" class="nav-link text-white">Productos</a></li>
-    <li class="nav-item"><a href="#" class="nav-link text-white">Materiales</a></li>
-    <li class="nav-item"><a href="#" class="nav-link text-white">Servicios</a></li>
-    <li class="nav-item"><a href="#" class="nav-link text-white">Proyectos</a></li>
-    <li class="nav-item"><a href="#" class="nav-link text-white">Ventas</a></li>
-  </ul>
-</div> -->
+ 
 
 <div class="sidebar bg-dark d-none d-md-block p-1 vh-100 overflow-auto  mt-5" style="position: fixed" id="sidebar">
   <h5 class="text-white">Menú</h5>
@@ -37,11 +23,13 @@
   
         <li >
           <a href="#usuariosSubmenu" data-bs-toggle="collapse" class="nav-link text-white">
-            <i class="bi bi-people me-2"></i> Usuarios y Roles
+            <i class="bi bi-people me-2"></i> Usuarios 
           </a>
           <ul class="collapse list-unstyled ps-3" id="usuariosSubmenu">
             <li><a href="usuarios.php" class="nav-link text-white">Usuarios</a></li>
+            <li><a href="empleados.php" class="nav-link text-white">empleados</a></li>
             <li><a href="roles.php" class="nav-link text-white">Roles</a></li>
+            <li><a href="departamentos.php" class="nav-link text-white">departamentos</a></li>
           </ul>
         </li>
   

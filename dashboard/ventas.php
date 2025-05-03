@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once("../includes/conexion.php");
 
 // ========================
@@ -64,6 +65,7 @@ $ventas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <main class="flex-grow-1 overflow-auto p-4">
     <div class="container ">
+        
         <h4 class="mb-4"><i class="bi bi-cart-fill me-1"></i> Listado de Ventas</h4>
 
         <?php if (isset($_GET['exito'])): ?>

@@ -103,7 +103,7 @@ $venta_items = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
 // Datos auxiliares
 $clientes = $pdo->query("SELECT id, nombre FROM clientes ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
 $productos = $pdo->query("SELECT id, nombre, precio FROM productos ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
-$proyectos = $pdo->query("SELECT id, nombre, costo_estimado AS precio FROM proyectos ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
+$proyectos = $pdo->query("SELECT id, nombre  FROM proyectos ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
 $servicios = $pdo->query("SELECT id, nombre, precio FROM servicios ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 

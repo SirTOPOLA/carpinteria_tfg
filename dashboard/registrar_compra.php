@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             VALUES (?, ?, ?, ?, ?)");
 
         // Actualizar stock del material
-        $stmt_update = $pdo->prepare("UPDATE materiales SET stock = stock + ? WHERE id = ?");
+        $stmt_update = $pdo->prepare("UPDATE materiales SET stock_actual = stock_actual + ? WHERE id = ?");
 
         foreach ($material_id as $i => $mat_id) {
             $mat_id = (int) $mat_id;
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Confirmar transacción
         $pdo->commit();
 
-        
+
         // Ahora $materiales es un array asociativo con: id, material (nombre del material), y categoria
         header('location: compras.php');
     } catch (PDOException $e) {
@@ -63,27 +63,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->rollBack();
         die("Error al registrar la compra: " . $e->getMessage());
     }
-} 
+}
 
 try {
     // Obtener proveedores
-$proveedores = $pdo->query("SELECT id, nombre FROM proveedores")->fetchAll(PDO::FETCH_ASSOC);
+    $proveedores = $pdo->query("SELECT id, nombre FROM proveedores")->fetchAll(PDO::FETCH_ASSOC);
 
-// Obtener materiales con su categoría
+    // Obtener materiales con su categoría
 
-// Consulta para obtener los materiales junto con su categoría
-$materiales = $pdo->query("
-    SELECT 
-        m.id, 
-        m.nombre AS material, 
-        c.nombre AS categoria
-    FROM 
-        materiales m
-    LEFT JOIN 
-        categorias_material c ON m.categoria_id = c.id
-")->fetchAll(PDO::FETCH_ASSOC);
-}catch(PDOException $e) {
-    
+    // Consulta para obtener los materiales junto con su categoría
+    $materiales = $pdo->query("SELECT  m.id, m.nombre AS materiales, c.nombre AS categoria FROM  materiales m LEFT JOIN categorias_materiales c ON m.categoria_id = c.id")->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "fatal: " . $e->getMessage();
 }
 
 
@@ -99,14 +90,13 @@ $materiales = $pdo->query("
 include '../includes/header.php';
 include '../includes/nav.php';
 include '../includes/sidebar.php';
-include '../includes/conexion.php'; // Asegúrate de tener la conexión a base de datos aquí
 ?>
 <main class="flex-grow-1 overflow-auto p-3" id="mainContent">
     <div class="container-fluid">
         <div class="col-md-11">
             <h2 class="mb-4">Registrar Compra</h2>
 
-            <form  method="POST" onsubmit="return validarFormulario();">
+            <form method="POST" onsubmit="return validarFormulario();">
                 <div class="mb-3">
                     <label for="proveedor_id" class="form-label">Proveedor</label>
                     <select name="proveedor_id" id="proveedor_id" class="form-select" required>
@@ -134,8 +124,8 @@ include '../includes/conexion.php'; // Asegúrate de tener la conexión a base d
                                 <select name="material_id[]" class="form-select" required>
                                     <option value="">Seleccione</option>
                                     <?php foreach ($materiales as $mat): ?>
-                                        <option value="<?= $mat['id'] ?>">
-                                            <?= htmlspecialchars($mat['material']) ?>
+                                        <option class="hr" value="<?= $mat['id'] ?>">
+                                            <?= htmlspecialchars($mat['materiales']) ?>
                                             (<?= htmlspecialchars($mat['categoria']) ?>)
                                         </option>
                                     <?php endforeach; ?>
@@ -166,7 +156,7 @@ include '../includes/conexion.php'; // Asegúrate de tener la conexión a base d
             </form>
         </div>
     </div>
-</div>
+    </div>
 </main>
 <script>
     function agregarFila() {

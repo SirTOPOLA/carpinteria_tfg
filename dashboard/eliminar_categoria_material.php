@@ -7,7 +7,7 @@ if ($id <= 0) {
 }
 
 // Validar si existe
-$stmt = $pdo->prepare("SELECT * FROM categorias_material WHERE id = :id");
+$stmt = $pdo->prepare("SELECT * FROM categorias_materiales WHERE id = :id");
 $stmt->execute([':id' => $id]);
 $categoria = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -16,7 +16,7 @@ if (!$categoria) {
 }
 
 // Eliminar
-$stmt = $pdo->prepare("DELETE FROM categorias_material WHERE id = :id");
+$stmt = $pdo->prepare("DELETE FROM categorias_materiales WHERE id = :id");
 $stmt->execute([':id' => $id]);
 
 header("Location: categorias_material.php?mensaje=Categoría eliminada");

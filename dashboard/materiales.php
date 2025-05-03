@@ -42,7 +42,7 @@ $sql = "SELECT
         LIMIT 1
     ) AS precio_unitario
 FROM materiales m
-LEFT JOIN categorias_materiales c ON m.categoria_id = c.id
+LEFT JOIN categorias_material c ON m.categoria_id = c.id
 $where
 ORDER BY m.nombre DESC
 LIMIT :offset, :limite";

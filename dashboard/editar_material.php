@@ -11,8 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $precio = (float) $_POST['precio_unitario'];
 
     if ($id > 0 && $nombre !== '' && $stock >= 0 && $precio >= 0) {
-        $stmt = $pdo->prepare("UPDATE materiales SET nombre = ?, descripcion = ?, categoria_id = ?, unidad_medida = ?, stock = ?, precio_unitario = ? WHERE id = ?");
-        $stmt->execute([$nombre, $descripcion, $categoria_id, $unidad, $stock, $precio, $id]);
+        $stmt = $pdo->prepare("UPDATE materiales SET nombre = ?, descripcion = ?, categoria_id = ?, unidad_medida = ?, stock_actual = ? WHERE id = ?");
+        $stmt->execute([$nombre, $descripcion, $categoria_id, $unidad, $stock, $id]);
+        
+        //$stmt = $pdo->prepare("UPDATE detalle_material SET precio_unitario = ?, descripcion = ?, categoria_id = ?, unidad_medida = ?, stock_actual = ? WHERE id = ?");
+        //$stmt->execute([$nombre, $descripcion, $categoria_id, $unidad, $stock, $id]);
     }
 
     header("Location: materiales.php");
@@ -45,8 +48,13 @@ if (!$material) {
     exit;
 }
 
+// Obtener detalles de compra de  material
+$stmt = $pdo->prepare("SELECT * FROM detalle_compra WHERE id = ?");
+$stmt->execute([$id]);
+$detalles = $stmt->fetch(PDO::FETCH_ASSOC);
+
 // Obtener categorías
-$stmt_categorias = $pdo->query("SELECT id, nombre FROM categorias_material ORDER BY nombre ASC");
+$stmt_categorias = $pdo->query("SELECT id, nombre FROM categorias_materiales ORDER BY nombre ASC");
 $categorias = $stmt_categorias->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -97,13 +105,13 @@ include '../includes/conexion.php'; // Asegúrate de tener la conexión a base d
         <div class="mb-3">
             <label>Stock:</label>
             <input type="number" step="0.01" name="stock" class="form-control" required
-                value="<?= $material['stock'] ?>">
+                value="<?= htmlspecialchars($material['stock_actual']) ?>">
         </div>
 
         <div class="mb-3">
             <label>Precio Unitario (€):</label>
             <input type="number" step="0.01" name="precio_unitario" class="form-control" required
-                value="<?= $material['precio_unitario'] ?>">
+                value="<?= !empty($detalles['precio_unitario']) ? htmlspecialchars($detalles['precio_unitario']) : 0 ?>">
         </div>
         <div class="d-flex justify-content-between">
 

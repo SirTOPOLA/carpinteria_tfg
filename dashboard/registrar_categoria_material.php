@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($nombre === '') {
         $error = "El nombre es obligatorio.";
     } else {
-        $stmt = $pdo->prepare("INSERT INTO categorias_material (nombre  ) VALUES (:nombre  )");
+        $stmt = $pdo->prepare("INSERT INTO categorias_materiales (nombre  ) VALUES (:nombre  )");
         $stmt->execute([
             ':nombre' => $nombre 
         ]);
@@ -21,8 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // dashboard.php principal
 include '../includes/header.php';
 include '../includes/nav.php';
-include '../includes/sidebar.php';
-include '../includes/conexion.php'; // Asegúrate de tener la conexión a base de datos aquí
+include '../includes/sidebar.php';  // Asegúrate de tener la conexión a base de datos aquí
 ?>
 <main class="flex-grow-1 overflow-auto p-3" id="mainContent">
     <div class="container-fluid">
@@ -37,6 +36,10 @@ include '../includes/conexion.php'; // Asegúrate de tener la conexión a base d
                 <div class="mb-3">
                     <label for="nombre" class="form-label">Nombre</label>
                     <input type="text" name="nombre" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="nombre" class="form-label">Descripción</label>
+                    <input type="a" name="nombre" class="form-control" required>
                 </div>
                  <div class="d-flex justify-content-between">
 

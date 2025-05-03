@@ -5,7 +5,7 @@ $errores = [];
 $materiales = [];
 
 try {
-    $stmt = $pdo->query("SELECT id, nombre, stock FROM materiales ORDER BY nombre ASC");
+    $stmt = $pdo->query("SELECT id, nombre, stock_actual FROM materiales ORDER BY nombre ASC");
     $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     $errores[] = "Error al obtener materiales: " . $e->getMessage();
@@ -15,6 +15,7 @@ try {
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // Sanitización y validación básica
+    $observaciones = isset($_POST['observaciones']) ? trim($_POST['observaciones']) : '';
     $tipo = isset($_POST['tipo']) ? trim($_POST['tipo']) : '';
     $material_id = isset($_POST['material_id']) ? (int) $_POST['material_id'] : 0;
     $cantidad = isset($_POST['cantidad']) ? (int) $_POST['cantidad'] : 0;
@@ -28,10 +29,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $error[] = "Datos inválidos.";
     }
 
-    // Verificar stock si el tipo es salida
+    // Verificar stock_actual si el tipo es salida
     if ($tipo === 'salida') {
         try {
-            $stmt = $pdo->prepare("SELECT stock FROM materiales WHERE id = ?");
+            $stmt = $pdo->prepare("SELECT stock_actual FROM materiales WHERE id = ?");
             $stmt->execute([$material_id]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -39,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $errores[] = "Material no encontrado.";
             }
 
-            $stock_actual = (int) $row['stock'];
+            $stock_actual = (int) $row['stock_actual'];
 
             if ($cantidad > $stock_actual) {
                 $errores[] = "Error: No puede retirar más unidades de las disponibles. Stock actual: $stock_actual.";
@@ -51,24 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
 
-    /*   if (!$material_id)
-          $errores[] = "Debe seleccionar un material.";
-      if (!in_array($tipo, ['entrada', 'salida']))
-          $errores[] = "Tipo de movimiento inválido.";
-      if ($cantidad <= 0)
-          $errores[] = "La cantidad debe ser mayor que cero.";
-
-      if ($tipo === 'salida') {
-          $stmt = $pdo->prepare("SELECT stock FROM materiales WHERE id = ?");
-          $stmt->execute([$material_id]);
-          $stock = $stmt->fetchColumn();
-
-          if ($cantidad > $stock) {
-              $errores[] = "No hay suficiente stock disponible.";
-          }
-      }
-   */
-
+   
 
     if (empty($errores)) {
         try {
@@ -78,9 +62,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $stmt->execute([$material_id, $tipo, $cantidad, $observaciones]);
 
             if ($tipo === 'entrada') {
-                $pdo->prepare("UPDATE materiales SET stock = stock + ? WHERE id = ?")->execute([$cantidad, $material_id]);
+                $pdo->prepare("UPDATE materiales SET stock_actual = stock_actual + ? WHERE id = ?")->execute([$cantidad, $material_id]);
             } else {
-                $pdo->prepare("UPDATE materiales SET stock = stock - ? WHERE id = ?")->execute([$cantidad, $material_id]);
+                $pdo->prepare("UPDATE materiales SET stock_actual = stock_actual - ? WHERE id = ?")->execute([$cantidad, $material_id]);
             }
 
             $pdo->commit();

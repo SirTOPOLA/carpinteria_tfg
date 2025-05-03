@@ -1,4 +1,4 @@
-<?php
+<?php 
 require_once("../includes/conexion.php");
 
 // Validar el parámetro ID
@@ -24,7 +24,7 @@ try {
     $pdo->beginTransaction();
 
     // Eliminar detalles de la venta
-    $stmt = $pdo->prepare("DELETE FROM detalle_venta WHERE venta_id = :id");
+    $stmt = $pdo->prepare("DELETE FROM venta_detalle WHERE venta_id = :id");
     $stmt->execute([':id' => $id]);
 
     // Eliminar la venta principal
@@ -34,6 +34,6 @@ try {
     $pdo->commit();
     header("Location: ventas.php?mensaje=Venta eliminada correctamente");
 } catch (Exception $e) {
-    $pdo->rollBack();
+    $pdo->rollBack(); 
     header("Location: ventas.php?error=Ocurrió un error al eliminar");
 }

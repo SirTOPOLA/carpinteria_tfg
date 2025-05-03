@@ -1,171 +1,132 @@
 <?php
-require_once("../includes/conexion.php");
+require_once("../includes/conexion.php"); 
 
-$errores = [];
-$exito = "";
+// Verificar si el formulario fue enviado
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Recibir los datos del formulario
+    $usuario = trim($_POST['usuario']);
+    $password = $_POST['password'];
+    $rol = $_POST['rol'];
+    $empleado_id = $_POST['empleado_id'] ?? null;
+    $activo = isset($_POST['activo']) ? (bool) $_POST['activo'] : false;
 
-// Obtener roles para el select
-$roles_stmt = $pdo->query("SELECT id, nombre FROM roles ORDER BY nombre ASC");
-$roles = $roles_stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// PROCESAMIENTO DEL FORMULARIO
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nombre = trim($_POST['nombre'] ?? '');
-    $correo = trim($_POST['correo'] ?? '');
-    $rol_id = $_POST['rol_id'] ?? '';
-    $estado = $_POST['estado'] ?? '';
-    $contrasena = $_POST['contrasena'] ?? '';
-
-    // ==========================
-    // VALIDACIONES
-    // ==========================
-    if (empty($nombre)) {
-        $errores[] = "El nombre es obligatorio.";
-    } elseif (strlen($nombre) < 3 || strlen($nombre) > 100) {
-        $errores[] = "El nombre debe tener entre 3 y 100 caracteres.";
+    // Validar los campos
+    if (empty($usuario) || empty($password) || empty($rol)) {
+        $errores[]=  "Todos los campos son obligatorios.";
+        header("Location: usuarios.php");
+        exit;
     }
 
-    if (empty($correo)) {
-        $errores[] = "El correo es obligatorio.";
-    } elseif (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-        $errores[] = "El correo no es válido.";
+    // Sanitizar los datos
+    $usuario = htmlspecialchars($usuario);
+    $rol = htmlspecialchars($rol);
+
+    // Verificar si el usuario ya existe
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE usuario = :usuario");
+    $stmt->execute([':usuario' => $usuario]);
+    $existe_usuario = $stmt->fetchColumn();
+
+    if ($existe_usuario) {
+      $errores[] = "El nombre de usuario ya está en uso.";
+        header("Location: usuarios.php");
+        exit;
+        
     }
 
-    if (empty($rol_id) || !is_numeric($rol_id)) {
-        $errores[] = "Debe seleccionar un rol válido.";
-    }
+    // Hash de la contraseña
+    $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-    if ($estado !== 'activo' && $estado !== 'inactivo') {
-        $errores[] = "Estado inválido.";
-    }
-
-    if (empty($contrasena)) {
-        $errores[] = "La contraseña es obligatoria.";
-    } elseif (strlen($contrasena) < 6) {
-        $errores[] = "La contraseña debe tener al menos 6 caracteres.";
-    }
-
-    // ==========================
-    // VERIFICACIÓN DE CORREO ÚNICO
-    // ==========================
-    if (empty($errores)) {
-        try {
-            $stmt_check = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE correo = :correo");
-            $stmt_check->bindParam(':correo', $correo, PDO::PARAM_STR);
-            $stmt_check->execute();
-
-            if ($stmt_check->fetchColumn() > 0) {
-                $errores[] = "Ya existe un usuario con ese correo.";
-            }
-        } catch (PDOException $e) {
-            $errores[] = "Error al verificar el correo: " . $e->getMessage();
-        }
-    }
-
-    // ==========================
-    // INSERCIÓN SI TODO ESTÁ CORRECTO
-    // ==========================
-    if (empty($errores)) {
-        try {
-            $hash = password_hash($contrasena, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("
-                INSERT INTO usuarios (nombre, correo, contrasena, rol_id, estado, fecha_creacion)
-                VALUES (:nombre, :correo, :contrasena, :rol_id, :estado, NOW())
-            ");
-            $stmt->bindParam(":nombre", $nombre, PDO::PARAM_STR);
-            $stmt->bindParam(":correo", $correo, PDO::PARAM_STR);
-            $stmt->bindParam(":contrasena", $hash, PDO::PARAM_STR);
-            $stmt->bindParam(":rol_id", $rol_id, PDO::PARAM_INT);
-            $stmt->bindParam(":estado", $estado, PDO::PARAM_STR);
-
-            if ($stmt->execute()) {
-                header("Location: usuarios.php?exito=1");
-                exit;
-            } else {
-                $errores[] = "No se pudo registrar el usuario.";
-            }
-        } catch (PDOException $e) {
-            $errores[] = "Error al guardar en base de datos: " . $e->getMessage();
-        }
+    // Preparar la consulta para insertar el nuevo usuario
+    $sql = "INSERT INTO usuarios (usuario, password, rol, empleado_id, activo) 
+            VALUES (:usuario, :password, :rol, :empleado_id, :activo)";
+    
+    // Ejecutar la consulta
+    $stmt = $pdo->prepare($sql);
+    $params = [
+        ':usuario' => $usuario,
+        ':password' => $password_hash,
+        ':rol' => $rol,
+        ':empleado_id' => $empleado_id,
+        ':activo' => $activo
+    ];
+    
+    try {
+        $pdo->beginTransaction();
+        $stmt->execute($params);
+        $pdo->commit();
+        header("Location: usuarios.php ");
+        exit;
+    } catch (PDOException $e) {
+        $pdo->rollBack();
+        $errores[] = "Error al registrar el usuario: " . $e->getMessage();
+        header("Location: usuarios.php");
+        exit;
     }
 }
+ 
+
+// Obtener lista de empleados para asociar al usuario
+$stmt = $pdo->query("SELECT id, CONCAT(nombre, ' ', apellido) AS nombre_completo FROM empleados ORDER BY nombre");
+$empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<?php
-// dashboard.php principal
-include '../includes/header.php';
-include '../includes/nav.php';
-include '../includes/sidebar.php';
-include '../includes/conexion.php'; // Asegúrate de tener la conexión a base de datos aquí
-?>
+<?php include '../includes/header.php'; ?>
+<?php include '../includes/nav.php'; ?>
+<?php include '../includes/sidebar.php'; ?>
+
 <main class="flex-grow-1 overflow-auto p-3" id="mainContent">
-    <div class="container-fluid">
-    <div class="row justify-content-center">
-        <div class="col-md-7">
-            <h4 class="mb-4">Registrar Nuevo Usuario</h4>
+    <div class="container">
+        <h4 class="mb-4">Registrar Usuario</h4>
 
-            <!-- ERRORES -->
-            <?php if (!empty($errores)): ?>
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        <?php foreach ($errores as $error): ?>
-                            <li><?= htmlspecialchars($error) ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            <?php endif; ?>
+        <form   method="POST" class="row g-3 needs-validation" novalidate>
 
-            <!-- FORMULARIO -->
-            <form method="POST" novalidate>
-                <div class="mb-3">
-                    <label for="nombre" class="form-label">Nombre completo</label>
-                    <input type="text" name="nombre" id="nombre" class="form-control"
-                        value="<?= htmlspecialchars($nombre ?? '') ?>" required maxlength="100">
-                </div>
+            <div class="col-md-6">
+                <label for="usuario" class="form-label">Nombre de Usuario <span class="text-danger">*</span></label>
+                <input type="text" name="usuario" id="usuario" class="form-control" required>
+            </div>
 
-                <div class="mb-3">
-                    <label for="correo" class="form-label">Correo electrónico</label>
-                    <input type="email" name="correo" id="correo" class="form-control"
-                        value="<?= htmlspecialchars($correo ?? '') ?>" required>
-                </div>
+            <div class="col-md-6">
+                <label for="password" class="form-label">Contraseña <span class="text-danger">*</span></label>
+                <input type="password" name="password" id="password" class="form-control" required>
+            </div>
 
-                <div class="mb-3">
-                    <label for="contrasena" class="form-label">Contraseña</label>
-                    <input type="password" name="contrasena" id="contrasena" class="form-control" required>
-                </div>
+            <div class="col-md-6">
+                <label for="rol" class="form-label">Rol <span class="text-danger">*</span></label>
+                <select name="rol" id="rol" class="form-select" required>
+                    <option value="">Seleccione un rol</option>
+                    <option value="administrador">Administrador</option>
+                    <option value="vendedor">Vendedor</option>
+                    <option value="operario">Operario</option>
+                    <option value="diseñador">Diseñador</option>
+                </select>
+            </div>
 
-                <div class="mb-3">
-                    <label for="rol_id" class="form-label">Rol asignado</label>
-                    <select name="rol_id" id="rol_id" class="form-select" required>
-                        <option value="">-- Seleccionar --</option>
-                        <?php foreach ($roles as $rol): ?>
-                            <option value="<?= $rol['id'] ?>" <?= isset($rol_id) && $rol_id == $rol['id'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($rol['nombre']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+            <div class="col-md-6">
+                <label for="empleado_id" class="form-label">Empleado Asociado</label>
+                <select name="empleado_id" id="empleado_id" class="form-select">
+                    <option value="">Sin asociar</option>
+                    <?php foreach ($empleados as $emp): ?>
+                        <option value="<?= $emp['id'] ?>"><?= htmlspecialchars($emp['nombre_completo']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-                <div class="mb-3">
-                    <label for="estado" class="form-label">Estado</label>
-                    <select name="estado" id="estado" class="form-select" required>
-                        <option value="">-- Seleccionar --</option>
-                        <option value="activo" <?= ($estado ?? '') === 'activo' ? 'selected' : '' ?>>Activo</option>
-                        <option value="inactivo" <?= ($estado ?? '') === 'inactivo' ? 'selected' : '' ?>>Inactivo</option>
-                    </select>
-                </div>
+            <div class="col-md-6">
+                <label class="form-label">¿Activo?</label>
+                <select name="activo" class="form-select">
+                    <option value="1" selected>Sí</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
 
-                <div class="d-flex justify-content-between">
-                    <a href="usuarios.php" class="btn btn-secondary">
-                        <i class="bi bi-arrow-left"></i> Volver
-                    </a>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-save"></i> Registrar
-                    </button>
-                </div>
-            </form>
-        </div>
+            <div class="col-12 mt-3">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Guardar Usuario
+                </button>
+                <a href="usuarios.php" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
     </div>
-</div>
 </main>
-<?php include_once("../includes/footer.php"); ?>
+
+<?php include '../includes/footer.php'; ?>

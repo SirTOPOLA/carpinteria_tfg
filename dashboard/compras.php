@@ -105,6 +105,10 @@ include '../includes/conexion.php'; // Asegúrate de tener la conexión a base d
                                     title="Eliminar" onclick="return confirm('¿Está seguro de eliminar esta compra?');">
                                     <i class="bi bi-trash"></i>
                                 </a>
+                                <a href="detalle_compra.php?id=<?= $compra['id'] ?>" class="btn btn-sm btn-primary"
+                                    title="Detalles">
+                                    <i class="bi bi-eye"></i>
+                                </a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

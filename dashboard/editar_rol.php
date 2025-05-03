@@ -48,7 +48,7 @@ include '../includes/conexion.php'; // Asegúrate de tener la conexión a base d
             <input type="text" name="nombre" value="<?= htmlspecialchars($rol['nombre']) ?>" class="form-control" required>
         </div>
         <div class="col-12">
-            <button class="btn btn-primary">Guardar Cambios</button>
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
             <a href="roles.php" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
