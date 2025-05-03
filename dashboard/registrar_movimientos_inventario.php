@@ -186,7 +186,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         return;
                     }
 
-                    currentStock = parseInt(data.stock) || 0;
+                    currentStock = parseInt(data.stock_actual) || 0;
                     stockInfo.style.display = "block";
                     stockSpan.textContent = currentStock;
 
