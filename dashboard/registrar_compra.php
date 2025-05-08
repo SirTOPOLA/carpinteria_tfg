@@ -1,70 +1,6 @@
 <?php
 require_once '../includes/conexion.php';
-
-
-// Validación básica
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Sanitizar y validar los campos principales
-    $proveedor_id = isset($_POST['proveedor_id']) ? (int) $_POST['proveedor_id'] : 0;
-    $material_id = $_POST['material_id'] ?? [];
-    $cantidad = $_POST['cantidad'] ?? [];
-    $precio_unitario = $_POST['precio_unitario'] ?? [];
-
-    // Validación básica
-    if ($proveedor_id <= 0 || empty($material_id) || count($material_id) !== count($cantidad) || count($material_id) !== count($precio_unitario)) {
-        die('Datos incompletos o inválidos.');
-    }
-
-    try {
-        // Iniciar transacción
-        $pdo->beginTransaction();
-
-        // Calcular total de la compra
-        $total = 0;
-        foreach ($material_id as $i => $mat_id) {
-            $qty = (float) $cantidad[$i];
-            $price = (float) $precio_unitario[$i];
-            $total += $qty * $price;
-        }
-
-        // Insertar en tabla compras
-        $stmt = $pdo->prepare("INSERT INTO compras (proveedor_id, total) VALUES (?, ?)");
-        $stmt->execute([$proveedor_id, $total]);
-        $compra_id = $pdo->lastInsertId();
-
-        // Insertar cada material en detalle_compra
-        $stmt_detalle = $pdo->prepare("INSERT INTO detalle_compra (compra_id, material_id, cantidad, precio_unitario, subtotal)
-            VALUES (?, ?, ?, ?, ?)");
-
-        // Actualizar stock del material
-        $stmt_update = $pdo->prepare("UPDATE materiales SET stock_actual = stock_actual + ? WHERE id = ?");
-
-        foreach ($material_id as $i => $mat_id) {
-            $mat_id = (int) $mat_id;
-            $qty = (float) $cantidad[$i];
-            $price = (float) $precio_unitario[$i];
-            $subtotal = $qty * $price;
-
-            // Guardar detalle
-            $stmt_detalle->execute([$compra_id, $mat_id, $qty, $price, $subtotal]);
-
-            // Actualizar stock del material
-            $stmt_update->execute([$qty, $mat_id]);
-        }
-
-        // Confirmar transacción
-        $pdo->commit();
-
-
-        // Ahora $materiales es un array asociativo con: id, material (nombre del material), y categoria
-        header('location: compras.php');
-    } catch (PDOException $e) {
-        // Revertir si hay error
-        $pdo->rollBack();
-        die("Error al registrar la compra: " . $e->getMessage());
-    }
-}
-
+ 
 try {
     // Obtener proveedores
     $proveedores = $pdo->query("SELECT id, nombre FROM proveedores")->fetchAll(PDO::FETCH_ASSOC);
@@ -72,31 +8,24 @@ try {
     // Obtener materiales con su categoría
 
     // Consulta para obtener los materiales junto con su categoría
-    $materiales = $pdo->query("SELECT  m.id, m.nombre AS materiales, c.nombre AS categoria FROM  materiales m LEFT JOIN categorias_materiales c ON m.categoria_id = c.id")->fetchAll(PDO::FETCH_ASSOC);
+    $materiales = $pdo->query("SELECT  *FROM materiales")->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     echo "fatal: " . $e->getMessage();
-}
-
-
-
-
-
-
-
+} 
 ?>
 
 <?php
 // dashboard.php principal
 include '../includes/header.php';
 include '../includes/nav.php';
-include '../includes/sidebar.php';
+include '../includes/sidebar.php'; 
 ?>
 <main class="flex-grow-1 overflow-auto p-3" id="mainContent">
     <div class="container-fluid">
         <div class="col-md-11">
             <h2 class="mb-4">Registrar Compra</h2>
 
-            <form method="POST" onsubmit="return validarFormulario();">
+            <form action="../php/guardar_compras.php" method="POST" onsubmit="return validarFormulario();">
                 <div class="mb-3">
                     <label for="proveedor_id" class="form-label">Proveedor</label>
                     <select name="proveedor_id" id="proveedor_id" class="form-select" required>
@@ -125,8 +54,7 @@ include '../includes/sidebar.php';
                                     <option value="">Seleccione</option>
                                     <?php foreach ($materiales as $mat): ?>
                                         <option class="hr" value="<?= $mat['id'] ?>">
-                                            <?= htmlspecialchars($mat['materiales']) ?>
-                                            (<?= htmlspecialchars($mat['categoria']) ?>)
+                                            <?= htmlspecialchars($mat['nombre']) ?> 
                                         </option>
                                     <?php endforeach; ?>
                                 </select>

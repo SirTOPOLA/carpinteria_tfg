@@ -1,46 +1,47 @@
 <?php
 require_once("../includes/conexion.php");
 
-// ========================
-// PARÁMETROS DE BÚSQUEDA Y PAGINACIÓN
-// ========================
-$busqueda = trim($_GET['buscar'] ?? '');
-$pagina = isset($_GET['pagina']) && is_numeric($_GET['pagina']) ? (int) $_GET['pagina'] : 1;
-$registros_por_pagina = 10;
-$offset = ($pagina - 1) * $registros_por_pagina;
+try { 
 
-// ========================
-// FILTRO DE BÚSQUEDA
-// ========================
-$where = '';
-$params = [];
+    // Verificar si los roles ya están cargadas
+    $consulta = $pdo->prepare("SELECT COUNT(*) FROM roles");
+    $consulta->execute();
+    $total = $consulta->fetchColumn();
 
-if (!empty($busqueda)) {
-    $where = "WHERE nombre LIKE :buscar";
-    $params[':buscar'] = "%$busqueda%";
+    if ($total > 0) {
+        // Si las categorías ya están cargadas, no es necesario insertarlas de nuevo
+        
+    } else {
+        // Si no hay roles, insertamos los predeterminados
+        $roles = [
+            ['Administrador'], 
+            ['Vendedor'], 
+            ['Diseñador'], 
+            ['Operario'], 
+        ];
+
+        // Preparamos la consulta para insertar roles
+        $stmt = $pdo->prepare("INSERT INTO roles (nombre) VALUES ( ?)");
+
+        // Ejecutamos la inserción de cada rol
+        foreach ($roles as $rol) {
+            $stmt->execute([$rol[0]]);
+        }
+
+    }
+} catch (PDOException $e) {
+    error_log("Error al insertar categorías: " . $e->getMessage());
+    
 }
 
-// ========================
-// TOTAL DE RESULTADOS
-// ========================
-$total_stmt = $pdo->prepare("SELECT COUNT(*) FROM roles $where");
-$total_stmt->execute($params);
-$total_resultados = $total_stmt->fetchColumn();
-$total_paginas = ceil($total_resultados / $registros_por_pagina);
 
+ 
 // ========================
 // CONSULTA DE ROLES
 // ========================
-$query = "SELECT id, nombre FROM roles $where ORDER BY id ASC LIMIT :offset, :limite";
+$query = "SELECT id, nombre FROM roles ";
 $stmt = $pdo->prepare($query);
-
-// Bind de parámetros
-foreach ($params as $clave => $valor) {
-    $stmt->bindValue($clave, $valor, PDO::PARAM_STR);
-}
-$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-$stmt->bindValue(':limite', $registros_por_pagina, PDO::PARAM_INT);
-$stmt->execute();
+ $stmt->execute();
 $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -48,8 +49,7 @@ $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // dashboard.php principal
 include '../includes/header.php';
 include '../includes/nav.php';
-include '../includes/sidebar.php';
-include '../includes/conexion.php'; // Asegúrate de tener la conexión a base de datos aquí
+include '../includes/sidebar.php'; // Asegúrate de tener la conexión a base de datos aquí
 ?>
 <main class="flex-grow-1 overflow-auto p-3" id="mainContent">
     <div class="container-fluid">
@@ -66,17 +66,7 @@ include '../includes/conexion.php'; // Asegúrate de tener la conexión a base d
         </div>
     </div>
 
-    <!-- BUSCADOR -->
-    <form method="GET" class="row g-2 mb-3">
-        <div class="col-md-10 col-8">
-            <input type="text" name="buscar" class="form-control" placeholder="Buscar rol por nombre"
-                   value="<?= htmlspecialchars($busqueda) ?>">
-        </div>
-        <div class="col-md-2 col-4">
-            <button type="submit" class="btn btn-primary w-100">Buscar</button>
-        </div>
-    </form>
-
+     
     <!-- TABLA -->
     <div class="table-responsive">
         <table class="table table-bordered table-hover align-middle">
@@ -97,12 +87,7 @@ include '../includes/conexion.php'; // Asegúrate de tener la conexión a base d
                                 <a href="editar_rol.php?id=<?= $rol['id'] ?>" class="btn btn-sm btn-primary me-1" title="Editar">
                                     <i class="bi bi-pencil-square"></i>
                                 </a>
-                                <a href="eliminar_rol.php?id=<?= $rol['id'] ?>"
-                                   class="btn btn-sm btn-danger"
-                                   onclick="return confirm('¿Deseas eliminar este rol?')"
-                                   title="Eliminar">
-                                    <i class="bi bi-trash"></i>
-                                </a>
+                                 
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -115,18 +100,7 @@ include '../includes/conexion.php'; // Asegúrate de tener la conexión a base d
         </table>
     </div>
 
-    <!-- PAGINACIÓN -->
-    <?php if ($total_paginas > 1): ?>
-        <nav aria-label="Paginación de roles">
-            <ul class="pagination justify-content-center">
-                <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
-                    <li class="page-item <?= ($i == $pagina) ? 'active' : '' ?>">
-                        <a class="page-link" href="?buscar=<?= urlencode($busqueda) ?>&pagina=<?= $i ?>"><?= $i ?></a>
-                    </li>
-                <?php endfor; ?>
-            </ul>
-        </nav>
-    <?php endif; ?>
+ 
 </div>
 </main>
 <?php include_once("../includes/footer.php"); ?>

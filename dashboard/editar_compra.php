@@ -1,92 +1,99 @@
 <?php
-require_once("../includes/conexion.php");
+require_once '../includes/conexion.php';
 
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-
-if ($id <= 0) {
-    header("Location: compras.php?error=ID inválido");
-    exit;
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    die("ID de compra no válido.");
 }
 
-// Obtener datos de la compra
-$stmt = $pdo->prepare("SELECT * FROM compras WHERE id = :id");
-$stmt->execute([':id' => $id]);
-$compra = $stmt->fetch(PDO::FETCH_ASSOC);
+$compra_id = (int) $_GET['id'];
 
-if (!$compra) {
-    header("Location: compras.php?error=Compra no encontrada");
-    exit;
-}
+try {
+    // Obtener datos de la compra
+    $stmt = $pdo->prepare("SELECT * FROM compras WHERE id = ?");
+    $stmt->execute([$compra_id]);
+    $compra = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Obtener materiales para el select
-$materiales = $pdo->query("SELECT id, nombre FROM materiales ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
-
-// Procesar envío del formulario
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $material_id = (int)$_POST['material_id'];
-    $cantidad = (float)$_POST['cantidad'];
-    $precio_total = (float)$_POST['precio_total'];
-
-    // Validaciones simples
-    if ($material_id <= 0 || $cantidad <= 0 || $precio_total <= 0) {
-        $error = "Todos los campos son obligatorios y deben ser mayores a 0.";
-    } else {
-        $stmt = $pdo->prepare("UPDATE compras SET material_id = :material_id, cantidad = :cantidad, precio_total = :precio_total WHERE id = :id");
-        $stmt->execute([
-            ':material_id' => $material_id,
-            ':cantidad' => $cantidad,
-            ':precio_total' => $precio_total,
-            ':id' => $id
-        ]);
-        header("Location: compras.php?mensaje=Compra actualizada");
-        exit;
+    if (!$compra) {
+        die("Compra no encontrada.");
     }
+
+    // Obtener proveedores
+    $proveedores = $pdo->query("SELECT id, nombre FROM proveedores ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
+
+    // Obtener materiales disponibles
+    $materiales = $pdo->query("SELECT id, nombre FROM materiales ORDER BY nombre")->fetchAll(PDO::FETCH_ASSOC);
+
+    // Obtener detalles de esta compra
+    $stmt = $pdo->prepare("
+        SELECT dc.id, dc.material_id, dc.cantidad, dc.precio_unitario
+        FROM detalles_compra dc
+        WHERE dc.compra_id = ?
+    ");
+    $stmt->execute([$compra_id]);
+    $detalles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error: " . htmlspecialchars($e->getMessage()));
 }
 ?>
 
-<?php
-// dashboard.php principal
-include '../includes/header.php';
-include '../includes/nav.php';
-include '../includes/sidebar.php';
-include '../includes/conexion.php'; // Asegúrate de tener la conexión a base de datos aquí
-?>
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
-    <div class="container-fluid">
-    <h4>Editar Compra</h4>
+<?php include '../includes/header.php'; ?>
+<main class="container mt-4">
+    <h2>Editar Compra #<?= $compra_id ?></h2>
+    <form action="guardar_edicion_compra.php" method="POST">
+        <input type="hidden" name="compra_id" value="<?= $compra_id ?>">
 
-    <?php if (!empty($error)): ?>
-        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
-    <?php endif; ?>
-
-    <form method="POST" class="row g-3">
-        <div class="col-md-6">
-            <label for="material_id" class="form-label">Material</label>
-            <select name="material_id" id="material_id" class="form-select" required>
-                <option value="">Seleccione</option>
-                <?php foreach ($materiales as $mat): ?>
-                    <option value="<?= $mat['id'] ?>" <?= $compra['material_id'] == $mat['id'] ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($mat['nombre']) ?>
+        <div class="mb-3">
+            <label class="form-label">Proveedor:</label>
+            <select name="proveedor_id" class="form-select" required>
+                <option value="">Seleccione proveedor</option>
+                <?php foreach ($proveedores as $prov): ?>
+                    <option value="<?= $prov['id'] ?>" <?= $prov['id'] == $compra['proveedor_id'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($prov['nombre']) ?>
                     </option>
                 <?php endforeach; ?>
             </select>
         </div>
 
-        <div class="col-md-3">
-            <label for="cantidad" class="form-label">Cantidad</label>
-            <input type="number" name="cantidad" id="cantidad" class="form-control" value="<?= htmlspecialchars($compra['cantidad']) ?>" step="0.01" min="0" required>
+        <div class="mb-3">
+            <label class="form-label">Fecha:</label>
+            <input type="date" name="fecha" value="<?= $compra['fecha'] ?>" class="form-control" required>
         </div>
 
-        <div class="col-md-3">
-            <label for="precio_total" class="form-label">Precio Total (€)</label>
-            <input type="number" name="precio_total" id="precio_total" class="form-control" value="<?= htmlspecialchars($compra['precio_total']) ?>" step="0.01" min="0" required>
-        </div>
+        <h5>Materiales Comprados:</h5>
+        <?php foreach ($detalles as $i => $item): ?>
+            <div class="border rounded p-3 mb-3">
+                <input type="hidden" name="detalle_ids[]" value="<?= $item['id'] ?>">
 
-        <div class="col-12 text-end">
-            <a href="compras.php" class="btn btn-secondary">Cancelar</a>
-            <button type="submit" class="btn btn-primary">Actualizar</button>
-        </div>
+                <div class="mb-2">
+                    <label class="form-label">Material:</label>
+                    <select name="material_ids[]" class="form-select" required>
+                        <option value="">Seleccione</option>
+                        <?php foreach ($materiales as $mat): ?>
+                            <option value="<?= $mat['id'] ?>" <?= $mat['id'] == $item['material_id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($mat['nombre']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <label class="form-label">Cantidad:</label>
+                        <input type="number" name="cantidades[]" value="<?= $item['cantidad'] ?>" class="form-control" required min="1">
+                    </div>
+                    <div class="col">
+                        <label class="form-label">Precio Unitario:</label>
+                        <input type="number" name="precios[]" value="<?= $item['precio_unitario'] ?>" class="form-control" step="0.01" required>
+                    </div>
+                    <div class="col">
+                        <label class="form-label">Stock Mínimo:</label>
+                        <input type="number" name="stocks_minimos[]" value="<?= $item['stock_minimo'] ?>" class="form-control" min="0" required>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
     </form>
-</div>
 </main>
-<?php include_once("../includes/footer.php"); ?>
+<?php include '../includes/footer.php'; ?>

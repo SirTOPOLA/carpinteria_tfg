@@ -74,15 +74,7 @@ include '../includes/conexion.php'; // Asegúrate de tener la conexión a base d
         <div class="col-md-7">
             <h4 class="mb-4">Registrar Nuevo Producto</h4>
 
-            <?php if (!empty($errores)): ?>
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        <?php foreach ($errores as $error): ?>
-                            <li><?= htmlspecialchars($error) ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            <?php endif; ?>
+            
 
             <form method="POST" novalidate>
                 <div class="form-floating mb-3">

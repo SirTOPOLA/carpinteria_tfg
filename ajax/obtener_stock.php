@@ -1,46 +1,37 @@
 <?php
-// Establecer cabecera JSON
+require_once '../includes/conexion.php';
+
 header('Content-Type: application/json');
 
-// Incluir conexión con la ruta correcta desde /ajax/
-require_once('../includes/conexion.php');
+$id = $_GET['id'] ?? null;
+$tipo = $_GET['tipo'] ?? null;
 
-// Validar parámetro ID
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Parámetro inválido.',
-        'stock_actual' => 0
-    ]);
+if (!$id || !$tipo) {
+    echo json_encode(['success' => false, 'message' => 'Datos incompletos']);
     exit;
 }
 
-$material_id = (int) $_GET['id'];
-
 try {
-    // Preparar y ejecutar consulta
-    $stmt = $pdo->prepare("SELECT stock_actual FROM materiales WHERE id = ?");
-    $stmt->execute([$material_id]);
-
-    if ($stmt->rowCount() > 0) {
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        echo json_encode([
-            'success' => true,
-            'stock' => (int) $row['stock_actual']
-        ]);
+    if ($tipo === 'entrada') {
+        // Stock desde tabla materiales
+        $stmt = $pdo->prepare("SELECT stock_actual FROM materiales WHERE id = ?");
+        $stmt->execute([$id]);
+        $stock = $stmt->fetchColumn();
+    } elseif ($tipo === 'salida') {
+        // Sumar cantidad disponible desde detalles_compra
+        $stmt = $pdo->prepare("SELECT SUM(cantidad) AS stock_actual FROM detalles_compra WHERE material_id = ?");
+        $stmt->execute([$id]);
+        $stock = $stmt->fetchColumn();
     } else {
-        // Material no encontrado
-        echo json_encode([
-            'success' => false,
-            'message' => 'Material no encontrado.',
-            'stock' => 0
-        ]);
+        throw new Exception("Tipo de movimiento inválido.");
     }
-} catch (PDOException $e) {
-    // Error en base de datos
+
+    $stock = $stock !== null ? (int) $stock : 0;
+
     echo json_encode([
-        'success' => false,
-        'message' => 'Error en la base de datos: ' . $e->getMessage(),
-        'stock' => 0
+        'success' => true,
+        'stock_actual' => $stock
     ]);
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }

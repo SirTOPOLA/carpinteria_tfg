@@ -24,11 +24,11 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         $stmt_update->execute();
 
         // Redirigir a la página de listado de usuarios
-        header("Location: usuarios.php?mensaje=" . ($nuevo_estado ? 'Usuario activado con éxito' : 'Usuario desactivado con éxito'));
+        header("Location: ../dashboard/usuarios.php?mensaje=" . ($nuevo_estado ? 'Usuario activado con éxito' : 'Usuario desactivado con éxito'));
         exit;
     } else {
         // Si el usuario no existe
-        header("Location: usuarios.php?error=Usuario no encontrado");
+        header("Location: ../dashboard/usuarios.php?error=Usuario no encontrado");
         exit;
     }
 } else {

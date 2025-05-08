@@ -29,7 +29,7 @@
             <li><a href="usuarios.php" class="nav-link text-white">Usuarios</a></li>
             <li><a href="empleados.php" class="nav-link text-white">empleados</a></li>
             <li><a href="roles.php" class="nav-link text-white">Roles</a></li>
-            <li><a href="departamentos.php" class="nav-link text-white">departamentos</a></li>
+           <!--  <li><a href="departamentos.php" class="nav-link text-white">departamentos</a></li> -->
           </ul>
         </li>
   
@@ -49,8 +49,8 @@
           </a>
           <ul class="collapse list-unstyled ps-3" id="materialesSubmenu">
             <li><a href="materiales.php" class="nav-link text-white">Materiales</a></li>
-            <li><a href="categoria_material.php" class="nav-link text-white">Categorías de Material</a></li>
-            <li><a href="movimientos_inventario.php" class="nav-link text-white">Movimientos</a></li>
+             
+            <li><a href="movimientos_material.php" class="nav-link text-white">Movimientos</a></li>
           </ul>
         </li>
   
@@ -59,6 +59,7 @@
             <i class="bi bi-hammer me-2"></i> Productos / Servicios
           </a>
           <ul class="collapse list-unstyled ps-3" id="productosSubmenu">
+            <li><a href="producciones.php" class="nav-link text-white">Producciones</a></li>
             <li><a href="productos.php" class="nav-link text-white">Productos</a></li>
             <li><a href="categoria_producto.php" class="nav-link text-white">Categorías de Producto</a></li>
             <li><a href="servicios.php" class="nav-link text-white">Servicios</a></li>
@@ -118,10 +119,10 @@
 
 
 <!-- Sidebar para móviles -->
-<div class="sidebar-overlay d-md-none" style="position: fixed" id="sidebarOverlay">
+<!-- <div class="sidebar-overlay d-md-none" style="position: fixed" id="sidebarOverlay">
   <div class="sidebar bg-dark p-3 vh-100 overflow-auto d-none" id="sidebarMobile">
     <button class="btn btn-outline-light mb-3" id="closeSidebar">Cerrar ✖</button>
-    <!-- Repetimos el menú -->
+  
     <ul class="nav flex-column">
       <li class="nav-item"><a href="#" class="nav-link text-white">Dashboard</a></li>
       <li class="nav-item"><a href="#" class="nav-link text-white">Usuarios</a></li>
@@ -134,4 +135,4 @@
       <li class="nav-item"><a href="#" class="nav-link text-white">Ventas</a></li>
     </ul>
   </div>
-</div>
+</div> -->
