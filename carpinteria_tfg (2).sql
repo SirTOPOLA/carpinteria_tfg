@@ -6,7 +6,8 @@
 -- Tiempo de generación: 10-05-2025 a las 12:38:51
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
-
+/* DROP DATABASE IF NOT EXISTS carpinteria_tfg;
+CREATE DATABASE  carpinteria_tfg; */
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
