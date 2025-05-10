@@ -1,25 +1,40 @@
 <?php
 require_once("../includes/conexion.php");
 
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+/* if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     header("Location: proyectos.php");
     exit;
-}
+} */
 
-$id = (int) $_GET['id'];
+//$id = (int) $_GET['id'];
 
-$sql = "SELECT p.*, c.nombre AS cliente_nombre 
-        FROM proyectos p 
-        JOIN clientes c ON p.cliente_id = c.id 
-        WHERE p.id = :id";
+$id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+if ($id <= 0)
+    die("ID inválido.");
+
+
+$sql = "SELECT *
+        FROM proyectos 
+        WHERE id = :id";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([':id' => $id]);
 $proyecto = $stmt->fetch(PDO::FETCH_ASSOC);
 
-if (!$proyecto) {
+$sql = "SELECT sp.*,
+        c.nombre AS cliente
+        FROM solicitudes_proyecto sp
+        INNER JOIN clientes c ON sp.cliente_id = c.id 
+         ";
+$stmt = $pdo->prepare($sql);
+$stmt->execute();
+$solicitudes_proyecto = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+ 
+/* if (!$proyecto) {
     header("Location: proyectos.php");
     exit;
-}
+} */
 ?>
 
 <?php include '../includes/header.php'; ?>
@@ -50,7 +65,7 @@ if (!$proyecto) {
 
                     <div class="col-md-6">
                         <h6 class="text-muted">Cliente</h6>
-                        <p class="fw-bold"><?= htmlspecialchars($proyecto['cliente_nombre']) ?></p>
+                        <p class="fw-bold"><?= htmlspecialchars($solicitudes_proyecto['cliente']) ?></p>
                     </div>
 
                     <div class="col-md-12">
@@ -79,13 +94,13 @@ if (!$proyecto) {
 
                     <div class="col-md-4">
                         <h6 class="text-muted">Fecha de creación</h6>
-                        <p><?= date('d/m/Y H:i', strtotime($proyecto['fecha_inicio'])) ?></p>
+                        <p><?= date('d/m/Y H:i', strtotime($proyecto['creado_en'])) ?></p>
                     </div>
 
                     <div class="col-md-4">
                         <h6 class="text-muted">Costo estimado</h6>
                         <p class="fw-bold text-success">
-                            <?= number_format($proyecto['costo_estimado'], 2, ',', '.') ?> €
+                            <?= number_format($solicitudes_proyecto['estimacion_total'], 2, ',', '.') ?> €
                         </p>
                     </div>
 

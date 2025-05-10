@@ -25,11 +25,11 @@
                 required>
         </div>
  -->
-       <!--  <div class="col-12 col-md-6">
+        <div class="col-12 col-md-6">
             <label for="stock_minimo" class="form-label">Stock Mínimo:</label>
-            <input type="number" name="stock_minimo" id="stock_minimo" class="form-control" step="0.01" value="0.00"
+            <input type="number" name="stock_minimo" id="stock_minimo" class="form-control" value="0"
                 required>
-        </div> -->
+        </div>
         <div class="col-12 col-md-6">
             <label for="descripcion" class="form-label">Descripción:</label>
             <textarea name="descripcion" id="descripcion" class="form-control" rows="3"></textarea>

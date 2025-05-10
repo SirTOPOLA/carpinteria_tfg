@@ -2,13 +2,13 @@
 require_once("../includes/conexion.php");
 
 
-// Obtener lista de empleados
-$stmt = $pdo->query("SELECT id, CONCAT(nombre, ' ', apellido) AS nombre_completo  FROM empleados ORDER BY id");
-$empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Obtener lista de clientes
+$stmt = $pdo->query("SELECT * FROM clientes ORDER BY id");
+$clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Obtener lista de proyectos
-$stmt = $pdo->query("SELECT * FROM proyectos ");
-$proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Obtener lista de empleados
+$stmt = $pdo->query("SELECT * FROM empleados ");
+$empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 ?>
@@ -34,11 +34,11 @@ $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     required>
             </div> 
             <div class="col-12 col-md-6">
-                <label for="proyecto_id" class="form-label">proyecto <span class="text-danger">*</span></label>
-                <select name="proyecto_id" id="proyecto" class="form-select" required>
-                    <option value="">Seleccione un proyecto</option>
-                    <?php foreach ($proyectos as $proyecto): ?>
-                        <option value="<?= htmlspecialchars($proyecto['id']) ?>"> <?= htmlspecialchars($proyecto['nombre']) ?>
+                <label for="cliente_id" class="form-label">clientes <span class="text-danger">*</span></label>
+                <select name="cliente_id" id="cliente" class="form-select" required>
+                    <option value="">Seleccione un cliente</option>
+                    <?php foreach ($clientes as $cliente): ?>
+                        <option value="<?= htmlspecialchars($cliente['id']) ?>"> <?= htmlspecialchars($proyecto['nombre']) ?>
                         </option>
 
                     <?php endforeach; ?>
@@ -51,7 +51,7 @@ $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <option value="">Seleccione un empleado</option>
                     <?php foreach ($empleados as $empleado): ?>
                         <option value="<?= htmlspecialchars($empleado['id']) ?>">
-                            <?= htmlspecialchars($empleado['nombre_completo']) ?></option>
+                            <?= htmlspecialchars($empleado['nombre']) ?> <?= htmlspecialchars($empleado['apellido']) ?></option>
 
                     <?php endforeach; ?>
                 </select>

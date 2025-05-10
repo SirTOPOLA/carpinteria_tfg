@@ -25,8 +25,7 @@ try {
     $detalle_ids = $_POST['detalle_ids'];
     $material_ids = $_POST['material_ids'];
     $cantidades = $_POST['cantidades'];
-    $precios = $_POST['precios'];
-    $stocks_minimos = $_POST['stocks_minimos'];
+    $precios = $_POST['precios']; 
 
     $total = 0;
 
@@ -35,7 +34,7 @@ try {
         $mid = (int)$material_ids[$i];
         $cantidad = max(1, (int)$cantidades[$i]);
         $precio = round((float)$precios[$i], 2);
-        $stock_minimo = max(0, (int)$stocks_minimos[$i]);
+       // $stock_minimo = max(0, (int)$stocks_minimos[$i]);
 
         $subtotal = $cantidad * $precio;
         $total += $subtotal;
@@ -45,7 +44,7 @@ try {
             SET material_id = ?, cantidad = ?, precio_unitario = ? 
             WHERE id = ? AND compra_id = ?
         ");
-        $stmt->execute([$mid, $cantidad, $precio, $stock_minimo, $did, $compra_id]);
+        $stmt->execute([$mid, $cantidad, $precio,  $did, $compra_id]);
     }
 
     // Actualizar total calculado
@@ -53,7 +52,7 @@ try {
     $stmt->execute([$total, $compra_id]);
 
     $pdo->commit();
-    header("Location: lista_compras.php?actualizado=1");
+    header("Location: ../dashboard/compras.php");
     exit;
 
 } catch (Exception $e) {

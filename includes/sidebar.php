@@ -61,21 +61,20 @@
           <ul class="collapse list-unstyled ps-3" id="productosSubmenu">
             <li><a href="producciones.php" class="nav-link text-white">Producciones</a></li>
             <li><a href="productos.php" class="nav-link text-white">Productos</a></li>
-            <li><a href="categoria_producto.php" class="nav-link text-white">Categorías de Producto</a></li>
             <li><a href="servicios.php" class="nav-link text-white">Servicios</a></li>
             <li><a href="proyectos.php" class="nav-link text-white">Proyectos</a></li>
           </ul>
         </li>
   
-        <li>
-          <a href="#cotizacionesSubmenu" data-bs-toggle="collapse" class="nav-link text-white">
-            <i class="bi bi-file-earmark-text me-2"></i> Cotizaciones
+       <!--  <li>
+          <a href="#sulicitudesSubmenu" data-bs-toggle="collapse" class="nav-link text-white">
+            <i class="bi bi-file-earmark-text me-2"></i> sulicitudes
           </a>
-          <ul class="collapse list-unstyled ps-3" id="cotizacionesSubmenu">
-            <li><a href="cotizaciones.php" class="nav-link text-white">Listado</a></li>
+          <ul class="collapse list-unstyled ps-3" id="sulicitudesSubmenu">
+            <li><a href="sulicitudes.php" class="nav-link text-white">Listado</a></li>
             <li><a href="crear_cotizacion.php" class="nav-link text-white">Nueva Cotización</a></li>
           </ul>
-        </li>
+        </li> -->
   
         <li>
           <a href="#ordenesSubmenu" data-bs-toggle="collapse" class="nav-link text-white">

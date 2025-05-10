@@ -35,8 +35,15 @@ include '../includes/sidebar.php';
 ?>
 <main class="flex-grow-1 overflow-auto p-3" id="mainContent">
     <div class="container-fluid p-3">
-        <h2 class="mb-3">Historial de Compras</h2>
-        <a href="registrar_compra.php" class="btn btn-primary mb-3">Nueva Compra</a>
+         <!-- BARRA DE ACCIONES -->
+    <div class="d-flex justify-content-between align-items-center  p-2 mb-3">
+       
+        <h4 class="mb-3">Historial de Compras</h4>
+        <div> 
+            <a href="registrar_compra.php" class="btn btn-success mb-3"><i class="bi bi-plus"></i> Nueva Compra</a>
+        </div>
+    </div>
+      
 
         <?php if (empty($compras)): ?>
             <div class="alert alert-warning">No se han registrado compras.</div>
@@ -50,9 +57,9 @@ include '../includes/sidebar.php';
                             <th>Proveedor</th>
                             <th>Total</th>
                             <th>Material</th>
-                            <th>Cantidad</th>
-                            <th>Precio Unitario</th>
-                            <th>Stock Mínimo</th>
+                            <th>Stock</th>
+                            <th>Precio Unitario</th> 
+                            <th>Acciones</th> 
                         </tr>
                     </thead>
                     <tbody>
@@ -66,7 +73,12 @@ include '../includes/sidebar.php';
                                     <td><?= htmlspecialchars($detalle['material']) ?></td>
                                     <td><?= $detalle['cantidad'] ?></td>
                                     <td>$<?= number_format($detalle['precio_unitario'], 2) ?></td>
-                                    <td><?= $detalle['stock_minimo'] ?></td>
+                                    <td>
+                                    <a href="editar_compra.php?id=<?= $compra['id'] ?>" class="btn btn-sm btn-warning" title="Editar">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                       
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endforeach; ?>

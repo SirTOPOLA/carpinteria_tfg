@@ -1,6 +1,6 @@
 <?php
 require_once '../includes/conexion.php';
- 
+
 try {
     // Obtener proveedores
     $proveedores = $pdo->query("SELECT id, nombre FROM proveedores")->fetchAll(PDO::FETCH_ASSOC);
@@ -11,14 +11,14 @@ try {
     $materiales = $pdo->query("SELECT  *FROM materiales")->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     echo "fatal: " . $e->getMessage();
-} 
+}
 ?>
 
 <?php
 // dashboard.php principal
 include '../includes/header.php';
 include '../includes/nav.php';
-include '../includes/sidebar.php'; 
+include '../includes/sidebar.php';
 ?>
 <main class="flex-grow-1 overflow-auto p-3" id="mainContent">
     <div class="container-fluid">
@@ -26,15 +26,22 @@ include '../includes/sidebar.php';
             <h2 class="mb-4">Registrar Compra</h2>
 
             <form action="../php/guardar_compras.php" method="POST" onsubmit="return validarFormulario();">
-                <div class="mb-3">
-                    <label for="proveedor_id" class="form-label">Proveedor</label>
-                    <select name="proveedor_id" id="proveedor_id" class="form-select" required>
-                        <option value="">Seleccione un proveedor</option>
-                        <?php foreach ($proveedores as $prov): ?>
-                            <option value="<?= $prov['id'] ?>"><?= htmlspecialchars($prov['nombre']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+               <div class="row">
+                   <div class="col-md-6 mb-3">
+                           <label for="proveedor_id" class="form-label">Proveedor</label>
+                           <select name="proveedor_id" id="proveedor_id" class="form-select" required>
+                               <option value="">Seleccione un proveedor</option>
+                               <?php foreach ($proveedores as $prov): ?>
+                                   <option value="<?= $prov['id'] ?>"><?= htmlspecialchars($prov['nombre']) ?></option>
+                               <?php endforeach; ?>
+                           </select>
+                       </div>
+                       <div class="col-md-6 mb-3">
+                           <label for="fecha" class="form-label">Fecha de compra:</label>
+                           <input type="date" name="fecha" class="form-control" required>
+                       </div>
+
+               </div>
 
                 <h5>Materiales</h5>
                 <table class="table table-bordered" id="tabla-materiales">
@@ -54,7 +61,7 @@ include '../includes/sidebar.php';
                                     <option value="">Seleccione</option>
                                     <?php foreach ($materiales as $mat): ?>
                                         <option class="hr" value="<?= $mat['id'] ?>">
-                                            <?= htmlspecialchars($mat['nombre']) ?> 
+                                            <?= htmlspecialchars($mat['nombre']) ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>

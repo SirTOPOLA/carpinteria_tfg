@@ -57,13 +57,19 @@ $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <td class="text-center">
 
                                     <!-- Ver proyecto -->
-                                    <a href="detalles_proyecto.php?id=<?= $p['id'] ?>" class="btn btn-sm btn-info"
+                                    <a href="solicitud_proyecto.php?id=<?= $p['id'] ?>" 
+                                    class="btn btn-sm btn-info"
                                         title="Ver detalles">
                                         <i class="bi bi-eye"></i>
                                     </a>
-
+                                    <!-- Asignar materiales al proyecto -->
+                                    <a href="registrar_proyecto_materiales.php?id=<?= $p['id'] ?>"
+                                                    class="btn btn-sm btn-secondary" >
+                                                    <i class="bi bi-files"></i> asignar Material
+                                                </a>
                                     <!-- Editar proyecto -->
-                                    <a href="editar_proyecto.php?id=<?= $p['id'] ?>" class="btn btn-sm btn-warning"
+                                    <a href="editar_proyecto.php?id=<?= $p['id'] ?>" 
+                                    class="btn btn-sm btn-warning"
                                         title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </a> 

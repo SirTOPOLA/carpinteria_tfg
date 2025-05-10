@@ -6,12 +6,13 @@ require_once '../includes/conexion.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitizar y validar los campos principales
     $proveedor_id = isset($_POST['proveedor_id']) ? (int) $_POST['proveedor_id'] : 0;
+    $fecha = $_POST['fecha'];
     $material_id = $_POST['material_id'] ?? [];
     $cantidad = $_POST['cantidad'] ?? [];
     $precio_unitario = $_POST['precio_unitario'] ?? [];
 
     // Validación básica
-    if ($proveedor_id <= 0 || empty($material_id) || count($material_id) !== count($cantidad) || count($material_id) !== count($precio_unitario)) {
+    if ($proveedor_id <= 0 || empty($fecha) || empty($material_id) || count($material_id) !== count($cantidad) || count($material_id) !== count($precio_unitario)) {
         die('Datos incompletos o inválidos.');
     }
 
@@ -28,8 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Insertar en tabla compras
-        $stmt = $pdo->prepare("INSERT INTO compras (proveedor_id, total) VALUES (?, ?)");
-        $stmt->execute([$proveedor_id, $total]);
+        $stmt = $pdo->prepare("INSERT INTO compras (proveedor_id, fecha, total) VALUES (?, ?, ?)");
+        $stmt->execute([$proveedor_id, $fecha, $total]);
         $compra_id = $pdo->lastInsertId();
 
         // Insertar cada material en detalles_compra

@@ -8,8 +8,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre = $_POST['nombre'];
     $descripcion = $_POST['descripcion'] ?? null;  // El campo descripción es opcional
     $unidad_medida = $_POST['unidad_medida'] ?? null;  // El campo unidad_medida es opcional
-    $stock_actual = $_POST['stock_actual'];
-    $stock_minimo = $_POST['stock_minimo'];
+    $stock_actual = $_POST['stock_actual'] ?? 0 ;
+    $stock_minimo = $_POST['stock_minimo'] ?? 0;
 
     // Preparar la sentencia SQL para insertar los datos en la tabla materiales
     $sql = "INSERT INTO materiales (nombre, descripcion, unidad_medida, stock_actual, stock_minimo)

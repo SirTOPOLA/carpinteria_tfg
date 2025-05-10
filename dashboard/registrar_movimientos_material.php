@@ -60,7 +60,7 @@ try {
         <?php endif; ?>
 
         <form method="POST" action="../php/guardar_movimiento_material.php" id="formMovimiento">
-        <div class="mb-3">
+            <div class="mb-3">
                 <label for="tipo" class="form-label">Tipo de movimiento:</label>
                 <select name="tipo" id="tipo" class="form-select" required>
                     <option value="">Seleccione tipo</option>
@@ -74,9 +74,6 @@ try {
                     <option value="">Seleccione tipo de movimiento primero</option>
                 </select>
             </div>
-
-           
-
             <div class="mb-3" id="stockInfo" style="display:none;">
                 <small class="text-muted">Stock actual: <span id="stockActual">0</span> unidades</small>
             </div>
@@ -103,17 +100,18 @@ try {
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="mb-3">
-                <label>Fecha del movimiento:</label>
-                <input type="date" name="fecha" class="form-control"  >
-            </div>
+             
             <div class="mb-3">
                 <label for="observaciones" class="form-label">Motivo / Observaciones:</label>
                 <textarea name="observaciones" class="form-control"
                     rows="3"><?= htmlspecialchars($observaciones ?? '') ?></textarea>
             </div>
+            <div class="d-flex justify-content-between g-3">
 
-            <button type="submit" class="btn btn-primary">Guardar movimiento</button>
+                <a href="movimientos_material.php" class="btn btn-secondary"> <i class="bi bi-arrow-left"></i>
+                    Volver</a>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Guardar movimiento</button>
+            </div>
         </form>
     </div>
 </main>
@@ -150,34 +148,34 @@ try {
         }
 
         function fetchStock(materialId, tipo) {
-    fetch(`../ajax/obtener_stock.php?id=${materialId}&tipo=${tipo}`)
-        .then(response => response.json())
-        .then(data => {
-            mensajeError.style.display = "none";
+            fetch(`../ajax/obtener_stock.php?id=${materialId}&tipo=${tipo}`)
+                .then(response => response.json())
+                .then(data => {
+                    mensajeError.style.display = "none";
 
-            if (!data.success) {
-                cantidadContainer.style.display = "none";
-                stockInfo.style.display = "none";
-                errorAjaxTexto.textContent = data.message || "Error al obtener el stock.";
-                mensajeError.style.display = "block";
-                return;
-            }
+                    if (!data.success) {
+                        cantidadContainer.style.display = "none";
+                        stockInfo.style.display = "none";
+                        errorAjaxTexto.textContent = data.message || "Error al obtener el stock.";
+                        mensajeError.style.display = "block";
+                        return;
+                    }
 
-            currentStock = parseInt(data.stock_actual) || 0;
-            stockInfo.style.display = "block";
-            stockSpan.textContent = currentStock;
+                    currentStock = parseInt(data.stock_actual) || 0;
+                    stockInfo.style.display = "block";
+                    stockSpan.textContent = currentStock;
 
-            generarOpcionesCantidad(tipo);
-        })
-        .catch(() => {
-            cantidadContainer.style.display = "none";
-            stockInfo.style.display = "none";
-            errorAjaxTexto.textContent = "Error al conectar con el servidor.";
-            mensajeError.style.display = "block";
-        });
-}
+                    generarOpcionesCantidad(tipo);
+                })
+                .catch(() => {
+                    cantidadContainer.style.display = "none";
+                    stockInfo.style.display = "none";
+                    errorAjaxTexto.textContent = "Error al conectar con el servidor.";
+                    mensajeError.style.display = "block";
+                });
+        }
 
-        
+
         function generarOpcionesCantidad(tipo) {
             cantidadSelect.innerHTML = '<option value="">Seleccione una cantidad</option>';
             const limite = tipo === 'entrada' ? 100 : currentStock;

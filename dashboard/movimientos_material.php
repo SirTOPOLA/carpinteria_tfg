@@ -81,13 +81,13 @@ $movimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <td><?= htmlspecialchars($mov['nombre_proyecto'] ?? 'N/D') ?></td>
                                 <td><?= htmlspecialchars(($mov['nombre_responsable'] ?? '') . ' ' . ($mov['apellido_responsable'] ?? '')) ?></td>
                                 <td class="text-center">
-                                    <a href="editar_movimientos_inventario.php?id=<?= $mov['id'] ?>" class="btn btn-sm btn-warning" title="Editar">
+                                    <a href="editar_movimientos_material.php?id=<?= $mov['id'] ?>" class="btn btn-sm btn-warning" title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <a href="eliminar_movimientos_inventario.php?id=<?= $mov['id'] ?>" class="btn btn-sm btn-danger"
+                                    <!-- <a href="eliminar_movimientos_inventario.php?id=<?= $mov['id'] ?>" class="btn btn-sm btn-danger"
                                        title="Eliminar" onclick="return confirm('¿Está seguro de eliminar este movimiento?');">
                                         <i class="bi bi-trash"></i>
-                                    </a>
+                                    </a> -->
                                 </td>
                             </tr>
                         <?php endforeach; ?>

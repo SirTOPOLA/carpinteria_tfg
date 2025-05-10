@@ -36,64 +36,77 @@ try {
 }
 ?>
 
-<?php include '../includes/header.php'; ?>
-<main class="container mt-4">
-    <h2>Editar Compra #<?= $compra_id ?></h2>
-    <form action="guardar_edicion_compra.php" method="POST">
+<?php
+// dashboard.php principal
+include '../includes/header.php';
+include '../includes/nav.php';
+include '../includes/sidebar.php';
+?>
+<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
+    <h4>Editar Compra #<?= $compra_id ?></h4>
+    <form action="../php/actualizar_compras.php" method="POST">
         <input type="hidden" name="compra_id" value="<?= $compra_id ?>">
+        <div class="row">
 
-        <div class="mb-3">
-            <label class="form-label">Proveedor:</label>
-            <select name="proveedor_id" class="form-select" required>
-                <option value="">Seleccione proveedor</option>
-                <?php foreach ($proveedores as $prov): ?>
-                    <option value="<?= $prov['id'] ?>" <?= $prov['id'] == $compra['proveedor_id'] ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($prov['nombre']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Proveedor:</label>
+                <select name="proveedor_id" class="form-select" required>
+                    <option value="">Seleccione proveedor</option>
+                    <?php foreach ($proveedores as $prov): ?>
+                        <option value="<?= $prov['id'] ?>" <?= $prov['id'] == $compra['proveedor_id'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($prov['nombre']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-        <div class="mb-3">
-            <label class="form-label">Fecha:</label>
-            <input type="date" name="fecha" value="<?= $compra['fecha'] ?>" class="form-control" required>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Fecha:</label>
+                <input type="date" name="fecha" value="<?= $compra['fecha'] ?>" class="form-control" required>
+            </div>
         </div>
 
         <h5>Materiales Comprados:</h5>
-        <?php foreach ($detalles as $i => $item): ?>
-            <div class="border rounded p-3 mb-3">
-                <input type="hidden" name="detalle_ids[]" value="<?= $item['id'] ?>">
+        <div class="row">
+            <?php foreach ($detalles as $i => $item): ?>
+                <div class="col-md-6">
+                    <div class=" border rounded p-3 mb-3">
 
-                <div class="mb-2">
-                    <label class="form-label">Material:</label>
-                    <select name="material_ids[]" class="form-select" required>
-                        <option value="">Seleccione</option>
-                        <?php foreach ($materiales as $mat): ?>
-                            <option value="<?= $mat['id'] ?>" <?= $mat['id'] == $item['material_id'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($mat['nombre']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
+                        <input type="hidden" name="detalle_ids[]" value="<?= $item['id'] ?>">
+
+                        <div class="mb-2">
+                            <label class="form-label">Material:</label>
+                            <select name="material_ids[]" class="form-select" required>
+                                <option value="">Seleccione</option>
+                                <?php foreach ($materiales as $mat): ?>
+                                    <option value="<?= $mat['id'] ?>" <?= $mat['id'] == $item['material_id'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($mat['nombre']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <label class="form-label">Cantidad:</label>
+                                <input type="number" name="cantidades[]" value="<?= $item['cantidad'] ?>"
+                                    class="form-control" required min="1">
+                            </div>
+                            <div class="col">
+                                <label class="form-label">Precio Unitario:</label>
+                                <input type="number" name="precios[]" value="<?= $item['precio_unitario'] ?>"
+                                    class="form-control" step="0.01" required>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
-
-                <div class="row">
-                    <div class="col">
-                        <label class="form-label">Cantidad:</label>
-                        <input type="number" name="cantidades[]" value="<?= $item['cantidad'] ?>" class="form-control" required min="1">
-                    </div>
-                    <div class="col">
-                        <label class="form-label">Precio Unitario:</label>
-                        <input type="number" name="precios[]" value="<?= $item['precio_unitario'] ?>" class="form-control" step="0.01" required>
-                    </div>
-                    <div class="col">
-                        <label class="form-label">Stock Mínimo:</label>
-                        <input type="number" name="stocks_minimos[]" value="<?= $item['stock_minimo'] ?>" class="form-control" min="0" required>
-                    </div>
-                </div>
-            </div>
-        <?php endforeach; ?>
-
-        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <?php endforeach; ?>
+        </div>
+        <div class=" d-flex justify-content-between px-5">
+            <a href="compras.php" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Guardar Cambios</button>
+        </div>
     </form>
 </main>
 <?php include '../includes/footer.php'; ?>

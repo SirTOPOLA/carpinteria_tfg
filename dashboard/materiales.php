@@ -10,7 +10,7 @@ $sql = "SELECT * FROM materiales";
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+ 
 // ========================
 // VISTA HTML
 // ========================
@@ -42,8 +42,8 @@ include '../includes/sidebar.php';
                         <th>Nombre</th>
                         <th>Descripción</th> 
                         <th>unidad medida</th> 
-                        <th>Stock Actual</th>
-                        <th>Precio</th>
+                        <th>Stock Actual</th> 
+                        <th>Stock Mínimo</th> 
                         <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
@@ -55,9 +55,9 @@ include '../includes/sidebar.php';
                                 <td><?= htmlspecialchars($material['nombre']) ?></td>
                                 <td><?= htmlspecialchars($material['descripcion']) ?></td> 
                                 <td><?= htmlspecialchars($material['unidad_medida']) ?></td> 
-                                <td><?= number_format($material['stock_actual'], 2) ?></td>
-                                <td> 00.00</td>
-                              
+                                <td><?= number_format($material['stock_actual'], 0) ?></td>
+                                <td><?= number_format($material['stock_minimo'], 0) ?></td>
+                                  
                                 <td class="text-center">
                                     <a href="editar_material.php?id=<?= $material['id'] ?>" class="btn btn-sm btn-warning" title="Editar">
                                         <i class="bi bi-pencil"></i>
