@@ -1,6 +1,5 @@
 <?php
-session_start();
-require_once("../includes/conexion.php");
+
 
 // ========================
 // PARÁMETROS
@@ -50,9 +49,7 @@ $ventas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <?php
 
-include '../includes/header.php';
-include '../includes/nav.php';
-include '../includes/sidebar.php';
+
 
 // Obtener ventas con nombre del cliente
 $sql = "SELECT v.id, v.fecha, v.tipo_pago, v.total, c.nombre AS cliente
@@ -63,70 +60,71 @@ $stmt = $pdo->query($sql);
 $ventas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<div class="container-fluid py-4">
-        
-        <h4 class="mb-4"><i class="bi bi-cart-fill me-1"></i> Listado de Ventas</h4>
-
-        <?php if (isset($_GET['exito'])): ?>
-            <div class="alert alert-success">
-                <i class="bi bi-check-circle-fill me-1"></i> Venta registrada correctamente.
+<div id="content" class="container-fluid py-4">
+    
+    
+    <?php if (count($ventas) > 0): ?>
+        <!-- Tarjeta contenedora -->
+        <div class="card mb-4">
+            <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                <h4 class="fw-bold mb-0 text-white">
+                    <i class="bi bi-receipt-cutoff me-2"></i> Lista de Ventas
+                </h4>
+                <div class="input-group w-100 w-md-auto" style="max-width: 300px;">
+                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control" id="buscador-ventas" placeholder="Buscar cliente...">
+                </div>
+                <a href="registrar_ventas.php" class="btn btn-secondary">
+                    <i class="bi bi-plus-circle me-1"></i> Nueva Venta
+                </a>
             </div>
-        <?php endif; ?>
 
-        <div class="mb-3">
-            <a href="registrar_ventas.php" class="btn btn-primary">
-                <i class="bi bi-plus-circle me-1"></i> Nueva Venta
-            </a>
-        </div>
-
-        <?php if (count($ventas) > 0): ?>
-            <div class="table-responsive">
-                <table class="table table-striped align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>ID</th>
-                            <th>Cliente</th>
-                            <th>Fecha</th>
-                            <th>Tipo de Pago</th>
-                            <th>Total (€)</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($ventas as $venta): ?>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle table-custom mb-0">
+                        <thead>
                             <tr>
-                                <td><?= $venta['id'] ?></td>
-                                <td><?= htmlspecialchars($venta['cliente']) ?></td>
-                                <td><?= date('d/m/Y', strtotime($venta['fecha'])) ?></td>
-                                <td><?= ucfirst($venta['tipo_pago']) ?></td>
-                                <td><?= number_format($venta['total'], 2) ?></td>
-                                <td>
-
-                                    <a href="detalles_ventas.php?id=<?= $venta['id'] ?>" class="btn btn-sm btn-info mb-1">
-                                        <i class="bi bi-eye"></i>  
-                                    </a>
-                                    <a href="editar_venta.php?id=<?= $venta['id'] ?>" class="btn btn-sm btn-warning mb-1">
-                                        <i class="bi bi-pencil"></i>  
-                                    </a>
-                                    <a href="eliminar_venta.php?id=<?= $venta['id'] ?>" class="btn btn-sm btn-danger mb-1"
-                                        onclick="return confirm('¿Estás seguro de eliminar esta venta? Esta acción no se puede deshacer.')">
-                                        <i class="bi bi-trash"></i>  
-                                    </a>
-
-
-                                    <!-- Puedes agregar botones de editar/eliminar si deseas -->
-                                </td>
+                                <th><i class="bi bi-hash me-1"></i>ID</th>
+                                <th><i class="bi bi-person-fill me-1"></i>Cliente</th>
+                                <th><i class="bi bi-calendar me-1"></i>Fecha</th>
+                                <th><i class="bi bi-cash-coin me-1"></i>Tipo de Pago</th>
+                                <th><i class="bi bi-currency-euro me-1"></i>Total</th>
+                                <th><i class="bi bi-gear-fill me-1"></i>Acciones</th>
                             </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($ventas as $venta): ?>
+                                <tr>
+                                    <td><?= $venta['id'] ?></td>
+                                    <td><?= htmlspecialchars($venta['cliente']) ?></td>
+                                    <td><?= date('d/m/Y', strtotime($venta['fecha'])) ?></td>
+                                    <td><?= ucfirst($venta['tipo_pago']) ?></td>
+                                    <td><?= number_format($venta['total'], 2) ?></td>
+                                    <td>
+                                        <a href="detalles_ventas.php?id=<?= $venta['id'] ?>"
+                                            class="btn btn-sm btn-outline-info mb-1" title="Ver detalles">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="editar_venta.php?id=<?= $venta['id'] ?>"
+                                            class="btn btn-sm btn-outline-warning mb-1" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="eliminar_venta.php?id=<?= $venta['id'] ?>"
+                                            class="btn btn-sm btn-outline-danger mb-1" title="Eliminar"
+                                            onclick="return confirm('¿Estás seguro de eliminar esta venta? Esta acción no se puede deshacer.')">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        <?php else: ?>
-            <div class="alert alert-warning">
-                No hay ventas registradas aún.
-            </div>
-        <?php endif; ?>
-    </div>
- 
-
-<?php include '../includes/footer.php'; ?>
+        </div>
+    <?php else: ?>
+        <div class="alert alert-warning text-center">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>No hay ventas registradas aún.
+        </div>
+    <?php endif; ?>
+</div>
