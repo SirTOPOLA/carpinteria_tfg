@@ -1,14 +1,11 @@
 
 
-<?php include '../includes/header.php'; ?>
-<?php include '../includes/nav.php'; ?>
-<?php include '../includes/sidebar.php'; ?>
-
-<div class="container-fluid py-4">
+ 
+<div id="content" class="container-fluid py-4">
         <h4 class="mb-4">Registrar Proyecto</h4>
  
 
-        <form action="../php/guardar_proyectos.php" method="POST" class="row g-3 needs-validation" novalidate>
+        <form id="formulario" method="POST" class="row g-3 needs-validation" novalidate>
             <div class="col-12 col-md-6">
                 <label for="nombre" class="form-label">Nombre del Proyecto</label>
                 <input type="text" name="nombre" id="nombre" class="form-control" required>
@@ -41,11 +38,35 @@
             </div>
 
             <div class="col-12 text-end">
-                <a href="proyectos.php" class="btn btn-secondary">Cancelar</a>
+                <a href="index.php?vista=proyectos" class="btn btn-secondary">Cancelar</a>
                 <button type="submit" class="btn btn-primary">Registrar Proyecto</button>
             </div>
         </form>
     </div>
  
+ 
+<script>
+    document.getElementById('form-proyecto').addEventListener('submit', function (e) {
+  e.preventDefault();
 
-<?php include '../includes/footer.php'; ?>
+  const datos = new FormData(this);
+
+  fetch('guardar_proyecto.php', {
+    method: 'POST',
+    body: datos
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.exito) {
+      alert('Proyecto guardado correctamente.');
+      // Opcional: limpiar formulario o redirigir
+    } else {
+      alert('Error: ' + data.mensaje);
+    }
+  })
+  .catch(error => {
+    console.error('Error en la petición:', error);
+  });
+});
+
+</script>

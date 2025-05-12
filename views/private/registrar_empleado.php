@@ -8,7 +8,7 @@
         <h4 class="mb-3">Registrar Empleado</h4>
 
        
-        <form   method="POST" class="row g-3">
+        <form id="form"  method="POST" class="row g-3">
             <div class="col-12 col-md-6">
                 <label class="form-label">Nombre *</label>
                 <input type="text" name="nombre" class="form-control" required>
@@ -56,9 +56,9 @@
                 <input type="text" name="horario_trabajo" class="form-control"
                     placeholder="Ej: Lunes a Viernes, 8am - 5pm">
             </div>
-            <div class="col-12  text-end">
+            <div class="col-12  d-flex justify-content-between">
+                <a href="index.php?vista=empleados" class="btn btn-secondary">Cancelar</a>
                 <button type="submit" class="btn btn-primary">Registrar</button>
-                <a href="empleados.php" class="btn btn-secondary">Cancelar</a>
             </div>
         </form>
     </div>
@@ -81,7 +81,7 @@ document.querySelector('form').addEventListener('submit', async function (e) {
 
         if (result.success) {
             alert('Empleado registrado correctamente');
-            window.location.href = 'empleados.php'; // redirige al listado
+            window.location.href = 'index.php?vista=empleados'; // redirige al listado
         } else {
             alert('Error: ' + result.message);
         }

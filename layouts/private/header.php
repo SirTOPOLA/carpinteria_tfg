@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
+
     <style>
         html,
         body {
@@ -106,7 +107,7 @@
             margin-left: 250px;
             padding: 1rem;
             transition: margin-left 0.3s ease;
-          /*   border: solid 2px #52a552; */
+            /*   border: solid 2px #52a552; */
         }
 
         #content.collapsed {
@@ -117,8 +118,9 @@
         @media (max-width: 767.98px) {
             #content {
                 margin-left: 0 !important;
-                
+
             }
+
             #navContent {
                 margin-left: 0 !important;
 
@@ -129,6 +131,7 @@
         body.sidebar-collapsed #navContent {
             left: 0px !important;
         }
+
         /* ---------------- NAVBAR ---------------- */
         .navbar {
             position: fixed;
@@ -201,10 +204,10 @@
         }
 
         /* ---------------- TABLA RESPONSIVA ---------------- */
-     
 
-        
- 
+
+
+
         /* Ajuste de los iconos y texto en dispositivos móviles */
         @media (max-width: 768px) {
             .table {
@@ -303,9 +306,61 @@
             }
         }
 
-        /* Por defecto, ocultamos los data-label */
-        .table tbody tr td::before {
-            display: none;
+
+
+        .card {
+            border-radius: 1rem;
+            border: none;
+            background: #ffffff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            background: linear-gradient(90deg, #495057, #343a40);
+            color: #f8f9fa;
+            border-top-left-radius: 1rem;
+            border-top-right-radius: 1rem;
+            padding: 1rem 1.5rem;
+        }
+
+        .card-header h4 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .table-custom thead {
+            background-color: #e9ecef;
+            color:rgb(255, 255, 255);
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .table-custom th i {
+            color: #6c757d;
+        }
+
+        .table-custom td,
+        .table-custom th {
+            vertical-align: middle;
+            border-color: #dee2e6;
+            white-space: nowrap;
+        }
+
+        .table-custom tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .btn-success {
+            background-color: #198754;
+            border-color: #198754;
+        }
+
+        .form-control::placeholder {
+            color: #adb5bd;
+        }
+
+        .input-group .form-control {
+            border-radius: 0.5rem;
         }
 
         /* En dispositivos móviles, mostramos los data-label */
@@ -324,11 +379,9 @@
             }
         }
 
-#navContent{
-    
-}
+        #navContent {}
 
-       /*  @media (max-width: 767.98px) {
+        /*  @media (max-width: 767.98px) {
             .table-responsive table thead {
                 display: none;
             }

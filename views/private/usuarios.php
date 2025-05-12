@@ -1,121 +1,108 @@
 <div id="content" class="container-fliud">
-    <div id="navContent" class="row">
-        <!-- BARRA DE ACCIONES -->
-        <h4 class="mb-0">Usuarios Registrados</h4>
-
-        <div class="text-end mb-4 p-2">
-            <a href="index.php?vista=registrar_usuarios" class="btn btn-success me-2">
-
-                <i class="bi bi-plus-circle"></i> Nuevo Usuario
+    <!-- Card con tabla de roles -->
+    <div class="card shadow-sm border-0 mb-4">   
+        
+        <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <h4 class="fw-bold mb-0 text-white">
+                <i class="bi bi-person-lock me-2"></i> Gestión de Roles de Usuario
+            </h4>
+            <div class="input-group w-100 w-md-auto" style="max-width: 300px;">
+                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" placeholder="Buscar usuario..." id="buscador-roles">
+            </div>
+            <a href="index.php?vista=registrar_usuarios" class="btn btn-secondary shadow-sm">
+                <i class="bi bi-plus-circle me-1"></i> Nuevo Usuario
             </a>
-
         </div>
 
-
-        <!-- BUSCADOR -->
-        <div class="mb-3">
-            <input type="search" id="buscador" class="form-control bg-white text-white border-secondary"
-                placeholder="Buscar rol…">
-        </div>
-
-    </div>
-
-    <!-- TABLA -->
-    <div class="card p-2">
-
-        <div class="table-responsive">
-            <table id="tablaRoles" class="table table-light table-hover align-middle mb-0">
-                <thead class="text-dark table-success p-2">
-                    <thead class="table-light">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="tablaRoles" class="table table-hover table-custom align-middle mb-0">
+                    <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Usuario</th>
-                            <th>Empleado</th>
-                            <th>Rol</th>
-                            <th>Activo</th>
-                            <th class="text-center">Acciones</th>
+                            <th><i class="bi bi-hash me-1"></i>ID</th>
+                            <th><i class="bi bi-person-circle me-1"></i>Usuario</th>
+                            <th><i class="bi bi-person-badge me-1"></i>Empleado</th>
+                            <th><i class="bi bi-person-gear me-1"></i>Rol</th>
+                            <th class="text-center"><i class="bi bi-check-circle me-1"></i>Activo</th>
+                            <th class="text-center"><i class="bi bi-gear-fill me-1"></i>Acciones</th>
                         </tr>
                     </thead>
-                <tbody>
-                    <?php if (count($usuarios) > 0): ?>
-                        <?php foreach ($usuarios as $usuario): ?>
+                    <tbody>
+                        <?php if (count($usuarios) > 0): ?>
+                            <?php foreach ($usuarios as $usuario): ?>
+                                <tr>
+                                    <td><?= $usuario['id'] ?></td>
+                                    <td><?= htmlspecialchars($usuario['usuario']) ?></td>
+                                    <td><?= htmlspecialchars($usuario['empleado_nombre'] . ' ' . $usuario['empleado_apellido']) ?>
+                                    </td>
+                                    <td><?= htmlspecialchars($usuario['rol']) ?></td>
+                                    <td class="text-center">
+                                        <a href="#"
+                                            class="btn btn-sm <?= $usuario['activo'] ? 'btn-success' : 'btn-danger' ?> activar-btn"
+                                            data-id="<?= $usuario['id'] ?>" data-estado="<?= $usuario['activo'] ? '1' : '0' ?>">
+                                            <i class="bi <?= $usuario['activo'] ? 'bi-toggle-on' : 'bi-toggle-off' ?>"></i>
+                                            <?= $usuario['activo'] ? 'Activado' : 'Desactivado' ?>
+                                        </a>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="index.php?vista=editar_usuarios&id=<?= $usuario['id'] ?>"
+                                            class="btn btn-sm btn-warning" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
                             <tr>
-                                <td><?= $usuario['id'] ?></td>
-                                <td><?= htmlspecialchars($usuario['usuario']) ?></td>
-                                <td><?= htmlspecialchars($usuario['empleado_nombre'] . ' ' . $usuario['empleado_apellido']) ?>
-                                </td>
-                                <td><?= htmlspecialchars($usuario['rol']) ?></td>
-                                <td class="text-center">
-                                    <!-- Botón de Activar/Desactivar -->
-                                    <a href="#"
-                                        class="btn btn-sm <?= $usuario['activo'] ? 'btn-success' : 'btn-danger' ?> activar-btn"
-                                        data-id="<?= $usuario['id'] ?>" data-estado="<?= $usuario['activo'] ? '1' : '0' ?>">
-                                        <i class="bi <?= $usuario['activo'] ? 'bi-toggle-on' : 'bi-toggle-off' ?>"></i>
-                                        <?= $usuario['activo'] ? 'Activado' : 'Desactivado' ?>
-                                    </a>
-
-
-                                    <!--   -->
-                                </td>
-
-                                <td class="text-center">
-                                    <a href="index.php?vista=editar_usuarios&id=<?= $usuario['id'] ?>"
-                                        class="btn btn-sm btn-warning">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-
-                                </td>
+                                <td colspan="6" class="text-muted text-center py-3">No se encontraron usuarios.</td>
                             </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="6" class="text-center">No se encontraron usuarios.</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
-
-
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const botones = document.querySelectorAll(".activar-btn");
+</div>
 
-            botones.forEach(boton => {
-                boton.addEventListener("click", function (e) {
-                    e.preventDefault();
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const botones = document.querySelectorAll(".activar-btn");
 
-                    const id = this.dataset.id;
-                    const estadoActual = this.dataset.estado;
+        botones.forEach(boton => {
+            boton.addEventListener("click", function (e) {
+                e.preventDefault();
 
-                    if (!confirm(`¿Está seguro de ${estadoActual === '1' ? 'desactivar' : 'activar'} este usuario?`)) {
-                        return;
-                    }
+                const id = this.dataset.id;
+                const estadoActual = this.dataset.estado;
 
-                    fetch("api/activar_desactivar_usuario.php", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({ id: id })
+                if (!confirm(`¿Está seguro de ${estadoActual === '1' ? 'desactivar' : 'activar'} este usuario?`)) {
+                    return;
+                }
+
+                fetch("api/activar_desactivar_usuario.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ id: id })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.ok) {
+                            // Puedes recargar la tabla, cambiar íconos, texto, etc.
+                            alert("Estado actualizado correctamente");
+                            location.reload(); // o actualiza solo la fila si prefieres
+                        } else {
+                            alert("Error al actualizar estado");
+                        }
                     })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.ok) {
-                                // Puedes recargar la tabla, cambiar íconos, texto, etc.
-                                alert("Estado actualizado correctamente");
-                                location.reload(); // o actualiza solo la fila si prefieres
-                            } else {
-                                alert("Error al actualizar estado");
-                            }
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            alert("Error en la petición");
-                        });
-                });
+                    .catch(err => {
+                        console.error(err);
+                        alert("Error en la petición");
+                    });
             });
         });
-    </script>
+    });
+</script>

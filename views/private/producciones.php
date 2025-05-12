@@ -19,35 +19,42 @@ $producciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
  
 <div id="content" class="container-fluid py-4">
-
-        
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-3">Listado de Producciones</h4>
-            <a href="index.php?vista=registrar_producciones" class="btn btn-success">
+    
+    
+    <div class="card mb-4">
+        <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <h4 class="fw-bold mb-0 text-white">
+                <i class="bi bi-boxes me-2"></i> Gestión de Producciones
+            </h4>
+            <div class="input-group w-100 w-md-auto" style="max-width: 300px;">
+                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" placeholder="Buscar producción..." id="buscador-producciones">
+            </div>
+            <a href="index.php?vista=registrar_producciones" class="btn btn-secondary">
                 <i class="bi bi-plus-circle"></i> Nueva Producción
             </a>
-            
-        </div>
+    </div>
 
+    <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered table-striped">
-                <thead class="table-light">
-                    <tr> 
-                        <th>ID</th>
-                        <th>Proycto</th>
-                        <th>Fecha Inicio</th>
-                        <th>Fecha Fin</th>
-                        <th>Estado Proyecto</th>
-                        <th>Etapa Poducion</th>
-                        <th>Responsable</th>
-                        <th>Creado en</th> 
-                        <th>Acciones</th>
+            <table class="table table-hover table-custom align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th><i class="bi bi-hash me-1"></i>ID</th>
+                        <th><i class="bi bi-folder2-open me-1"></i>Proyecto</th>
+                        <th><i class="bi bi-calendar-event me-1"></i>Inicio</th>
+                        <th><i class="bi bi-calendar-check me-1"></i>Fin</th>
+                        <th><i class="bi bi-flag-fill me-1"></i>Estado</th>
+                        <th><i class="bi bi-cpu me-1"></i>Etapa</th>
+                        <th><i class="bi bi-person-fill-gear me-1"></i>Responsable</th>
+                        <th><i class="bi bi-clock me-1"></i>Creado</th>
+                        <th><i class="bi bi-gear-fill me-1"></i>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (count($producciones) === 0): ?>
                         <tr>
-                            <td colspan="7" class="text-center">No se encontraron resultados.</td>
+                            <td colspan="9" class="text-center text-muted py-3">No se encontraron resultados.</td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($producciones as $p): ?>
@@ -60,10 +67,13 @@ $producciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <td><?= htmlspecialchars($p['estado']) ?></td>
                                 <td><?= htmlspecialchars($p['empleado_nombre']) ?></td>
                                 <td><?= htmlspecialchars($p['created_at']) ?></td>
-                                 <td>
-                                    <a href="editar_producciones.php?id=<?= $p['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
-                                    <a href="registrar_proceso_produccion.php?id=<?= $p['id'] ?>" class="btn btn-sm btn-primary">Procesar</a>
-
+                                <td>
+                                    <a href="editar_producciones.php?id=<?= $p['id'] ?>" class="btn btn-sm btn-outline-warning" title="Editar">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a href="registrar_proceso_produccion.php?id=<?= $p['id'] ?>" class="btn btn-sm btn-outline-primary" title="Procesar">
+                                        <i class="bi bi-play-circle"></i>
+                                    </a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -71,37 +81,9 @@ $producciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </tbody>
             </table>
         </div>
-
-
     </div>
+</div>
  
-    <script>
-/* document.getElementById('form-produccion').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const form = e.target;
-    const formData = new FormData(form);
-
-    try {
-        const response = await fetch('api/guardar_produccion.php', {
-            method: 'POST',
-            body: formData
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            alert(result.message);
-            window.location.href = 'producciones.php';
-        } else {
-            alert('Error: ' + result.message);
-        }
-    } catch (err) {
-        console.error('Fetch error:', err);
-        alert('Error inesperado al enviar los datos.');
-    }
-});
-</script> */
 
 
  
