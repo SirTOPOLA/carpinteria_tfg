@@ -43,8 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php include '../includes/nav.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
 
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
-    <div class="container">
+<div class="container-fluid py-4">
+   
         <h4 class="mb-4">Registrar Nuevo Departamento</h4>
 
         <?php if ($errores): ?>
@@ -73,6 +73,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </form>
     </div>
-</main>
+ 
 
 <?php include '../includes/footer.php'; ?>

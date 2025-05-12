@@ -26,8 +26,7 @@ include '../includes/header.php';
 include '../includes/nav.php';
 include '../includes/sidebar.php';
 ?>
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
-    <div class="container-fluid">
+   <div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="mb-0">Usuarios Registrados</h4>
             <a href="registrar_usuarios.php" class="btn btn-success">
@@ -88,6 +87,6 @@ include '../includes/sidebar.php';
 
    
     </div>
-</main>
+ 
 
 <?php include_once("../includes/footer.php"); ?>

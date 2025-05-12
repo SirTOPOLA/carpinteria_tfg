@@ -1,14 +1,15 @@
-<nav class="navbar navbar-dark bg-dark sticky-top shadow p-2 flex-md-nowrap">
-  <div class="container-fluid">
-    <button class="btn btn-outline-light d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
-      <i class="bi bi-list"></i>
-    </button>
-    <a class="navbar-brand ms-2 fw-bold" href="dashboard.php">
-      <i class="bi bi-grid-3x3-gap-fill me-1"></i> CarpinteríaApp
-    </a>
-    <div class="d-flex align-items-center ms-auto">
-      <span class="me-3"><i class="bi bi-person-circle"></i> Admin</span>
-      <a href="logout.php" class="btn btn-sm btn-outline-light"><i class="bi bi-box-arrow-right"></i> Salir</a>
-    </div>
-  </div>
-</nav>
+  <!-- Topbar -->
+  <nav class="navbar position-fixed navbar-expand navbar-dark shadow-sm px-3">
+        <button id="toggleSidebar"  class="btn btn-outline-dark me-3">
+          <i class="bi bi-list" ></i>
+        </button>
+        <span class="navbar-brand mb-0 h5 text-dark"><i class="bi bi-hammer me-2"></i>Panel Carpintería</span>
+        <div class="ms-auto user-info">
+          <img src="#" alt="Avatar usuario">
+          <div>
+            <div class="fw-bold">Juan Pérez</div>
+            <small>Administrador</small>
+          </div>
+          <button class="btn btn-sm btn-outline-danger ms-2"><i class="bi bi-box-arrow-right">Salir</i></button>
+        </div>
+      </nav>

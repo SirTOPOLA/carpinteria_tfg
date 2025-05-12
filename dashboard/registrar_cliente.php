@@ -4,8 +4,7 @@ include '../includes/header.php';
 include '../includes/nav.php';
 include '../includes/sidebar.php'; ?>
 
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
-    <div class="container-fluid">
+<div class="container-fluid py-4">
 
         <h4 class="mb-4">Registrar Nuevo Cliente</h4>
 
@@ -52,6 +51,6 @@ include '../includes/sidebar.php'; ?>
         </form>
     </div>
 
-</main>
+ 
 
 <?php include_once("../includes/footer.php"); ?>

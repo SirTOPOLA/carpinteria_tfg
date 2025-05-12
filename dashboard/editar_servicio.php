@@ -47,8 +47,7 @@ include '../includes/header.php';
 include '../includes/nav.php';
 include '../includes/sidebar.php';
 ?>
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
-    <div class="container-fluid">
+   <div class="container-fluid py-4">
     <h4>Editar Servicio</h4>
 
     <?php if (!empty($error)): ?>
@@ -77,5 +76,5 @@ include '../includes/sidebar.php';
         </div>
     </form>
 </div>
-</main>
+ 
 <?php include_once("../includes/footer.php"); ?>

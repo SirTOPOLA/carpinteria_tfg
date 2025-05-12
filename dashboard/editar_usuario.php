@@ -43,7 +43,7 @@ include '../includes/header.php';
 include '../includes/nav.php';
 include '../includes/sidebar.php';
 ?>
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
+   <div class="container-fluid py-4">
     <div class="row d-flex justify-content-center">
         <div class="col-md-7">
             <h2 class="mb-4">Editar Usuario</h2>
@@ -92,5 +92,5 @@ include '../includes/sidebar.php';
             </form>
         </div>
     </div>
-</main>
+</div>
 <?php include_once("../includes/footer.php"); ?>

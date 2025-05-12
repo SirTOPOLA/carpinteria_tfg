@@ -50,53 +50,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
+
 <?php
-// dashboard.php principal
-include '../includes/header.php';
-include '../includes/nav.php';
-include '../includes/sidebar.php';
-include '../includes/conexion.php'; // Asegúrate de tener la conexión a base de datos aquí
+
+include_once('../includes/header.php');
+include_once('../includes/sidebar.php');
+include_once('../includes/nav.php');
 ?>
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
-    <div class="container-fluid">
-        <div class="col-md-6">
-            <h4 class="mb-4">Registrar Nuevo Rol</h4>
 
-            <!-- MENSAJES DE ERROR -->
-            <?php if (!empty($errores)): ?>
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        <?php foreach ($errores as $error): ?>
-                            <li><?= htmlspecialchars($error) ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            <?php endif; ?>
 
-            <!-- MENSAJE DE ÉXITO -->
-            <?php if (!empty($exito)): ?>
-                <div class="alert alert-success"><?= htmlspecialchars($exito) ?></div>
-            <?php endif; ?>
+<!-- Contenido -->
+<div class="container-fluid py-4">
+    <div class="row g-4">
+        <h4 class="mb-4">Registrar Nuevo Rol</h4>
 
-            <!-- FORMULARIO -->
-            <form method="POST" novalidate>
-                <div class="mb-3">
-                    <label for="nombre" class="form-label">Nombre del Rol</label>
-                    <input type="text" name="nombre" id="nombre" class="form-control"
-                           value="<?= htmlspecialchars($nombre ?? '') ?>" required maxlength="50">
-                </div>
+        <!-- MENSAJES DE ERROR -->
+        <?php if (!empty($errores)): ?>
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    <?php foreach ($errores as $error): ?>
+                        <li><?= htmlspecialchars($error) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
 
-                <div class="d-flex justify-content-between">
-                    <a href="roles.php" class="btn btn-secondary">
-                        <i class="bi bi-arrow-left"></i> Volver
-                    </a>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-save"></i> Registrar
-                    </button>
-                </div>
-            </form>
-        </div>
+        <!-- MENSAJE DE ÉXITO -->
+        <?php if (!empty($exito)): ?>
+            <div class="alert alert-success"><?= htmlspecialchars($exito) ?></div>
+        <?php endif; ?>
+
+        <!-- FORMULARIO -->
+        <form method="POST" novalidate>
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre del Rol</label>
+                <input type="text" name="nombre" id="nombre" class="form-control"
+                    value="<?= htmlspecialchars($nombre ?? '') ?>" required maxlength="50">
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <a href="roles.php" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Registrar
+                </button>
+            </div>
+        </form>
     </div>
 </div>
-</main>
-<?php include_once("../includes/footer.php"); ?>
+
+
+
+<?php include_once('../includes/footer.php'); ?>

@@ -47,8 +47,8 @@ try {
 <?php include '../includes/header.php'; ?>
 <?php include '../includes/nav.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
-
-<main class="flex-grow-1 overflow-auto p-4">
+   <!-- Contenido -->
+   <div class="container-fluid py-4">
     <div class="container col-sm-12 col-md-9 col-xl-8">
         <div class="border-bottom pb-3 mb-4 d-flex justify-content-between align-items-center">
             <div>
@@ -133,6 +133,6 @@ try {
 
     </div>
 
-</main>
+ </div>
 
 <?php include '../includes/footer.php'; ?>

@@ -57,7 +57,8 @@ include_once('../includes/nav.php');
 include_once('../includes/sidebar.php');
 
 ?>
-<main class="flex-grow-1 overflow-auto p-4">
+   <!-- Contenido -->
+   <div class="container-fluid py-4">
     <h2 class="mb-4">Editar Movimiento de Inventario</h2>
     <div class="container col-7 mt-4">
         <form action="../php/actualizar_movimientos_material.php" method="POST">
@@ -112,7 +113,7 @@ include_once('../includes/sidebar.php');
             </div>
         </form>
     </div>
-</main>
+ </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {

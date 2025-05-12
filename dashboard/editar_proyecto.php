@@ -24,8 +24,7 @@ $proyecto = $stmt->fetch(PDO::FETCH_ASSOC);
 <?php include '../includes/nav.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
 
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
-    <div class="container">
+<div class="container-fluid py-4">
         <h4 class="mb-4">Editar Proyecto</h4>
 
 
@@ -74,6 +73,6 @@ $proyecto = $stmt->fetch(PDO::FETCH_ASSOC);
             </div>
         </form>
     </div>
-</main>
+ 
 
 <?php include '../includes/footer.php'; ?>

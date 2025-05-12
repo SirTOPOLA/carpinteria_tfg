@@ -2,7 +2,7 @@
 <?php include '../includes/nav.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
 
-<main class="flex-grow-1 overflow-auto p-3">
+<div class="container-fluid py-4">
     <h2>Registrar Material</h2>
 
 
@@ -42,6 +42,6 @@
 
     </form>
 
-</main>
+</div>
 
 <?php include '../includes/footer.php'; ?>

@@ -33,7 +33,7 @@ include '../includes/header.php';
 include '../includes/nav.php';
 include '../includes/sidebar.php';
 ?>
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
+ 
     <div class="container-fluid p-3">
          <!-- BARRA DE ACCIONES -->
     <div class="d-flex justify-content-between align-items-center  p-2 mb-3">
@@ -87,6 +87,6 @@ include '../includes/sidebar.php';
             </div>
         <?php endif; ?>
     </div>
-</main>
+ 
 
 <?php include '../includes/footer.php'; ?>

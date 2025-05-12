@@ -24,7 +24,8 @@ if (!$empleado) {
 <?php include '../includes/nav.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
 
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
+   <!-- Contenido -->
+   <div class="container-fluid py-4">
     <div class="container">
         <h4>Editar Empleado</h4>
         <form action="../php/actualizar_empleados.php" method="POST" class="row g-3">
@@ -82,7 +83,7 @@ if (!$empleado) {
 
         
     </div>
-</main>
+</div>
 
 
 <script>

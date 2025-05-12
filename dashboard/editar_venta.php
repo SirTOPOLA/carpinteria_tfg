@@ -111,8 +111,7 @@ $servicios = $pdo->query("SELECT id, nombre, precio FROM servicios ORDER BY nomb
 <?php include '../includes/nav.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
 
-<main class="flex-grow-1 overflow-auto p-4">
-    <div class="container col-sm-12 col-md-9 col-xl-8">
+<div class="container-fluid py-4">
         <h4 class="mb-4"><i class="bi bi-pencil-square"></i> Editar Venta</h4>
 
         <form method="POST" id="formVenta">
@@ -172,7 +171,6 @@ $servicios = $pdo->query("SELECT id, nombre, precio FROM servicios ORDER BY nomb
             </button>
         </form>
     </div>
-</main>
 
 <script>
 const productos = <?= json_encode($productos) ?>;

@@ -45,7 +45,7 @@ try {
 <?php include '../includes/header.php'; ?>
 <?php include '../includes/nav.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
-<main class="flex-grow-1 overflow-auto p-4">
+<div class="container-fluid py-4">
     <h2>Registrar Movimiento de Inventario</h2>
 
     <div class="container col-7 mt-4">
@@ -114,7 +114,7 @@ try {
             </div>
         </form>
     </div>
-</main>
+</div>
 <?php include '../includes/footer.php'; ?>
 
 

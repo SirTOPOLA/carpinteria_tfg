@@ -49,8 +49,7 @@ $departamentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <?php include '../includes/header.php'; ?>
 <?php include '../includes/nav.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
-
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
+ 
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="mb-0">Departamentos</h4>
@@ -125,6 +124,6 @@ $departamentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </nav>
         <?php endif; ?>
     </div>
-</main>
+ 
 
 <?php include '../includes/footer.php'; ?>

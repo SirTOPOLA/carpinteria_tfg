@@ -15,8 +15,7 @@ $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <?php include '../includes/nav.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
 
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
-    <div class="container">
+<div class="container-fluid py-4">
         <h4 class="mb-4">Registrar Usuario</h4>
 
         <form action="../php/guardar_usuarios.php"  method="POST" class="row g-3 needs-validation" novalidate>
@@ -61,6 +60,6 @@ $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </form>
     </div>
-</main>
+ 
 
 <?php include '../includes/footer.php'; ?>

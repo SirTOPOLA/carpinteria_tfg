@@ -10,7 +10,7 @@ $materiales = $stmtMat->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <?php include '../includes/header.php'; ?>
-<main class="container mt-4">
+<div class="container-fluid py-4">
     <h2>Registrar Nueva Compra</h2>
     <form id="formCompra" method="POST" action="guardar_compra.php">
         <div class="mb-3">
@@ -56,7 +56,7 @@ $materiales = $stmtMat->fetchAll(PDO::FETCH_ASSOC);
         <br><br>
         <button type="submit" class="btn btn-primary">Guardar Compra</button>
     </form>
-</main>
+</div>
 
 <script>
     document.getElementById('agregarFila').addEventListener('click', () => {

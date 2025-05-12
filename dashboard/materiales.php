@@ -19,8 +19,7 @@ include '../includes/nav.php';
 include '../includes/sidebar.php';
 ?>
 
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
-    <div class="container-fluid">
+<div class="container-fluid py-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="mb-0">Materiales Registrados</h4>
             <div>
@@ -75,6 +74,6 @@ include '../includes/sidebar.php';
             </table>
         </div>
     </div>
-</main>
+ 
 
 <?php include_once("../includes/footer.php"); ?>

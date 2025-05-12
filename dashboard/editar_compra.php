@@ -42,7 +42,8 @@ include '../includes/header.php';
 include '../includes/nav.php';
 include '../includes/sidebar.php';
 ?>
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
+   <!-- Contenido -->
+   <div class="container-fluid py-4">
     <h4>Editar Compra #<?= $compra_id ?></h4>
     <form action="../php/actualizar_compras.php" method="POST">
         <input type="hidden" name="compra_id" value="<?= $compra_id ?>">
@@ -108,5 +109,5 @@ include '../includes/sidebar.php';
             <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Guardar Cambios</button>
         </div>
     </form>
-</main>
+ </div>
 <?php include '../includes/footer.php'; ?>

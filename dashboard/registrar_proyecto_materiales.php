@@ -37,8 +37,7 @@ $materiales = $pdo->query("SELECT id, nombre FROM materiales ORDER BY nombre")->
 <?php include '../includes/nav.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
 
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
-    <div class="container-fluid">
+<div class="container-fluid py-4">
         <h4>Asignar Material a Proyecto</h4>
         <p><strong>Proyecto:</strong> <?= htmlspecialchars($proyecto['nombre']) ?></p>
         <p><strong>Responsable:</strong> <?= htmlspecialchars($produccion['responsable']) ?></p>
@@ -77,6 +76,6 @@ $materiales = $pdo->query("SELECT id, nombre FROM materiales ORDER BY nombre")->
             </div>
         </form>
     </div>
-</main>
+ 
 
 <?php include '../includes/footer.php'; ?>

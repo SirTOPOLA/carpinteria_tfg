@@ -63,8 +63,7 @@ $stmt = $pdo->query($sql);
 $ventas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<main class="flex-grow-1 overflow-auto p-4">
-    <div class="container ">
+<div class="container-fluid py-4">
         
         <h4 class="mb-4"><i class="bi bi-cart-fill me-1"></i> Listado de Ventas</h4>
 
@@ -128,6 +127,6 @@ $ventas = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         <?php endif; ?>
     </div>
-</main>
+ 
 
 <?php include '../includes/footer.php'; ?>

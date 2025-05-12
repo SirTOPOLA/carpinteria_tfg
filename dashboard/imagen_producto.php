@@ -19,8 +19,7 @@ include '../includes/nav.php';
 include '../includes/sidebar.php';
 include '../includes/conexion.php'; // Asegúrate de tener la conexión a base de datos aquí
 ?>
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
-    <div class="container-fluid">
+   <div class="container-fluid py-4">
         <div class="col-md-7">
             <h4>Listado de Imágenes de Productos</h4>
 
@@ -64,5 +63,5 @@ include '../includes/conexion.php'; // Asegúrate de tener la conexión a base d
         </div> 
     </div>
 </div>
-</main>
+ 
 <?php include_once("../includes/footer.php"); ?>

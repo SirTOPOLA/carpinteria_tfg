@@ -1,7 +1,3 @@
-
-
-
-
 <?php
 require_once("../includes/conexion.php");
 
@@ -20,8 +16,8 @@ $material = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$material) {
     header("Location: materiales.php");
     exit;
-}  
- ?>
+}
+?>
 
 <?php
 // dashboard.php principal
@@ -30,41 +26,42 @@ include '../includes/nav.php';
 include '../includes/sidebar.php';
 include '../includes/conexion.php'; // Asegúrate de tener la conexión a base de datos aquí
 ?>
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
+<!-- Contenido -->
+<div class="container-fluid py-4">
     <div class="container-fluid">
-    <h4 class="mb-4">Editar Material</h4>
+        <h4 class="mb-4">Editar Material</h4>
 
-    <form action="../php/actualizar_materiales.php" method="POST">
-        <input type="hidden" name="material_id" value="<?= $material['id'] ?>">
+        <form action="../php/actualizar_materiales.php" method="POST">
+            <input type="hidden" name="material_id" value="<?= $material['id'] ?>">
 
-        <div class="mb-3">
-            <label>Nombre:</label>
-            <input type="text" name="nombre" class="form-control" required
-                value="<?= htmlspecialchars($material['nombre']) ?>">
-        </div> 
-        <div class="mb-3">
-            <label>Descripción:</label>
-            <textarea name="descripcion" class="form-control"
-                rows="3"><?= htmlspecialchars($material['descripcion']) ?></textarea>
-        </div> 
-        <div class="mb-3">
-            <label>Unidad de Medida:</label>
-            <input type="text" name="unidad_medida" class="form-control"
-                value="<?= htmlspecialchars($material['unidad_medida']) ?>">
-        </div>
+            <div class="mb-3">
+                <label>Nombre:</label>
+                <input type="text" name="nombre" class="form-control" required
+                    value="<?= htmlspecialchars($material['nombre']) ?>">
+            </div>
+            <div class="mb-3">
+                <label>Descripción:</label>
+                <textarea name="descripcion" class="form-control"
+                    rows="3"><?= htmlspecialchars($material['descripcion']) ?></textarea>
+            </div>
+            <div class="mb-3">
+                <label>Unidad de Medida:</label>
+                <input type="text" name="unidad_medida" class="form-control"
+                    value="<?= htmlspecialchars($material['unidad_medida']) ?>">
+            </div>
 
-        <div class="mb-3">
-            <label>Stock Mímino:</label>
-            <input type="number" name="stock_minimo" class="form-control" required
-                value="<?= htmlspecialchars($material['stock_minimo']) ?>">
-        </div>
+            <div class="mb-3">
+                <label>Stock Mímino:</label>
+                <input type="number" name="stock_minimo" class="form-control" required
+                    value="<?= htmlspecialchars($material['stock_minimo']) ?>">
+            </div>
 
-         
-        <div class="d-flex justify-content-between"> 
-            <a href="materiales.php" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Cancelar</a>
-            <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Guardar Cambios</button>
-        </div>
-    </form>
+
+            <div class="d-flex justify-content-between">
+                <a href="materiales.php" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Cancelar</a>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
 </div>
-</main>
-<?php include_once("../includes/footer.php"); ?>
+    <?php include_once("../includes/footer.php"); ?>

@@ -40,9 +40,7 @@ $solicitudes_proyecto = $stmt->fetch(PDO::FETCH_ASSOC);
 <?php include '../includes/header.php'; ?>
 <?php include '../includes/nav.php'; ?>
 <?php include '../includes/sidebar.php'; ?>
-
-<main class="flex-grow-1 overflow-auto p-4" id="mainContent">
-    <div class="container">
+<div class="container-fluid py-4">
         <div class="card shadow-lg border-0 rounded-4">
             <div class="card-header bg-info text-white d-flex justify-content-between align-items-center rounded-top-4">
                 <h4 class="mb-0"><i class="bi bi-folder2-open"></i> Proyecto: <?= htmlspecialchars($proyecto['nombre']) ?></h4>
@@ -120,6 +118,6 @@ $solicitudes_proyecto = $stmt->fetch(PDO::FETCH_ASSOC);
             </div>
         </div>
     </div>
-</main>
+ 
 
 <?php include '../includes/footer.php'; ?>

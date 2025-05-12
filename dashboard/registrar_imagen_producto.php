@@ -84,8 +84,7 @@ include '../includes/nav.php';
 include '../includes/sidebar.php';
 include '../includes/conexion.php'; // Asegúrate de tener la conexión a base de datos aquí
 ?>
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
-    <div class="container-fluid">
+   <div class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4>Subir Imágenes para Productos</h4>
         <a href="productos.php" class="btn btn-secondary">
@@ -126,7 +125,7 @@ include '../includes/conexion.php'; // Asegúrate de tener la conexión a base d
         </button>
     </form>
 </div>
-                </main>
+              
 <script>
 // Agregar nuevo input file
 document.getElementById('btn-agregar').addEventListener('click', function () {

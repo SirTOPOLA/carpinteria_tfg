@@ -120,10 +120,9 @@ $servicios = $stmtServicios->fetchAll(PDO::FETCH_ASSOC);
 <?php include '../includes/sidebar.php'; ?>
 
 
-<main class="flex-grow-1 overflow-auto p-4">
+<div class="container-fluid py-4">
     <div class="container col-sm-12 col-md-9 col-xl-8">
         <h4 class="mb-4"><i class="bi bi-cart-plus"></i> Registrar Venta</h4>
-
         <form  method="POST" id="formVenta">
             <!-- Cliente -->
             <div class="mb-3">
@@ -190,7 +189,7 @@ $servicios = $stmtServicios->fetchAll(PDO::FETCH_ASSOC);
             </button>
         </form>
     </div>
-</main>
+</div>
 
 
 <script>
@@ -244,7 +243,7 @@ tipoItem.addEventListener('change', () => {
                 </div>
             </div>
         </div>
-    `;
+        `;
 
     itemsContainer.insertAdjacentHTML('beforeend', itemHTML);
 });

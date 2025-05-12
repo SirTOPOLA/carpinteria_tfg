@@ -38,7 +38,7 @@ include '../includes/header.php';
 include '../includes/nav.php';
 include '../includes/sidebar.php';
 ?>
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
+   <div class="container-fluid py-4">
     <div class="container-fluid d-flex justify-content-center">
         <div class="col-md-7">
             <h2 class="mb-4">Registrar Nuevo Servicio</h2>
@@ -78,9 +78,8 @@ include '../includes/sidebar.php';
                     <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Registrar Servicio</button>
                 </div>
             </form>
-        </div>
-</main>
-
+ 
+</div>
 <?php
 include_once('../includes/footer.php')
     ?>

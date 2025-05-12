@@ -84,61 +84,60 @@ include '../includes/nav.php';
 include '../includes/sidebar.php';
 include '../includes/conexion.php'; // Asegúrate de tener la conexión a base de datos aquí
 ?>
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
-    <div class="container-fluid">
-        <div class="col-md-6">
-            <h4>Editar Producto</h4>
+<div class="container-fluid py-4">
+    <div class="col-md-6">
+        <h4>Editar Producto</h4>
 
-            <?php if (!empty($errores)): ?>
-                <div class="alert alert-danger">
-                    <ul>
-                        <?php foreach ($errores as $error): ?>
-                            <li><?= htmlspecialchars($error) ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            <?php endif; ?>
+        <?php if (!empty($errores)): ?>
+            <div class="alert alert-danger">
+                <ul>
+                    <?php foreach ($errores as $error): ?>
+                        <li><?= htmlspecialchars($error) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
 
-            <form method="POST" class="  p-4">
-                <div class="mb-3">
-                    <label for="nombre" class="form-label">Nombre</label>
-                    <input type="text" name="nombre" id="nombre" class="form-control" required
-                        value="<?= htmlspecialchars($nombre) ?>">
-                </div>
+        <form method="POST" class="  p-4">
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" name="nombre" id="nombre" class="form-control" required
+                    value="<?= htmlspecialchars($nombre) ?>">
+            </div>
 
-                <div class="mb-3">
-                    <label for="descripcion" class="form-label">Descripción</label>
-                    <textarea name="descripcion" id="descripcion" class="form-control"
-                        rows="3"><?= htmlspecialchars($descripcion) ?></textarea>
-                </div>
+            <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción</label>
+                <textarea name="descripcion" id="descripcion" class="form-control"
+                    rows="3"><?= htmlspecialchars($descripcion) ?></textarea>
+            </div>
 
-                <div class="mb-3">
-                    <label for="categoria_id" class="form-label">Categoría</label>
-                    <select name="categoria_id" id="categoria_id" class="form-select" required>
-                        <option value="">Seleccione una categoría</option>
-                        <?php foreach ($categorias as $cat): ?>
-                            <option value="<?= $cat['id'] ?>" <?= $cat['id'] == $categoria_id ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($cat['nombre']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+            <div class="mb-3">
+                <label for="categoria_id" class="form-label">Categoría</label>
+                <select name="categoria_id" id="categoria_id" class="form-select" required>
+                    <option value="">Seleccione una categoría</option>
+                    <?php foreach ($categorias as $cat): ?>
+                        <option value="<?= $cat['id'] ?>" <?= $cat['id'] == $categoria_id ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($cat['nombre']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-                <div class="mb-3">
-                    <label for="precio" class="form-label">Precio</label>
-                    <input type="number" name="precio" id="precio" class="form-control" step="0.01" required
-                        value="<?= htmlspecialchars($precio) ?>">
-                </div>
+            <div class="mb-3">
+                <label for="precio" class="form-label">Precio</label>
+                <input type="number" name="precio" id="precio" class="form-control" step="0.01" required
+                    value="<?= htmlspecialchars($precio) ?>">
+            </div>
 
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-save"></i> Guardar Cambios
-                </button>
-                <a href="productos.php" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left"></i> Volver
-                </a>
-            </form>
-        </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i> Guardar Cambios
+            </button>
+            <a href="productos.php" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </form>
     </div>
 </div>
-</main>
+ 
+
 <?php include_once("../includes/footer.php"); ?>

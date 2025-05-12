@@ -36,8 +36,7 @@ include '../includes/nav.php';
 include '../includes/sidebar.php';
 include '../includes/conexion.php'; // Asegúrate de tener la conexión a base de datos aquí
 ?>
-<main class="flex-grow-1 overflow-auto p-3" id="mainContent">
-    <div class="container-fluid">
+   <div class="container-fluid py-4">
     <h4>Editar Rol</h4>
     <?php if (isset($error)): ?>
         <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
@@ -53,5 +52,5 @@ include '../includes/conexion.php'; // Asegúrate de tener la conexión a base d
         </div>
     </form>
 </div>
-</main>
+ 
 <?php include("../includes/footer.php"); ?>
