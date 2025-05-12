@@ -21,8 +21,8 @@ function verificarAcceso($vista)
     $permisos = [
         'administrador' => [
             'dashboard',
-            'usuarios', 'usuarios_listar', 'usuarios_crear', 'usuarios_editar',
-            'roles', 'roles_listar', 'roles_crear',
+            'usuarios', 'registrar_usuarios', 'editar_usuarios',
+            'roles', 'registrar_roles', 'editar_roles',
             'reportes',
             'productos', 'productos_listar', 'productos_crear',
             'ventas',

@@ -4,7 +4,7 @@
         <h4 class="mb-0">Usuarios Registrados</h4>
 
         <div class="text-end mb-4 p-2">
-            <a href="registrar_rol.php" class="btn btn-success me-2">
+            <a href="index.php?vista=registrar_usuarios" class="btn btn-success me-2">
 
                 <i class="bi bi-plus-circle"></i> Nuevo Usuario
             </a>
