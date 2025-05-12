@@ -8,7 +8,7 @@
 
                 <i class="bi bi-plus-circle"></i> Nuevo Usuario
             </a>
-          
+
         </div>
 
 
@@ -47,16 +47,20 @@
                                 <td><?= htmlspecialchars($usuario['rol']) ?></td>
                                 <td class="text-center">
                                     <!-- Botón de Activar/Desactivar -->
-                                    <a href="php/activar_desactivar_usuario.php?id=<?= $usuario['id'] ?>"
-                                        class="btn btn-sm <?= $usuario['activo'] ? 'btn-success' : 'btn-danger' ?>"
-                                        onclick="return confirm('¿Está seguro de <?= $usuario['activo'] ? 'desactivar' : 'activar' ?> este usuario?');">
+                                    <a href="#"
+                                        class="btn btn-sm <?= $usuario['activo'] ? 'btn-success' : 'btn-danger' ?> activar-btn"
+                                        data-id="<?= $usuario['id'] ?>" data-estado="<?= $usuario['activo'] ? '1' : '0' ?>">
                                         <i class="bi <?= $usuario['activo'] ? 'bi-toggle-on' : 'bi-toggle-off' ?>"></i>
                                         <?= $usuario['activo'] ? 'Activado' : 'Desactivado' ?>
                                     </a>
+
+
+                                    <!--   -->
                                 </td>
 
                                 <td class="text-center">
-                                    <a href="php/editar_usuario.php?id=<?= $usuario['id'] ?>" class="btn btn-sm btn-warning">
+                                    <a href="index.php?vista=editar_usuarios&id=<?= $usuario['id'] ?>"
+                                        class="btn btn-sm btn-warning">
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
@@ -76,6 +80,42 @@
     </div>
 
     <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const botones = document.querySelectorAll(".activar-btn");
 
-        
+            botones.forEach(boton => {
+                boton.addEventListener("click", function (e) {
+                    e.preventDefault();
+
+                    const id = this.dataset.id;
+                    const estadoActual = this.dataset.estado;
+
+                    if (!confirm(`¿Está seguro de ${estadoActual === '1' ? 'desactivar' : 'activar'} este usuario?`)) {
+                        return;
+                    }
+
+                    fetch("api/activar_desactivar_usuario.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ id: id })
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.ok) {
+                                // Puedes recargar la tabla, cambiar íconos, texto, etc.
+                                alert("Estado actualizado correctamente");
+                                location.reload(); // o actualiza solo la fila si prefieres
+                            } else {
+                                alert("Error al actualizar estado");
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            alert("Error en la petición");
+                        });
+                });
+            });
+        });
     </script>

@@ -1,26 +1,12 @@
+ 
 
 
-<?php include '../includes/header.php'; ?>
-<?php include '../includes/nav.php'; ?>
-<?php include '../includes/sidebar.php'; ?>
-
-<div class="container-fluid py-4">
+ 
+<div id="content" class="container-fluid py-4">
         <h4 class="mb-3">Registrar Empleado</h4>
 
-        <?php if (!empty($exito)): ?>
-            <div class="alert alert-success"><?= $exito ?></div>
-        <?php endif; ?>
-
-        <?php if (!empty($errores)): ?>
-            <div class="alert alert-danger">
-                <ul class="mb-0">
-                    <?php foreach ($errores as $e): ?>
-                        <li><?= htmlspecialchars($e) ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        <?php endif; ?> 
-        <form action="../php/guardar_empleados.php" method="POST" class="row g-3">
+       
+        <form   method="POST" class="row g-3">
             <div class="col-12 col-md-6">
                 <label class="form-label">Nombre *</label>
                 <input type="text" name="nombre" class="form-control" required>
@@ -76,4 +62,4 @@
     </div>
  
 
-<?php include '../includes/footer.php'; ?>
+ 

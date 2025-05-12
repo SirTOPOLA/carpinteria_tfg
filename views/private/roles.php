@@ -1,17 +1,17 @@
  
 
 <div id="content" class="container-fliud">
-    <div id="navContent" class="row">
+    <div id="navContent" class="row  mb-2 p-2">
         <!-- BARRA DE ACCIONES -->
-        <h4 class="mb-0">Listado de Roles</h4>
-        <div class="text-end mb-4 p-2">
+        <h4 class="mb-4 text-start">Listado de Roles</h4>
+       <!--  <div class="text-end mb-4 p-2">
             <a href="registrar_rol.php" class="btn btn-success me-2">
                 <i class="bi bi-shield-plus"></i> Nuevo Rol
             </a>
             <a href="usuarios.php" class="btn btn-primary">
                 <i class="bi bi-person-lines-fill"></i> Lista de Usuarios
             </a>
-        </div>
+        </div> -->
 
 
         <!-- BUSCADOR -->

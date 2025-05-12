@@ -11,7 +11,7 @@ $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <div id="content" class="container-fluid py-4">
         <h4 class="mb-4">Registrar Usuario</h4>
 
-        <form action="index.php?vista=registrar_usuarios"  method="POST" class="row g-3 needs-validation" novalidate>
+        <form  id="formUsuario"  method="POST" class="row g-3 needs-validation" novalidate>
 
             <div class="col-12 col-md-6">
                 <label for="usuario" class="form-label">Nombre de Usuario <span class="text-danger">*</span></label>
@@ -49,8 +49,44 @@ $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-save"></i> Guardar Usuario
                 </button>
-                <a href="usuarios.php" class="btn btn-secondary">Cancelar</a>
+                <a href="index.php?vista=usuarios" class="btn btn-secondary">Cancelar</a>
             </div>
         </form>
     </div>
- 
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('formUsuario');
+
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault(); // Evita el envío tradicional
+
+        const datos = {
+            usuario: document.getElementById('usuario').value.trim(),
+            password: document.getElementById('password').value,
+            rol: document.getElementById('rol').value,
+            empleado_id: document.getElementById('empleado_id').value
+        };
+
+        try {
+            const respuesta = await fetch('api/guardar_usuario.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datos)
+            });
+
+            const resultado = await respuesta.json();
+
+            // Mostrar mensaje
+            alert(resultado.mensaje);
+
+            if (resultado.ok) {
+                window.location.href = 'index.php?vista=usuarios';
+            }
+
+        } catch (error) {
+            console.error('Error al enviar el formulario:', error);
+            alert('Hubo un error al registrar el usuario.');
+        }
+    });
+});
+</script>

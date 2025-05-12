@@ -1,5 +1,5 @@
 <?php
-require_once("../includes/conexion.php");
+ 
 
 $busqueda = trim($_GET['busqueda'] ?? '');
 
@@ -14,16 +14,13 @@ $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
-<?php include '../includes/header.php'; ?>
-<?php include '../includes/nav.php'; ?>
-<?php include '../includes/sidebar.php'; ?>
-
-<div class="container-fluid py-4">
+ 
+<div id="content" class="container-fluid py-4">
 
         
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="mb-3">Listado de Empleados</h4>
-            <a href="registrar_empleado.php" class="btn btn-success">
+            <a href="index.php?vista=registrar_empleado" class="btn btn-success">
                 <i class="bi bi-plus-circle"></i> Nuevo empleado
             </a>
             
@@ -63,7 +60,11 @@ $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <td><?= htmlspecialchars($e['salario'] ?? 'Sin definir') ?></td>
                                 <td><?= $e['fecha_ingreso'] ?></td>
                                 <td>
-                                    <a href="editar_empleado.php?id=<?= $e['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
+                                <a href="index.php?vista=editar_empleado&id=<?= urlencode($e["id"]) ?>" class="btn btn-sm btn-outline-warning"
+                                    title="Editar">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+ 
 
                                 </td>
                             </tr>
@@ -77,4 +78,4 @@ $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
  
 
-<?php include '../includes/footer.php'; ?>
+ 

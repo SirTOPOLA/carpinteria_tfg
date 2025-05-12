@@ -28,7 +28,7 @@ if (!$empleado) {
    <div class="container-fluid py-4">
     <div class="container">
         <h4>Editar Empleado</h4>
-        <form action="../php/actualizar_empleados.php" method="POST" class="row g-3">
+        <form id="formEditarEmpleado" method="POST" class="row g-3">
          <!-- ID oculto -->
          <input type="hidden" name="id" value="<?= htmlspecialchars($empleado['id']) ?>">
    
@@ -102,4 +102,41 @@ if (!$empleado) {
 })();
 </script>
 
-<?php include '../includes/footer.php'; ?>
+<script>
+document.getElementById('formEditarEmpleado').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const empleado = {
+        id: document.getElementById('empleado_id').value,
+        nombre: document.getElementById('nombre').value,
+        apellido: document.getElementById('apellido').value,
+        codigo: document.getElementById('codigo').value,
+        email: document.getElementById('email').value,
+        telefono: document.getElementById('telefono').value,
+        direccion: document.getElementById('direccion').value,
+        horario_trabajo: document.getElementById('horario_trabajo').value,
+        salario: document.getElementById('salario').value,
+        fecha_ingreso: document.getElementById('fecha_ingreso').value
+    };
+
+    fetch('api/editar_empleado.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(empleado)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.ok) {
+            alert('Empleado guardado exitosamente.');
+            window.location.href = 'index.php?vista=empleados';
+        } else {
+            alert('Error: ' + data.mensaje);
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Error al enviar datos');
+    });
+});
+</script>
+

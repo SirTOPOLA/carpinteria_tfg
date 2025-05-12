@@ -1,5 +1,4 @@
-<?php
-require_once("../includes/conexion.php");
+<?php 
 
 $mensaje = '';
 $usuario = [];
@@ -28,7 +27,7 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if (!$usuario) {
-        header("Location: usuarios.php?error=Usuario no encontrado");
+        header("Location: index.php?vista=usuarios&error=Usuario no encontrado");
         exit;
     }
 
@@ -38,12 +37,8 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     exit;
 }
 ?>
-<?php
-include '../includes/header.php';
-include '../includes/nav.php';
-include '../includes/sidebar.php';
-?>
-   <div class="container-fluid py-4">
+ 
+   <div id="content" class="container-fluid py-4">
     <div class="row d-flex justify-content-center">
         <div class="col-md-7">
             <h2 class="mb-4">Editar Usuario</h2>
@@ -52,19 +47,19 @@ include '../includes/sidebar.php';
                 <div class="alert alert-info"><?= htmlspecialchars($mensaje) ?></div>
             <?php endif; ?>
 
-            <form action="../php/actualizar_usuarios.php" method="POST" class="p-4">
-                <input type="hidden" class="form-control" name="usuario_id"
+            <form id="formEditarUsuario" method="POST" class="p-4">
+                <input id="usuario_id" type="hidden" class="form-control" name="usuario_id"
                     value="<?= htmlspecialchars($usuario['id']) ?>">
 
                 <div class="mb-3">
                     <label class="form-label">Empleado</label>
-                    <input type="text" class="form-control" disabled
+                    <input type="text" class="form-control" id="empleado_id" disabled
                         value="<?= htmlspecialchars($usuario['emp_nombre'] . ' ' . $usuario['emp_apellido']) ?>">
                 </div>
 
                 <div class="mb-3">
                     <label for="usuario" class="form-label">Usuario</label>
-                    <input type="email" name="usuario" id="usuario" class="form-control"
+                    <input   type="email" name="usuario" id="usuario" class="form-control"
                         value="<?= htmlspecialchars($usuario['usuario']) ?>" required>
                 </div>
 
@@ -81,16 +76,53 @@ include '../includes/sidebar.php';
 
                 <div class="mb-3">
                     <label for="password" class="form-label">Nueva Contraseña (opcional)</label>
-                    <input type="password" name="password" id="password" class="form-control">
+                    <input  type="password" name="password" id="password" class="form-control">
                     <div class="form-text">Solo completa este campo si deseas cambiar la contraseña.</div>
                 </div>
 
                 <div class="d-flex justify-content-between">
-                    <a href="usuarios.php" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Cancelar</a>
+                    <a href="index.php?vista=usuarios" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Cancelar</a>
                     <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Guardar Cambios</button>
                 </div>
             </form>
         </div>
     </div>
-</div>
-<?php include_once("../includes/footer.php"); ?>
+</div> 
+
+
+<script>
+document.getElementById('formEditarUsuario').addEventListener('submit', function(e) {
+    e.preventDefault(); // evitar envío normal
+
+    // Obtener datos del formulario
+    const formData = {
+        id: document.getElementById('usuario_id').value,
+        usuario: document.getElementById('usuario').value,
+        password: document.getElementById('password').value,
+        rol: document.getElementById('rol').value,
+        empleado_id: document.getElementById('empleado_id').value
+    };
+
+    // Enviar con fetch
+    fetch('api/editar_usuario.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.ok) {
+            alert('Usuario editado con éxito');
+            window.location.href = 'index.php?vista=usuarios';
+        } else {
+            alert('Error: ' + data.mensaje);
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Error en la solicitud');
+    });
+});
+</script>

@@ -22,6 +22,7 @@ function verificarAcceso($vista)
         'administrador' => [
             'dashboard',
             'usuarios', 'registrar_usuarios', 'editar_usuarios',
+            'empleados', 'registrar_empleado', 'editar_empleado',
             'roles', 'registrar_roles', 'editar_roles',
             'reportes',
             'productos', 'productos_listar', 'productos_crear',
