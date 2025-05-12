@@ -1,5 +1,5 @@
 <?php
-require_once("../includes/conexion.php");
+ 
 
 $sql = "SELECT * FROM proyectos ";
 $stmt = $pdo->prepare($sql);
@@ -8,12 +8,8 @@ $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 
-
-<?php include '../includes/header.php'; ?>
-<?php include '../includes/nav.php'; ?>
-<?php include '../includes/sidebar.php'; ?>
-
-<div class="container-fluid py-4">
+ 
+<div id="content" class="container-fluid py-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4>Listado de Proyectos</h4>
         <a href="registrar_proyectos.php" class="btn btn-primary">+ Nuevo Proyecto</a>
@@ -79,4 +75,4 @@ $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </div>
 
 
-<?php include '../includes/footer.php'; ?>
+ 

@@ -1,5 +1,5 @@
 <?php
-require_once("../includes/conexion.php");
+ 
 
 
 // Obtener lista de empleados
@@ -13,11 +13,8 @@ $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
-<?php include '../includes/header.php'; ?>
-<?php include '../includes/nav.php'; ?>
-<?php include '../includes/sidebar.php'; ?>
-
-<div class="container-fluid py-4">
+ 
+<div id="content" class="container-fluid py-4">
     <h4 class="mb-4">Registrar Produccion</h4>
 
     <form action="../php/guardar_producciones.php" method="POST" class="row g-3 needs-validation" novalidate>
@@ -77,5 +74,4 @@ $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </form>
 </div>
 
-
-<?php include '../includes/footer.php'; ?>
+ 

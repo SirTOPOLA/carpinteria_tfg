@@ -1,6 +1,4 @@
 <?php
-require_once("../includes/conexion.php");
- 
  
 
 // Obtener producciones disponibles
@@ -19,16 +17,13 @@ $producciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
-<?php include '../includes/header.php'; ?>
-<?php include '../includes/nav.php'; ?>
-<?php include '../includes/sidebar.php'; ?>
-
-<div class="container-fluid py-4">
+ 
+<div id="content" class="container-fluid py-4">
 
         
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="mb-3">Listado de Producciones</h4>
-            <a href="registrar_producciones.php" class="btn btn-success">
+            <a href="index.php?vista=registrar_producciones" class="btn btn-success">
                 <i class="bi bi-plus-circle"></i> Nueva Producción
             </a>
             
@@ -80,5 +75,33 @@ $producciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     </div>
  
+    <script>
+/* document.getElementById('form-produccion').addEventListener('submit', async function(e) {
+    e.preventDefault();
 
-<?php include '../includes/footer.php'; ?>
+    const form = e.target;
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch('api/guardar_produccion.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert(result.message);
+            window.location.href = 'producciones.php';
+        } else {
+            alert('Error: ' + result.message);
+        }
+    } catch (err) {
+        console.error('Fetch error:', err);
+        alert('Error inesperado al enviar los datos.');
+    }
+});
+</script> */
+
+
+ 

@@ -1,7 +1,9 @@
  
 
 
- 
+
+
+
 <div id="content" class="container-fluid py-4">
         <h4 class="mb-3">Registrar Empleado</h4>
 
@@ -62,4 +64,30 @@
     </div>
  
 
- 
+    <script>
+document.querySelector('form').addEventListener('submit', async function (e) {
+    e.preventDefault(); // Evita el envío tradicional del formulario
+
+    const form = e.target;
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch('api/guardar_empleado.php', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert('Empleado registrado correctamente');
+            window.location.href = 'empleados.php'; // redirige al listado
+        } else {
+            alert('Error: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Error en la solicitud:', error);
+        alert('Ocurrió un error al guardar el empleado.');
+    }
+});
+</script>
