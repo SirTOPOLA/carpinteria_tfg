@@ -1,136 +1,98 @@
 <?php
-require_once("../includes/conexion.php");
-
-// ========================
-// PARÁMETROS DE BÚSQUEDA Y PAGINACIÓN
-// ========================
-$busqueda = trim($_GET['buscar'] ?? '');
-$pagina = isset($_GET['pagina']) && is_numeric($_GET['pagina']) ? (int) $_GET['pagina'] : 1;
-$registros_por_pagina = 10;
-$offset = ($pagina - 1) * $registros_por_pagina;
-
-// ========================
-// FILTRO DE BÚSQUEDA
-// ========================
-$where = '';
-$params = [];
-
-if (!empty($busqueda)) {
-    $where = "WHERE nombre LIKE :buscar";
-    $params[':buscar'] = "%$busqueda%";
-}
-
-// ========================
-// TOTAL DE RESULTADOS
-// ========================
-$total_stmt = $pdo->prepare("SELECT COUNT(*) FROM servicios $where");
-$total_stmt->execute($params);
-$total_resultados = $total_stmt->fetchColumn();
-$total_paginas = ceil($total_resultados / $registros_por_pagina);
-
-// ========================
-// CONSULTA DE SERVICIOS
-// ========================
-$query = "SELECT id, nombre, descripcion, precio, fecha_creacion 
-          FROM servicios 
-          $where 
-          ORDER BY id ASC 
-          LIMIT :offset, :limite";
-$stmt = $pdo->prepare($query);
-
-// Bind de parámetros
-foreach ($params as $clave => $valor) {
-    $stmt->bindValue($clave, $valor, PDO::PARAM_STR);
-}
-$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-$stmt->bindValue(':limite', $registros_por_pagina, PDO::PARAM_INT);
+$stmt = $pdo->prepare("SELECT * FROM servicios");
 $stmt->execute();
-$servicios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$servicios = $stmt->fetchAll();
+
 ?>
 
-<?php
-include '../includes/header.php';
-include '../includes/nav.php';
-include '../includes/sidebar.php';
-?>
-   <div class="container-fluid py-4">
-        <!-- BARRA DE ACCIONES -->
-        <div class="d-flex justify-content-between align-items-center p-2 mb-3">
-            <h4 class="mb-0">Listado de Servicios</h4>
-            <div>
-                <a href="registrar_servicios.php" class="btn btn-success me-2">
-                    <i class="bi bi-plus-circle"></i> Nuevo Servicio
-                </a>
+
+<div id="content" class="container-fliud">
+    <!-- Card con tabla de roles -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <h4 class="fw-bold mb-0 text-white">
+                <i class="bi bi-person-lock me-2"></i> Gestión de Roles de Usuario
+            </h4>
+            <div class="input-group w-100 w-md-auto" style="max-width: 300px;">
+                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" placeholder="Buscar servicio..." id="buscador-roles">
             </div>
+            <a href="index.php?vista=registrar_servicios" class="btn btn-secondary shadow-sm">
+                <i class="bi bi-plus-circle me-1"></i> Nuevo servicio
+            </a>
         </div>
 
-        <!-- BUSCADOR -->
-        <form method="GET" class="row g-2 mb-3">
-            <div class="col-md-10 col-8">
-                <input type="text" name="buscar" class="form-control" placeholder="Buscar servicio por nombre"
-                       value="<?= htmlspecialchars($busqueda) ?>">
-            </div>
-            <div class="col-md-2 col-4">
-                <button type="submit" class="btn btn-primary w-100">Buscar</button>
-            </div>
-        </form>
-
-        <!-- TABLA -->
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Descripción</th>
-                        <th>Precio (Bs)</th>
-                        <th>Fecha de Registro</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php if (count($servicios) > 0): ?>
-                    <?php foreach ($servicios as $s): ?>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="tablaRoles" class="table table-hover table-custom align-middle mb-0">
+                    <thead>
                         <tr>
-                            <td><?= htmlspecialchars($s['id']) ?></td>
-                            <td><?= htmlspecialchars($s['nombre']) ?></td>
-                            <td><?= htmlspecialchars($s['descripcion']) ?></td>
-                            <td><?= number_format($s['precio'], 2, ',', '.') ?></td>
-                            <td><?= date('d/m/Y', strtotime($s['fecha_creacion'])) ?></td>
-                            <td>
-                                <a href="editar_servicio.php?id=<?= $s['id'] ?>" class="btn btn-sm btn-warning me-1" title="Editar">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                <a href="eliminar_servicio.php?id=<?= $s['id'] ?>"
-                                   class="btn btn-sm btn-danger"
-                                   onclick="return confirm('¿Deseas eliminar este servicio?')"
-                                   title="Eliminar">
-                                    <i class="bi bi-trash"></i>
-                                </a>
-                            </td>
+                            <th><i class="bi bi-hash me-1"></i>ID</th> 
+                            <th>Nombre</th>
+                            <th>Unidad</th>
+                            <th>Precio</th> 
+                            <th class="text-center"><i class="bi bi-check-circle me-1"></i>Activo</th>
+                            <th class="text-center"><i class="bi bi-gear-fill me-1"></i>Acciones</th>
                         </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="6" class="text-center">No se encontraron servicios.</td>
-                    </tr>
-                <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($servicios)): ?>
+                            <?php foreach ($servicios as $servicio): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($servicio['id']) ?></td>
+                                    <td><?= htmlspecialchars($servicio['nombre']) ?></td>
+                                    <td><?= htmlspecialchars($servicio['unidad']) ?></td>
+                                    <td>XAF <?= number_format($servicio['precio_base'], 2) ?></td>
+                                    <td>
+                                        <a href="#"
+                                            class="btn btn-sm <?= $servicio['activo'] ? 'btn-danger' : 'btn-success' ?> toggle-estado"
+                                            data-id="<?= $servicio['id'] ?>" data-estado="<?= $servicio['activo'] ?>">
+                                            <?= $servicio['activo'] ? 'Desactivar' : 'Activar' ?>
+                                        </a>
 
-        <!-- PAGINACIÓN -->
-        <?php if ($total_paginas > 1): ?>
-            <nav aria-label="Paginación de servicios">
-                <ul class="pagination justify-content-center">
-                    <?php for ($i = 1; $i <= $total_paginas; $i++): ?>
-                        <li class="page-item <?= ($i == $pagina) ? 'active' : '' ?>">
-                            <a class="page-link" href="?buscar=<?= urlencode($busqueda) ?>&pagina=<?= $i ?>"><?= $i ?></a>
-                        </li>
-                    <?php endfor; ?>
-                </ul>
-            </nav>
-        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <a href="index.php?vista=editar_servicios.php&id=<?= $servicio['id'] ?>"
+                                            class="btn btn-sm btn-primary">Editar</a>
+
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="6" class="text-muted text-center py-3">No se encontraron usuarios.</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
- 
-<?php include_once("../includes/footer.php"); ?>
+
+</div>
+
+<script>
+    document.querySelectorAll('.toggle-estado').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const id = btn.dataset.id;
+            const estadoActual = parseInt(btn.dataset.estado);
+
+            const confirmar = confirm(`¿Estás seguro de ${estadoActual ? 'desactivar' : 'activar'} este servicio?`);
+            if (!confirmar) return;
+
+            const res = await fetch('api/toggle_estado_servicio.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, nuevo_estado: estadoActual ? 0 : 1 })
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                location.reload(); // refresca para ver el cambio
+            } else {
+                alert(data.message);
+            }
+        });
+    });
+</script>

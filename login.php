@@ -6,11 +6,11 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once 'config/conexion.php';
 require_once 'auth/auth.php';
 
-  // Si ya está logueado, redirige
- if (isset($_SESSION['usuario'])) {
-    header('Location: index.php?vista=dashboard');
-    exit;
-} 
+// Si ya está logueado, redirige
+if (isset($_SESSION['usuario'])) {
+  header('Location: index.php?vista=dashboard');
+  exit;
+}
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -20,12 +20,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $password = isset($_POST['contrasena']) ? trim($_POST['contrasena']) : '';
   $clienteId = isset($_POST['codigo']) ? trim($_POST['codigo']) : '';
 
- 
+
 
   // Validar tipo de usuario (opcional: según un conjunto permitido)
   $tipos_validos = ['personal', 'cliente']; // por ejemplo
   if (!in_array($tipo, $tipos_validos)) {
-     $_SESSION['alerta'] = "Tipo de usuario inválido.";
+    $_SESSION['alerta'] = "Tipo de usuario inválido.";
   }
 
 
@@ -34,18 +34,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if ($tipo === 'cliente') {
     // Validar clienteId si el tipo es "cliente"
     if ($tipo === 'cliente' && empty($clienteId)) {
-       $_SESSION['alerta'] = "Código de cliente inválido.";
+      $_SESSION['alerta'] = "Código de cliente inválido.";
     }
 
   } else {
     // Validar email
     if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-      $_SESSION['alerta']="Correo electrónico inválido.";
+      $_SESSION['alerta'] = "Correo electrónico inválido.";
     }
 
     // Validar contraseña (ejemplo: mínimo 6 caracteres)
     if (empty($password) || strlen($password) < 1) {
-      $_SESSION['alerta']= "La contraseña debe tener al menos 6 caracteres.";
+      $_SESSION['alerta'] = "La contraseña debe tener al menos 6 caracteres.";
     }
   }
 
@@ -55,37 +55,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: login.php'); 
         exit;
     } */
-    $_SESSION['alerta']= 'hubo errores';
+    $_SESSION['alerta'] = 'hubo errores';
     exit;
   }
 
   // Si no hay errores, intentamos login según tipo
 
 
-    if ($tipo === 'cliente') {
-      // loginCliente() debe validar cliente por código
-      if (loginCliente($pdo, $clienteId )) {
-        header('Location: index.php');
-        exit;
-      } else {
-       
-        header('Location: login.php');
-        exit;
-      }
-      
+  if ($tipo === 'cliente') {
+    // loginCliente() debe validar cliente por código
+    if (loginCliente($pdo, $clienteId)) {
+      header('Location: index.php');
+      exit;
     } else {
-      // Usuario interno (admin, operario, etc.)
-      if (login($pdo, $email, $password )) {
-        header('Location: index.php');
-        exit;
-      } else { 
-        // Mensaje de error ya asignado por login()
-        header('Location: login.php');
-        exit;
-      }
+
+      header('Location: login.php');
+      exit;
     }
 
+  } else {
+    // Usuario interno (admin, operario, etc.)
+    if (login($pdo, $email, $password)) {
+      header('Location: index.php');
+      exit;
+    } else {
+      // Mensaje de error ya asignado por login()
+      header('Location: login.php');
+      exit;
+    }
   }
+
+}
 
 
 ?>
@@ -126,8 +126,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <h3 class="mb-4 text-center text-success fw-semibold">Bienvenido a la carpinteria <span
               class="fw-bold">SIXBOKU</span>
           </h3>
-          <?php include_once ( 'components/alerta.php')  ?>
-             
+          <?php include_once('components/alerta.php') ?>
+
 
           <form method="POST" id="formLogin" novalidate>
             <div class="mb-3">

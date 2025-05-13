@@ -65,6 +65,7 @@ try {
                     <option value="">Seleccione tipo</option>
                     <option value="entrada">Entrada</option>
                     <option value="salida">Salida</option>
+                    <option value="salida">Pendiante</option>
                 </select>
             </div>
             <div class="col-md-6 mb-3">
@@ -147,7 +148,7 @@ try {
         }
 
         function fetchStock(materialId, tipo) {
-            fetch(`../ajax/obtener_stock.php?id=${materialId}&tipo=${tipo}`)
+            fetch(`api/obtener_stock.php?id=${materialId}&tipo=${tipo}`)
                 .then(response => response.json())
                 .then(data => {
                     mensajeError.style.display = "none";
@@ -202,7 +203,7 @@ try {
         /* --------------------------- */
 
         function cargarMaterialesPorTipo(tipo) {
-            fetch(`../ajax/obtener_materiales.php?tipo=${tipo}`)
+            fetch(`api/obtener_materiales.php?tipo=${tipo}`)
                 .then(response => response.json())
                 .then(data => {
                     if (!data.success) {

@@ -44,7 +44,7 @@ $solicitudes_pedidos = $stmt->fetch(PDO::FETCH_ASSOC);
 
 <div id="content" class="container-fluid py-4">
 
-<div class="card mb-4">
+    <div class="card mb-4">
         <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
             <h4 class="fw-bold mb-0 text-white">
                 <i class="bi bi-kanban-fill me-2"></i> Gestión de Pedidos
@@ -76,7 +76,7 @@ $solicitudes_pedidos = $stmt->fetch(PDO::FETCH_ASSOC);
                     </thead>
                     <tbody>
                         <?php if (!empty($pedidos) === 0): ?>
-                          
+
                             <?php foreach ($pedidos as $p): ?>
                                 <tr>
                                     <td><?= $p['id'] ?></td>
@@ -84,22 +84,22 @@ $solicitudes_pedidos = $stmt->fetch(PDO::FETCH_ASSOC);
                                     <td><?= htmlspecialchars($p['cliente']) ?></td>
                                     <td><?= htmlspecialchars($p['descripcion']) ?></td>
                                     <td><?= date('d/m/Y', strtotime($p['fecha_solicitud'])) ?></td>
-                                    <td><?= ucfirst($p['estado']) ?></td> 
+                                    <td><?= ucfirst($p['estado']) ?></td>
                                     <td>XAF <?= number_format($p['estimacion_total'], 1) ?></td>
-                                     <td class="text-center">
-                                        <a href="index.php?vista=destalles_pedidos&id=<?= $p['id'] ?>" class="btn btn-sm btn-outline-info"
-                                            title="Ver detalles">
+                                    <td class="text-center">
+                                        <a href="index.php?vista=destalles_pedidos&id=<?= $p['id'] ?>"
+                                            class="btn btn-sm btn-outline-info" title="Ver detalles">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                         <a href="index.php?vista=editar_pedidos&id=<?= $p['id'] ?>"
-                                            class="btn btn-sm btn-outline-primary"  >
+                                            class="btn btn-sm btn-outline-primary">
                                             <i class="bi bi-files"></i>
                                         </a>
-                                        
+
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
-                            <?php else: ?>
+                        <?php else: ?>
                             <tr>
                                 <td colspan="8" class="text-center text-muted py-3">No se encontraron pedidos.</td>
                             </tr>

@@ -102,10 +102,6 @@ $movimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </table>
             </div>
         </div>
-    </div>
-
-    
-
- 
+    </div> 
 
 </div>

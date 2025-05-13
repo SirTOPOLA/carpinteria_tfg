@@ -1,0 +1,25 @@
+<?php
+require '../config/conexion.php';
+
+header('Content-Type: application/json');
+
+$input = json_decode(file_get_contents('php://input'), true);
+
+if (!$input || !isset($input['nombre'], $input['precio_base'], $input['unidad'])) {
+  echo json_encode(['success' => false, 'message' => 'Datos incompletos.']);
+  exit;
+}
+
+$nombre = trim($input['nombre']);
+$descripcion = trim($input['descripcion'] ?? '');
+$precio_base = floatval($input['precio_base']);
+$unidad = trim($input['unidad']);
+$activo = $input['activo'] ? 1 : 0;
+
+try {
+  $stmt = $pdo->prepare("INSERT INTO servicios (nombre, descripcion, precio_base, unidad, activo) VALUES (?, ?, ?, ?, ?)");
+  $stmt->execute([$nombre, $descripcion, $precio_base, $unidad, $activo]);
+  echo json_encode(['success' => true, 'message' => 'Servicio registrado correctamente.']);
+} catch (PDOException $e) {
+  echo json_encode(['success' => false, 'message' => 'Error al guardar el servicio.']);
+}

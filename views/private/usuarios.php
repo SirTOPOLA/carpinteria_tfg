@@ -1,7 +1,32 @@
+<?php
+// Si no hay sesión → redirige a login
+if (!isset($_SESSION['usuario'])) {
+    $_SESSION['alerta'] = "Debes registrarte para continuar con esta petición.";
+    header("Location: login.php");
+    exit;
+}
+
+$sql = "SELECT 
+            u.*,
+            r.nombre AS rol,
+            e.nombre AS empleado_nombre,
+            e.apellido AS empleado_apellido
+            FROM usuarios u
+            LEFT JOIN roles r ON u.rol_id = r.id
+            LEFT JOIN empleados e ON u.empleado_id = e.id
+            ";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute();
+$usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+?>
+
+
 <div id="content" class="container-fliud">
     <!-- Card con tabla de roles -->
-    <div class="card shadow-sm border-0 mb-4">   
-        
+    <div class="card shadow-sm border-0 mb-4">
+
         <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
             <h4 class="fw-bold mb-0 text-white">
                 <i class="bi bi-person-lock me-2"></i> Gestión de Roles de Usuario
@@ -92,7 +117,7 @@
                     .then(data => {
                         if (data.ok) {
                             // Puedes recargar la tabla, cambiar íconos, texto, etc.
-                            alert("Estado actualizado correctamente");
+                           // alert("Estado actualizado correctamente");
                             location.reload(); // o actualiza solo la fila si prefieres
                         } else {
                             alert("Error al actualizar estado");

@@ -13,23 +13,30 @@ $rol = strtolower(trim($_SESSION['usuario']['rol'] ?? 'sin_permiso'));
 $current = $_GET['vista'] ?? 'dashboard';
 
 // Definir íconos por vista
+// Definir íconos por vista
 $iconos = [
-    'dashboard'    => 'bi-speedometer2',
-    'usuarios'     => 'bi-people',
-    'empleados'     => 'bi-people',
-    'roles'        => 'bi-person-gear',
-    'reportes'     => 'bi-graph-up',
-    'productos'    => 'bi-box-seam',
-    'ventas'       => 'bi-cash-stack',
-    'compras'      => 'bi-cart-plus',
-    'operaciones'  => 'bi-tools',
-    'produccion'   => 'bi-gear-wide',
-    'tareas'       => 'bi-list-check',
-    'clientes'     => 'bi-person-badge',
-    'proyectos'    => 'bi-kanban',
-    'diseños'      => 'bi-brush',
-    'perfil'       => 'bi-person-circle',
-    'mis_pedidos'  => 'bi-bag-check'
+  'dashboard'     => 'bi-speedometer2',
+  'usuarios'      => 'bi-people',
+  'empleados'     => 'bi-person-workspace',
+  'roles'         => 'bi-person-gear',
+  'reportes'      => 'bi-graph-up',
+  'productos'     => 'bi-box-seam',
+  'ventas'        => 'bi-cash-stack',
+  'compras'       => 'bi-cart-plus',
+  'operaciones'   => 'bi-tools',
+  'produccion'    => 'bi-gear-wide',
+  'producciones'  => 'bi-hammer',           // ícono relacionado a fabricación
+  'tareas'        => 'bi-list-check',
+  'clientes'      => 'bi-person-badge',
+  'proyectos'     => 'bi-kanban',
+  'diseños'       => 'bi-brush',
+  'perfil'        => 'bi-person-circle',
+  'mis_pedidos'   => 'bi-bag-check',
+  'materiales'    => 'bi-layers',           // ícono sugerido para recursos
+  'proveedores'   => 'bi-truck',            // ícono sugerido para proveedores
+  'servicios'     => 'bi-plug',             // ícono relacionado a servicios
+  'movimientos'   => 'bi-arrow-left-right', // entradas/salidas
+  'pedidos'       => 'bi-bag',              // ícono relacionado a órdenes
 ];
 
 // Menú por rol (usando vistas como clave para extraer íconos automáticamente)
@@ -37,12 +44,13 @@ $menu = [
     'administrador' => [
         'Dashboard'  => 'dashboard',
         'Empleados'  => 'empleados',
+        'Usuarios'   => 'usuarios',
+        'clientes'  => 'clientes',
         'materiales'  => 'materiales',
         'proveedores'  => 'proveedores',
-        'clientes'  => 'clientes',
+        'servicios'  => 'servicios',
         'movimientos'  => 'movimientos',
         'pedidos'  => 'pedidos',
-        'Usuarios'   => 'usuarios',
         'producciones'   => 'producciones',
         'proyectos'   => 'proyectos',
         'Roles'      => 'roles',
