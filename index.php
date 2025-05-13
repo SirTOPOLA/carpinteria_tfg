@@ -16,7 +16,7 @@ require_once 'models/usuarios.php';
  
 
 
-$publicas = ['inicio','productos','contacto'];  // vistas públicas
+$publicas = ['inicio','producto','contacto'];  // vistas públicas
 
 $vista = $_GET['vista'] ?? 'dashboard';
 

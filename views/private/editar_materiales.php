@@ -1,10 +1,10 @@
 <?php
-require_once("../includes/conexion.php");
+ 
 
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
 if ($id <= 0) {
-    header("Location: materiales.php");
+    header("Location: index.php?vista=materiales");
     exit;
 }
 
@@ -14,24 +14,17 @@ $stmt->execute([$id]);
 $material = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$material) {
-    header("Location: materiales.php");
+    header("Location: index.php?vista=materiales");
     exit;
 }
 ?>
-
-<?php
-// dashboard.php principal
-include '../includes/header.php';
-include '../includes/nav.php';
-include '../includes/sidebar.php';
-include '../includes/conexion.php'; // Asegúrate de tener la conexión a base de datos aquí
-?>
+ 
 <!-- Contenido -->
-<div class="container-fluid py-4">
+<div id="content" class="container-fluid py-4">
     <div class="container-fluid">
         <h4 class="mb-4">Editar Material</h4>
 
-        <form action="../php/actualizar_materiales.php" method="POST">
+        <form id="formEditarMaterial" method="POST">
             <input type="hidden" name="material_id" value="<?= $material['id'] ?>">
 
             <div class="mb-3">
@@ -58,10 +51,10 @@ include '../includes/conexion.php'; // Asegúrate de tener la conexión a base d
 
 
             <div class="d-flex justify-content-between">
-                <a href="materiales.php" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Cancelar</a>
+                <a href="index.php?vista=materiales" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Cancelar</a>
                 <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Guardar Cambios</button>
             </div>
         </form>
     </div>
 </div>
-    <?php include_once("../includes/footer.php"); ?>
+ 

@@ -1,5 +1,4 @@
 <?php
-require_once '../includes/conexion.php';
 
 try {
     // Obtener todas las compras
@@ -27,39 +26,36 @@ try {
 }
 ?>
 
-<?php
-// dashboard.php principal
-include '../includes/header.php';
-include '../includes/nav.php';
-include '../includes/sidebar.php';
-?>
- 
-    <div class="container-fluid p-3">
-         <!-- BARRA DE ACCIONES -->
-    <div class="d-flex justify-content-between align-items-center  p-2 mb-3">
-       
-        <h4 class="mb-3">Historial de Compras</h4>
-        <div> 
-            <a href="registrar_compra.php" class="btn btn-success mb-3"><i class="bi bi-plus"></i> Nueva Compra</a>
-        </div>
-    </div>
-      
 
-        <?php if (empty($compras)): ?>
-            <div class="alert alert-warning">No se han registrado compras.</div>
-        <?php else: ?>
+
+<div id="content" class="container-fluid p-3">
+    <div class="card mb-4">
+        <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <h4 class="fw-bold mb-0 text-white">
+                <i class="bi bi-person-vcard-fill me-2"></i> Historial de Compras
+            </h4>
+            <div class="input-group w-100 w-md-auto" style="max-width: 300px;">
+                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" placeholder="Buscar compras..." id="buscador-compra">
+            </div>
+            <a href="index.php?vista=registrar_compras" class="btn btn-secondary mb-3"><i class="bi bi-plus"></i> Nueva
+                Compra</a>
+
+        </div>
+
+        <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered table-sm">
-                    <thead class="table-light">
+                <table id="tablaRoles" class="table table-hover table-custom align-middle mb-0">
+                    <thead>
                         <tr>
-                            <th># Compra</th>
+                            <th><i class="bi bi-hash me-1"></i>ID</th>
                             <th>Fecha</th>
                             <th>Proveedor</th>
                             <th>Total</th>
                             <th>Material</th>
                             <th>Stock</th>
-                            <th>Precio Unitario</th> 
-                            <th>Acciones</th> 
+                            <th>Precio Unitario</th>
+                            <th><i class="bi bi-gear-fill me-1"></i>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -74,10 +70,11 @@ include '../includes/sidebar.php';
                                     <td><?= $detalle['cantidad'] ?></td>
                                     <td>$<?= number_format($detalle['precio_unitario'], 2) ?></td>
                                     <td>
-                                    <a href="editar_compra.php?id=<?= $compra['id'] ?>" class="btn btn-sm btn-warning" title="Editar">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                       
+                                        <a href="index.php?vista=editar_compras&id=<?= $compra['id'] ?>"
+                                            class="btn btn-sm btn-warning" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -85,8 +82,7 @@ include '../includes/sidebar.php';
                     </tbody>
                 </table>
             </div>
-        <?php endif; ?>
+        </div>
     </div>
- 
 
-<?php include '../includes/footer.php'; ?>
+</div>

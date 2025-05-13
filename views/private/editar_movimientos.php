@@ -1,5 +1,5 @@
 <?php
-require_once "../includes/conexion.php";
+ 
 
 
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
@@ -51,17 +51,12 @@ $producciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
-<?php
-include_once('../includes/header.php');
-include_once('../includes/nav.php');
-include_once('../includes/sidebar.php');
-
-?>
+ 
    <!-- Contenido -->
-   <div class="container-fluid py-4">
-    <h2 class="mb-4">Editar Movimiento de Inventario</h2>
+   <div id="content" class="container-fluid py-4">
+    <h2 class="mb-4">Editar Movimiento de Materiales</h2>
     <div class="container col-7 mt-4">
-        <form action="../php/actualizar_movimientos_material.php" method="POST">
+        <form id="form" method="POST">
             <input type="hidden" name="id" value="<?= $movimiento['id'] ?>">
 
             <div class="mb-3">
@@ -108,8 +103,8 @@ include_once('../includes/sidebar.php');
             </div>
             <div class="d-flex justify-content-between">
 
-                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                <a href="movimientos_material.php" class="btn btn-secondary">Cancelar</a>
+                <a href="index.php?vista=movimientos" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Cancelar</a>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Guardar Cambios</button>
             </div>
         </form>
     </div>
@@ -129,4 +124,4 @@ include_once('../includes/sidebar.php');
     });
 </script>
 
-<?php include_once('../includes/footer.php'); ?>
+ 

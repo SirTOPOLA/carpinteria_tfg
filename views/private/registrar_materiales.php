@@ -1,12 +1,13 @@
-<?php include '../includes/header.php'; ?>
-<?php include '../includes/nav.php'; ?>
-<?php include '../includes/sidebar.php'; ?>
 
-<div class="container-fluid py-4">
+
+
+
+
+<div id="content" class="container-fluid py-4">
     <h2>Registrar Material</h2>
 
 
-    <form method="POST" action="../php/guardar_materiales.php" class="row g-3 needs-validation" novalidate>
+    <form id="formRegistrarMaterial" method="POST"  class="row g-3 needs-validation" novalidate>
         <div class="col-12 col-md-6">
             <label for="nombre" class="form-label">Nombre:</label>
             <input type="text" name="nombre" id="nombre" class="form-control" required>
@@ -34,14 +35,13 @@
             <label for="descripcion" class="form-label">Descripción:</label>
             <textarea name="descripcion" id="descripcion" class="form-control" rows="3"></textarea>
         </div>
-        <div class="col-12 ">
-            <button type="submit" class="btn btn-primary">Registrar Material</button>
-            <a href="materiales.php" class="btn btn-secondary">Volver</a>
+        <div class="col-12 d-flex justify-content-between ">
+            <a href="index.php?vista=materiales" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Registrar Material</button>
 
         </div>
 
     </form>
 
 </div>
-
-<?php include '../includes/footer.php'; ?>
+ 

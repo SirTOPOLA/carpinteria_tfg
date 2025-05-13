@@ -1,9 +1,9 @@
 <?php
-require_once("../includes/conexion.php");
+ 
 
 // Validar ID del proyecto
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    header("Location: proyectos.php");
+    header("Location: index.php?vista=proyectos");
     exit;
 }
 
@@ -19,17 +19,13 @@ $proyecto = $stmt->fetch(PDO::FETCH_ASSOC);
  
 
 ?>
-
-<?php include '../includes/header.php'; ?>
-<?php include '../includes/nav.php'; ?>
-<?php include '../includes/sidebar.php'; ?>
-
-<div class="container-fluid py-4">
+ 
+<div id="content" class="container-fluid py-4">
         <h4 class="mb-4">Editar Proyecto</h4>
 
 
 
-        <form action="../php/actualizar_proyectos.php" method="POST" class="row g-3 needs-validation" novalidate>
+        <form id="form" method="POST" class="row g-3 needs-validation" novalidate>
             <input type="hidden" class="form-control" name='proyecto_id' value="<?= htmlspecialchars($proyecto['id']) ?>" >
             <div class=" col-12 col-md-6">
                 <label for="nombre" class="form-label">Nombre del Proyecto</label>
@@ -68,11 +64,10 @@ $proyecto = $stmt->fetch(PDO::FETCH_ASSOC);
                     class="form-control"><?= htmlspecialchars($proyecto['descripcion']) ?></textarea>
             </div>
             <div class="d-flex justify-content-between">
-                <a href="proyectos.php" class="btn btn-secondary">Cancelar</a>
+                <a href="index.php?vista=proyectos" class="btn btn-secondary">Cancelar</a>
                 <button type="submit" class="btn btn-primary">Guardar Cambios</button>
             </div>
         </form>
     </div>
  
-
-<?php include '../includes/footer.php'; ?>
+ 

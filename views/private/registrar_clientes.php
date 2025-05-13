@@ -1,15 +1,11 @@
-<?php
-// dashboard.php principal
-include '../includes/header.php';
-include '../includes/nav.php';
-include '../includes/sidebar.php'; ?>
+ 
 
-<div class="container-fluid py-4">
+<div id="content" class="container-fluid py-4">
 
         <h4 class="mb-4">Registrar Nuevo Cliente</h4>
 
         <!-- FORMULARIO -->
-        <form action="../php/guardar_clientes.php" method="POST" novalidate>
+        <form id="form" method="POST" class="row" novalidate>
             <div class="  col-md-6">
                 <label for="nombre" class="form-label">Nombre completo</label>
                 <input type="text" name="nombre" id="nombre" class="form-control" required maxlength="100">
@@ -41,7 +37,7 @@ include '../includes/sidebar.php'; ?>
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-                <a href="clientes.php" class="btn btn-secondary">
+                <a href="index.php?vista=clientes" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Volver
                 </a>
                 <button type="submit" class="btn btn-primary">
@@ -52,5 +48,4 @@ include '../includes/sidebar.php'; ?>
     </div>
 
  
-
-<?php include_once("../includes/footer.php"); ?>
+ 

@@ -37,9 +37,9 @@
                 <textarea name="descripcion" id="descripcion" class="form-control" rows="4"></textarea>
             </div>
 
-            <div class="col-12 text-end">
-                <a href="index.php?vista=proyectos" class="btn btn-secondary">Cancelar</a>
-                <button type="submit" class="btn btn-primary">Registrar Proyecto</button>
+            <div class="col-12 d-flex justify-content-between px-4">
+                <a href="index.php?vista=proyectos" class="btn btn-secondary"><i class="bi bi-arrow-left"> </i> Cancelar</a>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-save"> </i> Registrar Proyecto</button>
             </div>
         </form>
     </div>

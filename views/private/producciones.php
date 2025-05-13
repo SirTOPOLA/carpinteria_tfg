@@ -64,16 +64,21 @@ $producciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <td><?= htmlspecialchars($p['fecha_inicio']) ?></td>
                                 <td><?= htmlspecialchars($p['fecha_fin']) ?></td>
                                 <td><?= htmlspecialchars($p['estado_proyecto']) ?></td>
-                                <td><?= htmlspecialchars($p['estado']) ?></td>
+                                <td>
+                               
+                                    <?= htmlspecialchars($p['estado']) ?>
+
+                                </td>
                                 <td><?= htmlspecialchars($p['empleado_nombre']) ?></td>
                                 <td><?= htmlspecialchars($p['created_at']) ?></td>
                                 <td>
-                                    <a href="editar_producciones.php?id=<?= $p['id'] ?>" class="btn btn-sm btn-outline-warning" title="Editar">
+                                    <a href="index.php?vista=editar_producciones&id=<?= $p['id'] ?>" class="btn btn-sm btn-outline-warning" title="Editar">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
-                                    <a href="registrar_proceso_produccion.php?id=<?= $p['id'] ?>" class="btn btn-sm btn-outline-primary" title="Procesar">
+                                   <!--  <a href="registrar_proceso_produccionesid=<?= $p['id'] ?>" class="btn btn-sm btn-outline-primary" title="Procesar">
                                         <i class="bi bi-play-circle"></i>
-                                    </a>
+                                    </a> -->
+                                    
                                 </td>
                             </tr>
                         <?php endforeach; ?>

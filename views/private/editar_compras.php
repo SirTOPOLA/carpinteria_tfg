@@ -1,12 +1,14 @@
 <?php
-require_once '../includes/conexion.php';
+ 
 
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die("ID de compra no válido.");
 }
 
 $compra_id = (int) $_GET['id'];
-
+if($compra_id <=0){
+    header('location: index.php?vista=compras');
+}
 try {
     // Obtener datos de la compra
     $stmt = $pdo->prepare("SELECT * FROM compras WHERE id = ?");
@@ -14,7 +16,8 @@ try {
     $compra = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$compra) {
-        die("Compra no encontrada.");
+        header('location: index.php?vista=compras');
+        exit; 
     }
 
     // Obtener proveedores
@@ -32,25 +35,20 @@ try {
     $stmt->execute([$compra_id]);
     $detalles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    die("Error: " . htmlspecialchars($e->getMessage()));
+   // die("Error: " . htmlspecialchars($e->getMessage()));
 }
 ?>
 
-<?php
-// dashboard.php principal
-include '../includes/header.php';
-include '../includes/nav.php';
-include '../includes/sidebar.php';
-?>
+ 
    <!-- Contenido -->
-   <div class="container-fluid py-4">
+   <div id="content" class="container-fluid py-4">
     <h4>Editar Compra #<?= $compra_id ?></h4>
-    <form action="../php/actualizar_compras.php" method="POST">
+    <form id="formCompra" method="POST">
         <input type="hidden" name="compra_id" value="<?= $compra_id ?>">
         <div class="row">
 
             <div class="col-md-6 mb-3">
-                <label class="form-label">Proveedor:</label>
+                <label class="form-label"><i class="bi bi-person"></i> Proveedor:</label>
                 <select name="proveedor_id" class="form-select" required>
                     <option value="">Seleccione proveedor</option>
                     <?php foreach ($proveedores as $prov): ?>
@@ -105,9 +103,9 @@ include '../includes/sidebar.php';
             <?php endforeach; ?>
         </div>
         <div class=" d-flex justify-content-between px-5">
-            <a href="compras.php" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
+            <a href="index.php?vista=compras" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
             <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Guardar Cambios</button>
         </div>
     </form>
  </div>
-<?php include '../includes/footer.php'; ?>
+ 

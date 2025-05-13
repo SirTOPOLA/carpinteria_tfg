@@ -1,8 +1,5 @@
 <?php
-require_once("../includes/conexion.php");
-
  
-
 // Obtener datos del proveedor
 $stmt = $pdo->prepare("SELECT * FROM proveedores");
 $stmt->execute();
@@ -12,21 +9,11 @@ $proveedor = $stmt->fetch(PDO::FETCH_ASSOC);
 
  
 ?>
-
-<?php
-// dashboard.php principal
-include '../includes/header.php';
-include '../includes/nav.php';
-include '../includes/sidebar.php';
-include '../includes/conexion.php'; // Asegúrate de tener la conexión a base de datos aquí
-?>
-   <div class="container-fluid py-4">
  
-        <h4>Registrar Proveedor</h4>
-
-        
-
-        <form method="POST" action="../php/guardar_proveedor.php" class="row g-3">
+   <div id="content" class="container-fluid py-4">
+ 
+        <h4>Registrar Proveedor</h4> 
+        <form method="POST" id="form" class="row g-3">
             <div class="col-md-6">
                 <label class="form-label">Nombre</label>
                 <input type="text" name="nombre" class="form-control"
@@ -48,11 +35,11 @@ include '../includes/conexion.php'; // Asegúrate de tener la conexión a base d
                 <label class="form-label">Dirección</label>
                 <input type="text" name="direccion" class="form-control" >
             </div>
-            <div class="col-12 text-end">
-                <a href="proveedores.php" class="btn btn-secondary"><i class="bi bi-arrow-left"></i>Cancelar</a>
+            <div class="d-flex justify-content-between">
+                <a href="index.php?vista=proveedores" class="btn btn-secondary"><i class="bi bi-arrow-left"></i>Cancelar</a>
                 <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i>Guardar Cambios</button>
             </div>
         </form>
     </div>
  
-<?php include_once("../includes/footer.php"); ?>
+ 

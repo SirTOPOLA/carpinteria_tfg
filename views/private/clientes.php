@@ -1,5 +1,5 @@
 <?php
-require_once("../includes/conexion.php");
+
 
 
 // ========================
@@ -13,72 +13,75 @@ $stmt->execute();
 $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<?php
-// dashboard.php principal
-include '../includes/header.php';
-include '../includes/nav.php';
-include '../includes/sidebar.php';
-include '../includes/conexion.php'; // Asegúrate de tener la conexión a base de datos aquí
-?>
- 
-    <div class="container-fluid">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0">Clientes Registrados</h4>
-            <a href="registrar_cliente.php" class="btn btn-success">
-                <i class="bi bi-plus-circle"></i> Nuevo Cliente
-            </a>
+
+
+<div id="content" class="container-fluid">
+    <div class="card mb-4">
+        <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <h4 class="fw-bold mb-0 text-white">
+                <i class="bi bi-person-vcard-fill me-2"></i>Gestión de Clientes
+            </h4>
+            <div class="input-group w-100 w-md-auto" style="max-width: 300px;">
+                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" placeholder="Buscar cliente..." id="buscador-cliente">
+            </div>
+            <a href="index.php?vista=registrar_clientes" class="btn btn-secondary mb-3"><i class="bi bi-plus"></i>
+                Nuevo
+        Cliente</a>
+
         </div>
 
-
-        <!-- TABLA -->
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Correo</th>
-                        <th>codigo_acceso</th>
-                        <th>DIP</th>
-                        <th>Teléfono</th>
-                        <th>Dirección</th>
-                        <th>Fecha</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (count($clientes) > 0): ?>
-                        <?php foreach ($clientes as $cliente): ?>
-                            <tr>
-                                <td><?= $cliente['id'] ?></td>
-                                <td><?= htmlspecialchars($cliente['nombre']) ?></td>
-                                <td><?= htmlspecialchars($cliente['email']) ?></td>
-                                <td><?= htmlspecialchars($cliente['codigo_acceso']) ?></td>
-                                <td><?= htmlspecialchars($cliente['codigo']) ?></td>
-                                <td><?= htmlspecialchars($cliente['telefono']) ?></td>
-                                <td><?= htmlspecialchars($cliente['direccion']) ?></td>
-                                <td><?= date("d/m/Y H:i", strtotime($cliente['creado_en'])) ?></td>
-                                <td class="text-center">
-                                    <a href="editar_cliente.php?id=<?= $cliente['id'] ?>" class="btn btn-sm btn-warning">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <a href="eliminar_cliente.php?id=<?= $cliente['id'] ?>" class="btn btn-sm btn-danger"
-                                        onclick="return confirm('¿Está seguro de eliminar este cliente?');">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="tablaRoles" class="table table-hover table-custom align-middle mb-0">
+                    <thead>
                         <tr>
-                            <td colspan="7" class="text-center">No se encontraron clientes.</td>
+                            <th><i class="bi bi-hash me-1"></i>ID</th>
+                            <th><i class="bi bi-person"></i> Nombre</th>
+
+                            <th>Correo</th>
+                            <th>codigo_acceso</th>
+                            <th>DIP</th>
+                            <th>Teléfono</th>
+                            <th>Dirección</th>
+                            <th>Fecha</th>
+                            <th><i class="bi bi-gear-fill me-1"></i>Acciones</th>
                         </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php if (count($clientes) > 0): ?>
+                            <?php foreach ($clientes as $cliente): ?>
+                                <tr>
+                                    <td><?= $cliente['id'] ?></td>
+                                    <td><?= htmlspecialchars($cliente['nombre']) ?></td>
+                                    <td><?= htmlspecialchars($cliente['email']) ?></td>
+                                    <td><?= htmlspecialchars($cliente['codigo_acceso']) ?></td>
+                                    <td><?= htmlspecialchars($cliente['codigo']) ?></td>
+                                    <td><?= htmlspecialchars($cliente['telefono']) ?></td>
+                                    <td><?= htmlspecialchars($cliente['direccion']) ?></td>
+                                    <td><?= date("d/m/Y H:i", strtotime($cliente['creado_en'])) ?></td>
+                                    <td class="text-center">
+                                        <a href="index.php?vista=editar_clientes&id=<?= $cliente['id'] ?>" class="btn btn-sm btn-warning">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="iindex.php?vista=eliminar_clientes&id=<?= $cliente['id'] ?>" class="btn btn-sm btn-danger"
+                                            onclick="return confirm('¿Está seguro de eliminar este cliente?');">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="7" class="text-center">No se encontraron clientes.</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
-
-
     </div>
- 
-<?php include_once("../includes/footer.php"); ?>
+
+  
+
+</div>

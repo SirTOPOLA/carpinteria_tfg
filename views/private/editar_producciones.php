@@ -1,6 +1,11 @@
 <?php
  
+$id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
+if ($id <= 0) {
+    header("Location: index.php?vista=producciones");
+    exit;
+}
 
 // Obtener lista de empleados
 $stmt = $pdo->query("SELECT id, CONCAT(nombre, ' ', apellido) AS nombre_completo  FROM empleados ORDER BY id");

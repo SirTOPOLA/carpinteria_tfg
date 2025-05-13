@@ -1,9 +1,9 @@
 <?php
-require_once("../includes/conexion.php");
+ 
 
 $id = $_GET['id'] ?? null;
 if (!$id || !is_numeric($id)) {
-    header("Location: clientes.php");
+    header("Location: index.php?vista=clientes");
     exit;
 }
 
@@ -16,7 +16,7 @@ $stmt->execute();
 $cliente = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$cliente) {
-    header("Location: clientes.php");
+    header("Location: index.php?vista=clientes");
     exit;
 }
 
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':id', $id);
 
             if ($stmt->execute()) {
-                header("Location: clientes.php?exito=1");
+                header("Location: index.php?vista=clientes&exito=1");
                 exit;
             } else {
                 $errores[] = "Error al actualizar los datos.";
@@ -59,61 +59,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-
-<?php
-// dashboard.php principal
-include '../includes/header.php';
-include '../includes/nav.php';
-include '../includes/sidebar.php';
-include '../includes/conexion.php'; // Asegúrate de tener la conexión a base de datos aquí
-?>
+ 
    <!-- Contenido -->
-   <div class="container-fluid py-4">
+   <div id="content"  class="container-fluid py-4">
         <div class="col-md-7">
             <h4 class="mb-4">Editar Cliente</h4>
 
-            <?php if ($errores): ?>
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        <?php foreach ($errores as $error): ?>
-                            <li><?= htmlspecialchars($error) ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            <?php endif; ?>
+           
 
-            <form method="POST" novalidate>
-                <div class="mb-3">
+            <form id="form" method="POST" novalidate>
+                <div class="row"> 
+                <div class="col-md-6 mb-3">
                     <label for="nombre" class="form-label">Nombre completo</label>
                     <input type="text" name="nombre" id="nombre" class="form-control"
                         value="<?= htmlspecialchars($cliente['nombre']) ?>" required>
                 </div>
 
-                <div class="mb-3">
+                <div class="col-md-6 mb-3">
                     <label for="correo" class="form-label">Correo electrónico</label>
                     <input type="email" name="correo" id="correo" class="form-control"
-                        value="<?= htmlspecialchars($cliente['correo']) ?>">
+                        value="<?= htmlspecialchars($cliente['email']) ?>">
                 </div>
 
-                <div class="mb-3">
+                <div class="col-md-6 mb-3">
                     <label for="telefono" class="form-label">Teléfono</label>
                     <input type="text" name="telefono" id="telefono" class="form-control"
                         value="<?= htmlspecialchars($cliente['telefono']) ?>">
                 </div>
 
-                <div class="mb-3">
+                <div class="col-md-6 mb-3">
                     <label for="direccion" class="form-label">Dirección</label>
                     <textarea name="direccion" id="direccion"
                         class="form-control"><?= htmlspecialchars($cliente['direccion']) ?></textarea>
                 </div>
 
                 <div class="d-flex justify-content-between">
-                    <a href="clientes.php" class="btn btn-secondary">Volver</a>
+                    <a href="index.php?vista=clientes" class="btn btn-secondary">Volver</a>
                     <button type="submit" class="btn btn-primary">Actualizar</button>
+                </div>
                 </div>
             </form>
         </div>
     </div>
 
  
-<?php include_once("../includes/footer.php"); ?>
