@@ -124,7 +124,7 @@ $solicitudes_pedidos = $stmt->fetch(PDO::FETCH_ASSOC);
                 cargarServicios(data.servicios);
                 cargarProyectos(data.proyectos);
             });
-
+            console.log
         function cargarClientes(clientes) {
             const select = document.getElementById("clientes");
             clientes.forEach(c => {
