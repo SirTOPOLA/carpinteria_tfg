@@ -1,55 +1,56 @@
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Carpintería Moderna</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Carpintería Artesanal</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
   <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
     .hero {
-      background: url('https://source.unsplash.com/1600x600/?carpentry,wood') no-repeat center center;
+      background: url('img/hero.jpg') no-repeat center center;
       background-size: cover;
-      height: 60vh;
       color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      padding: 100px 0;
+      text-align: center;
     }
-    .hero h1 {
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 1rem 2rem;
-      border-radius: 10px;
+    .btn-main {
+      background-color: #795548;
+      color: white;
     }
+    .btn-main:hover {
+      background-color: #5d4037;
+    }
+    .object-fit-cover {
+    object-fit: cover;
+  }
   </style>
 </head>
 <body>
-
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">🪵 Carpintería Moderna</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="index.php">Carpintería</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item"><a class="nav-link" href="index.php?vista=inicio">Inicio</a></li>
-        <li class="nav-item"><a class="nav-link" href="index.php?vista=productos">Productos</a></li>
-        <li class="nav-item"><a class="nav-link" href="index.php?vista=contacto">Contacto</a></li>
-        <li class="nav-item"><a class="btn btn-primary" href="index.php?vista=login.php">Acceder</a></li>
-        
+        <li class="nav-item"><a class="nav-link" href="nosotros.php">Nosotros</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.php?vista=producto"">Catálogo</a></li>
+        <li class="nav-item"><a class="nav-link" href="pedido_personalizado.php">Pedido</a></li>
+        <li class="nav-item"><a class="nav-link" href="contacto.php">Contacto</a></li>
+        <li class="nav-item"><a class="btn btn-primary" href="login.php">Acceder</a></li>
       </ul>
     </div>
-  </div>
-</nav>
+  </nav>
 
-<!-- Hero -->
-<section class="hero text-center">
-  <h1 class="display-4">Diseño y calidad en cada pieza</h1>
-</section>
+ 
 
+
+  
+ 
 
  
  

@@ -1,99 +1,54 @@
+<?php
+try {
+    $sql = "SELECT ruta_imagen 
+            FROM imagenes_producto 
+            ORDER BY RAND() 
+            LIMIT 6"; // selecciona 6 imágenes aleatorias
 
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $imagenes = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
+} catch (PDOException $e) {
+    $imagenes = [];
+}
+?>
 
-
-<!-- Servicios -->
-<section id="servicios" class="py-5 bg-light">
-  <div class="container">
-    <h2 class="text-center mb-4">Nuestros Servicios</h2>
-    <div class="row g-4">
-      <div class="col-md-4">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">Muebles a medida</h5>
-            <p class="card-text">Diseñamos muebles personalizados para hogares y empresas según tus necesidades.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">Restauración</h5>
-            <p class="card-text">Damos nueva vida a tus muebles antiguos con técnicas modernas de carpintería.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">Montajes y reformas</h5>
-            <p class="card-text">Instalamos puertas, closets, pisos y techos de madera con acabados profesionales.</p>
-          </div>
-        </div>
-      </div>
-    </div>
+<!-- Hero Section mejorado -->
+<section class="hero bg-dark text-white py-5 position-relative overflow-hidden">
+  <div class="container text-center">
+    <h1 class="display-4 fw-bold">Diseños únicos en madera</h1>
+    <p class="lead mb-4">Creamos muebles a medida con pasión y detalle artesanal.</p>
+    <a href="productos.php" class="btn btn-warning btn-lg px-4 me-2">
+      <i class="bi bi-box-seam"></i> Ver Catálogo
+    </a>
+    <a href="pedido_personalizado.php" class="btn btn-outline-light btn-lg px-4">
+      <i class="bi bi-pencil-square"></i> Hacer un pedido
+    </a>
   </div>
 </section>
 
-<!-- Productos -->
-<section id="productos" class="py-5">
-  <div class="container">
-    <h2 class="text-center mb-5">Nuestros Productos</h2>
-
-    <!-- Estándar -->
-    <h4>Productos Estándar</h4>
-    <div class="row g-4 mb-4">
-      <div class="col-md-4">
-        <div class="card">
-          <img src="https://source.unsplash.com/400x300/?wooden,chair" class="card-img-top" alt="Producto estándar 1">
-          <div class="card-body">
-            <h5 class="card-title">Silla Clásica</h5>
-            <p class="card-text">Diseño ergonómico de madera natural, ideal para comedor o estudio.</p>
+<!-- Galería aleatoria de imágenes desde BD -->
+<section class="container my-5">
+  <h2 class="text-center mb-4"><i class="bi bi-images"></i> Nuestro trabajo</h2>
+  <div class="row g-3">
+    <?php if (!empty($imagenes)): ?>
+      <?php foreach ($imagenes as $ruta): ?>
+        <div class="col-6 col-md-4 col-lg-2">
+          <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+            <img src="api/<?= htmlspecialchars($ruta) ?>"
+                 class="img-fluid object-fit-cover h-100"
+                 style="aspect-ratio: 1/1;"
+                 alt="Mueble artesanal">
           </div>
         </div>
-      </div>
-      <!-- Agrega más productos aquí -->
-    </div>
-
-    <!-- Especializados -->
-    <h4>Productos Especializados</h4>
-    <div class="row g-4">
-      <div class="col-md-4">
-        <div class="card border-primary">
-          <img src="https://source.unsplash.com/400x300/?custom,furniture" class="card-img-top" alt="Producto especializado 1">
-          <div class="card-body">
-            <h5 class="card-title">Mueble personalizado</h5>
-            <p class="card-text">Diseñado a la medida del cliente con acabados únicos y funcionales.</p>
-          </div>
-        </div>
-      </div>
-      <!-- Agrega más productos especializados aquí -->
-    </div>
-  </div>
-</section>
-
-<!-- Contacto -->
-<section id="contacto" class="py-5 bg-light">
-  <div class="container">
-    <h2 class="text-center mb-4">Contáctanos</h2>
-    <form class="row g-3">
-      <div class="col-md-6">
-        <label class="form-label">Nombre</label>
-        <input type="text" class="form-control" placeholder="Tu nombre">
-      </div>
-      <div class="col-md-6">
-        <label class="form-label">Correo electrónico</label>
-        <input type="email" class="form-control" placeholder="ejemplo@correo.com">
-      </div>
+      <?php endforeach; ?>
+    <?php else: ?>
       <div class="col-12">
-        <label class="form-label">Mensaje</label>
-        <textarea class="form-control" rows="4" placeholder="Escribe tu mensaje..."></textarea>
+        <div class="alert alert-warning text-center">
+          <i class="bi bi-exclamation-circle"></i> No hay imágenes disponibles en este momento.
+        </div>
       </div>
-      <div class="col-12">
-        <button type="submit" class="btn btn-primary">Enviar mensaje</button>
-      </div>
-    </form>
+    <?php endif; ?>
   </div>
 </section>
-
-

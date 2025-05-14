@@ -50,13 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-
-<?php
-
-include_once('../includes/header.php');
-include_once('../includes/sidebar.php');
-include_once('../includes/nav.php');
-?>
+ 
 
 
 <!-- Contenido -->
@@ -100,6 +94,4 @@ include_once('../includes/nav.php');
     </div>
 </div>
 
-
-
-<?php include_once('../includes/footer.php'); ?>
+ 
