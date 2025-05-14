@@ -22,32 +22,36 @@ try {
     $direccion        = trim($_POST['direccion'] ?? '');
     $fecha_ingreso    = trim($_POST['fecha_ingreso'] ?? '');
     $horario_trabajo  = trim($_POST['horario_trabajo'] ?? '');
+    $salario = trim($_POST['salario'] ?? '');
 
+    if (floatval($salario) < -1) {
+        $errores[] = 'El salario debe ser un número positivo.';
+    }
     // Validación de campos obligatorios
-    if ($nombre === '') $errores['nombre'] = 'El nombre es obligatorio.';
-    if ($apellido === '') $errores['apellido'] = 'El apellido es obligatorio.';
+    if ($nombre === '') $errores[ ] = 'El nombre es obligatorio.';
+    if ($apellido === '') $errores[ ] = 'El apellido es obligatorio.';
     if (!in_array($genero, ['M', 'F'])) $errores[ ] = 'El género es inválido.';
     
     // Validación de código/DNI
     if ($codigo === '' || strlen($codigo) < 6) {
-        $errores['codigo'] = 'El código/DNI debe tener al menos 6 caracteres.';
+        $errores[ ] = 'El código/DNI debe tener al menos 6 caracteres.';
     }
 
     // Validación de teléfono
     if (!empty($telefono) && !preg_match('/^\d{9,}$/', $telefono)) {
-        $errores['telefono'] = 'El teléfono debe tener al menos 9 dígitos.';
+        $errores[ ] = 'El teléfono debe tener al menos 9 dígitos.';
     }
 
     // Validación de email
-    if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errores['email'] = 'El correo electrónico es inválido.';
+    if ($email === ''  ) {
+        $errores[ ] = 'El correo electrónico es inválido.';
     }
 
     // Validar duplicados por código y email (excluyendo al mismo ID)
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM empleados WHERE (codigo = ? OR LOWER(email) = LOWER(?)) AND id != ?");
     $stmt->execute([$codigo, $email, $id]);
     if ($stmt->fetchColumn() > 0) {
-        $errores['duplicado'] = 'Ya existe otro empleado con ese código o correo electrónico.';
+        $errores[ ] = 'Ya existe otro empleado con ese código o correo electrónico.';
     }
 
     // Validar fecha de nacimiento (mínimo 10 años atrás)
@@ -64,18 +68,18 @@ try {
     if ($fecha_ingreso !== '') {
         $fecha_ing = DateTime::createFromFormat('Y-m-d', $fecha_ingreso);
         if (!$fecha_ing || $fecha_ing > new DateTime()) {
-            $errores['fecha_ingreso'] = 'La fecha de ingreso no puede ser posterior a hoy.';
+            $errores[ ] = 'La fecha de ingreso no puede ser posterior a hoy.';
         }
     }
 
     // Validación del horario de trabajo
-    if (!empty($horario_trabajo) && !preg_match('/^[\p{L},\s\-0-9:.apmAPM]+$/u', $horario_trabajo)) {
-        $errores['horario_trabajo'] = 'El horario debe tener un formato válido. Ejemplo: lunes a viernes, 08:00 a.m - 14:00 p.m.';
-    }
+   /*  if (!empty($horario_trabajo) && !preg_match('/^[\p{L},\s\-0-9:.apmAPM]+$/u', $horario_trabajo)) {
+        $errores[ ] = 'El horario debe tener un formato válido. Ejemplo: lunes a viernes, 08:00 a.m - 14:00 p.m.';
+    } */
 
     // Si hay errores, retornarlos
     if (!empty($errores)) {
-        echo json_encode(['success' => false, 'errors' => $errores]);
+        echo json_encode(['success' => false, 'message' => $errores]);
         exit;
     }
 
@@ -90,7 +94,8 @@ try {
         email = ?, 
         direccion = ?, 
         fecha_ingreso = ?, 
-        horario_trabajo = ?
+        horario_trabajo = ?,
+        salario = ? 
         WHERE id = ?");
 
     $stmt->execute([
@@ -104,11 +109,12 @@ try {
         htmlspecialchars($direccion),
         $fecha_ingreso ?: null,
         htmlspecialchars($horario_trabajo),
+       intval( $salario) ?: null,
         $id
     ]);
 
     echo json_encode(['success' => true, 'message' => 'Empleado actualizado correctamente.']);
 
 } catch (PDOException $e) {
-    echo json_encode(['success' => false, 'errors' => ['sql' => 'Error en la base de datos: ' . $e->getMessage()]]);
+    echo json_encode(['success' => false, 'message' =>   'Error en la base de datos: ' . $e->getMessage() ]);
 }
