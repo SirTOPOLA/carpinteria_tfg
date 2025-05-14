@@ -1,56 +1,99 @@
+<?php
+// Obtener imagen para hero aleatoriamente
+try {
+    $stmt = $pdo->prepare("SELECT ruta_imagen FROM imagenes_producto ORDER BY RAND() LIMIT 1");
+    $stmt->execute();
+    $heroImg = $stmt->fetchColumn();
+    $heroRuta = $heroImg ? "uploads/productos/" . $heroImg : "img/hero-default.jpg";
+} catch (PDOException $e) {
+    $heroRuta = "img/hero-default.jpg";
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Carpintería Artesanal</title>
-  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Poppins', sans-serif;
+      background-color: #f9f7f6;
+      color: #444;
     }
-    .hero {
-      background: url('img/hero.jpg') no-repeat center center;
-      background-size: cover;
-      color: white;
-      padding: 100px 0;
-      text-align: center;
+
+    .navbar {
+      background-color: #4E342E;
     }
+
+    .navbar-brand,
+    .nav-link {
+      color: #fff !important;
+    }
+
+    .nav-link:hover {
+      color: #FFD54F !important;
+    }
+
     .btn-main {
       background-color: #795548;
       color: white;
+      border: none;
     }
+
     .btn-main:hover {
       background-color: #5d4037;
     }
+
+    .hero {
+      background: url('<?= htmlspecialchars($heroRuta) ?>') no-repeat center center;
+      background-size: cover;
+      padding: 120px 0;
+      color: #fff;
+      text-shadow: 1px 1px 5px rgba(0,0,0,0.7);
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 700;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      font-weight: 300;
+    }
+
     .object-fit-cover {
-    object-fit: cover;
-  }
+      object-fit: cover;
+    }
   </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="index.php">Carpintería</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="index.php"><i class="bi bi-house-door-fill me-1"></i> Carpintería</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="index.php?vista=inicio">Inicio</a></li>
-        <li class="nav-item"><a class="nav-link" href="nosotros.php">Nosotros</a></li>
-        <li class="nav-item"><a class="nav-link" href="index.php?vista=producto"">Catálogo</a></li>
-        <li class="nav-item"><a class="nav-link" href="pedido_personalizado.php">Pedido</a></li>
-        <li class="nav-item"><a class="nav-link" href="contacto.php">Contacto</a></li>
-        <li class="nav-item"><a class="btn btn-primary" href="login.php">Acceder</a></li>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav align-items-lg-center">
+        <li class="nav-item"><a class="nav-link" href="index.php?vista=inicio"><i class="bi bi-house-door"></i> Inicio</a></li>
+        <li class="nav-item"><a class="nav-link" href="nosotros.php"><i class="bi bi-people"></i> Nosotros</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.php?vista=producto"><i class="bi bi-box-seam"></i> Catálogo</a></li>
+        <li class="nav-item"><a class="nav-link" href="pedido_personalizado.php"><i class="bi bi-pencil-square"></i> Pedido</a></li>
+        <li class="nav-item"><a class="nav-link" href="contacto.php"><i class="bi bi-envelope"></i> Contacto</a></li>
+        <li class="nav-item ms-2">
+          <a class="btn btn-sm btn-outline-light" href="login.php"><i class="bi bi-person-circle"></i> Acceder</a>
+        </li>
       </ul>
     </div>
-  </nav>
+  </div>
+</nav>
 
- 
-
-
-  
- 
-
- 
- 
+<
