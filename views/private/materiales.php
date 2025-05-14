@@ -20,7 +20,7 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
       <input type="text" class="form-control" id="buscador-materiales" placeholder="Buscar material...">
     </div>
-    <a href="index.php?vista=registrar_materiales" class="btn btn-outline-light rounded-pill px-3" title="Nuevo Material">
+    <a href="index.php?vista=registrar_materiales" class="btn btn-secondary shadow-sm" title="Nuevo Material">
       <i class="bi bi-plus-circle me-1"></i>Nuevo Material
     </a>
   </div>
@@ -51,8 +51,8 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <td><?= number_format($material['stock_minimo'], 0) ?></td>
                 <td>
                   <a href="index.php?vista=editar_materiales&id=<?= $material['id'] ?>"
-                     class="btn btn-sm btn-outline-warning rounded-circle" title="Editar">
-                    <i class="bi bi-pencil-fill"></i>
+                     class="btn btn-sm btn-outline-warning  " title="Editar">
+                    <i class="bi bi-pencil-square"></i>
                   </a>
                 </td>
               </tr>

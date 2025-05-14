@@ -1,3 +1,23 @@
+<?php
+
+ // Si no hay sesión → redirige a login
+if (!isset($_SESSION['usuario'])) {
+    $_SESSION['alerta'] = "Debes registrarte para continuar con esta petición.";
+    header("Location: login.php");
+    exit;
+}
+
+ 
+    $sql = "SELECT * FROM roles";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $roles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+   
+ 
+?>
+
+
+
 <div id="content" class="container-fliud">
     <div class="card mb-4">
         <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
@@ -25,14 +45,14 @@
                             <?php foreach ($roles as $rol): ?>
                                 <tr>
                                     <td>
-                                        <i class="bi bi-hash"></i> <?= htmlspecialchars($rol["id"]) ?>
+                                          <?= htmlspecialchars($rol["id"]) ?>
                                     </td>
                                     <td>
-                                        <i class="bi bi-person-badge-fill"></i> <?= htmlspecialchars($rol["nombre"]) ?>
+                                          <?= htmlspecialchars($rol["nombre"]) ?>
                                     </td>
                                     <td>
-                                        <a href="index.php?vista=editar_rol&id=<?= urlencode($rol["id"]) ?>"
-                                            class="btn btn-sm btn-outline-info" title="Editar">
+                                        <a href="index.php?vista=editar_roles&id=<?= urlencode($rol["id"]) ?>"
+                                            class="btn btn-sm btn-outline-warning" title="Editar">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
                                     </td>

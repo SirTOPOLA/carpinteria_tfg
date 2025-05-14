@@ -4,6 +4,7 @@
 
  
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -45,6 +46,30 @@
          
     });
 </script>
+
+
+
+ 
+
+<script>
+  /**
+   * Muestra un toast elegante
+   * @param {string} tipo - 'success' | 'error' | 'info' | 'warning'
+   * @param {string} mensaje - Texto del mensaje
+   */
+  function mostrarToast(tipo = 'info', mensaje = '') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${tipo}`;
+    toast.textContent = mensaje;
+
+    document.getElementById('toast-container').appendChild(toast);
+
+    setTimeout(() => {
+      toast.remove();
+    }, 4000);
+  }
+</script>
+
 </body>
 
 </html>

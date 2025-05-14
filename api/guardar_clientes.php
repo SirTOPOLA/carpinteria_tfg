@@ -20,10 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Validar y limpiar campos
-$nombre    = trim($_POST['nombre'] ?? '');
-$correo    = trim($_POST['correo'] ?? '');
-$codigo    = trim($_POST['codigo'] ?? '');
-$telefono  = trim($_POST['telefono'] ?? '');
+$nombre = trim($_POST['nombre'] ?? '');
+$correo = trim($_POST['correo'] ?? '');
+$codigo = trim($_POST['codigo'] ?? '');
+$telefono = trim($_POST['telefono'] ?? '');
 $direccion = trim($_POST['direccion'] ?? '');
 
 // Validación mínima del lado del servidor
@@ -40,37 +40,51 @@ if ($correo !== '' && !filter_var($correo, FILTER_VALIDATE_EMAIL)) {
 }
 
 try {
-    $sql = "INSERT INTO clientes (nombre, email, codigo, telefono, direccion, creado_en)
-            VALUES (:nombre, :correo, :codigo, :telefono, :direccion, NOW())";
+    $stmt = $pdo->prepare('SELECT * FROM clientes WHERE codigo = ?');
+    $stmt->execute([$codigo]);
+    $dip = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!empty($did)) {
+        $sql = "INSERT INTO clientes (nombre, email, codigo, telefono, direccion, creado_en)
+                VALUES (:nombre, :correo, :codigo, :telefono, :direccion, NOW())";
+    
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':nombre', $nombre);
+        $stmt->bindParam(':correo', $correo);
+        $stmt->bindParam(':codigo', $codigo);
+        $stmt->bindParam(':telefono', $telefono);
+        $stmt->bindParam(':direccion', $direccion);
+        $stmt->execute();
+        $idCliente = $pdo->lastInsertId();
+    
+        // 2. Generar código DIP automático descriptivo (8 caracteres)
+        // Ejemplo: A2C5J824
+        $nombrePart = strtoupper(substr(preg_replace('/[^A-Za-z]/', '', $nombre), 0, 2));
+        $direccionPart = strtoupper(substr(preg_replace('/[^A-Za-z]/', '', $direccion), 0, 1));
+        $año = date('y'); // 2 últimos dígitos del año
+        $codigo = sprintf('%s%s%s%03d', $nombrePart, $direccionPart, $año, $idCliente);
+    
+        // Asegurar que tiene exactamente 8 caracteres
+        $codigo = strtoupper(substr($codigo, 0, 8));
+    
+        // 3. Actualizar cliente con el código generado
+        $update = $pdo->prepare("UPDATE clientes SET codigo_acceso = :codigo WHERE id = :id");
+        $update->bindParam(':codigo', $codigo);
+        $update->bindParam(':id', $idCliente);
+        $update->execute();
+    
+        $response['success'] = true;
+        $response['codigo'] = $codigo;
+        
+    }else {
+        $response['error'] = 'El cliente ya existe';
+        echo json_encode($response);
+        exit;
 
-    $stmt = $pdo->prepare($sql);
-    $stmt->bindParam(':nombre', $nombre);
-    $stmt->bindParam(':correo', $correo);
-    $stmt->bindParam(':codigo', $codigo);
-    $stmt->bindParam(':telefono', $telefono);
-    $stmt->bindParam(':direccion', $direccion);
-    $stmt->execute();
-    $idCliente = $pdo->lastInsertId();
+    }
 
-    // 2. Generar código DIP automático descriptivo (8 caracteres)
-    // Ejemplo: A2C5J824
-    $nombrePart = strtoupper(substr(preg_replace('/[^A-Za-z]/', '', $nombre), 0, 2));
-    $direccionPart = strtoupper(substr(preg_replace('/[^A-Za-z]/', '', $direccion), 0, 1));
-    $año = date('y'); // 2 últimos dígitos del año
-    $codigo = sprintf('%s%s%s%03d', $nombrePart, $direccionPart, $año, $idCliente);
 
-    // Asegurar que tiene exactamente 8 caracteres
-    $codigo = strtoupper(substr($codigo, 0, 8));
 
-    // 3. Actualizar cliente con el código generado
-    $update = $pdo->prepare("UPDATE clientes SET codigo_acceso = :codigo WHERE id = :id");
-    $update->bindParam(':codigo', $codigo);
-    $update->bindParam(':id', $idCliente);
-    $update->execute();
 
-    $response['success'] = true;
-    $response['codigo'] = $codigo;
- 
 
 } catch (PDOException $e) {
     $response['error'] = 'Error al guardar el cliente: ' . $e->getMessage();

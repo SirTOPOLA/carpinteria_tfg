@@ -45,8 +45,8 @@ if (!isset($_SESSION['usuario'])) {
                             <span class="input-group-text"><i class="bi bi-gender-ambiguous"></i></span>
                             <select name="genero" id="genero" class="form-select" required>
                                 <option value="">Seleccione el género</option>
-                                <option value="M">Hombre</option>
-                                <option value="F">Mujer</option>
+                                <option value="Masculino">Hombre</option>
+                                <option value="Femenino">Mujer</option>
                             </select>
                             <div class="invalid-feedback">Debe seleccionar un género.</div>
                         </div>
@@ -97,7 +97,14 @@ if (!isset($_SESSION['usuario'])) {
                             <input type="date" name="fecha_ingreso" class="form-control">
                         </div>
                     </div>
-
+                    <!-- DIP* -->
+                    <div class="col-md-6">
+                        <label for="codigo" class="form-label">DIP*</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                            <input type="text" name="codigo" id="codigo" class="form-control" value=" ">
+                        </div>
+                    </div>
                     <!-- Horario de trabajo -->
                     <div class="col-md-6">
                         <label class="form-label">Horario de Trabajo</label>
@@ -117,22 +124,22 @@ if (!isset($_SESSION['usuario'])) {
                                 <option value="USD">$</option>
                                 <option value="EUR">€</option>
                             </select>
-                            <input type="text" name="salario" class="form-control" placeholder="Ej: 1500.00">
+                            <input type="text" name="salario" id="salario" class="form-control" placeholder="Ej: 1500.00">
                         </div>
                     </div>
 
                     <!-- Botones -->
-                    <div class="col-12 d-flex justify-content-center mt-3">
-                        <div class="col-8 col-md-4 d-flex justify-content-between mt-3">
-                            <a href="index.php?vista=empleados" class="btn btn-outline-secondary rounded-pill px-4">
-                                <i class="bi bi-arrow-left-circle me-1"></i>Cancelar
-                            </a>
-                            <button type="submit" class="btn btn-outline-success rounded-pill px-4">
-                                <i class="bi bi-save-fill me-1"></i>Registrar
-                            </button>
 
-                        </div>
+                    <div class="col-12 d-flex justify-content-between pt-3">
+                        <a href="index.php?vista=empleados" class="btn btn-outline-secondary rounded-pill px-4">
+                            <i class="bi bi-arrow-left-circle me-1"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-outline-success rounded-pill px-4">
+                            <i class="bi bi-save-fill me-1"></i>Registrar
+                        </button>
+
                     </div>
+
                 </form>
             </div>
         </div>

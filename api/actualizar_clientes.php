@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Validar y limpiar campos
+$id    = trim($_POST['id'] ?? '');
 $nombre    = trim($_POST['nombre'] ?? '');
 $correo    = trim($_POST['correo'] ?? '');
 $codigo    = trim($_POST['codigo'] ?? '');
@@ -43,7 +44,7 @@ try {
     $email = $email ?: null;
     $telefono = $telefono ?: null;
     $direccion = $direccion ?: null;
-    $codigo_acceso = $codigo_acceso ?: null;
+    $codigo = $codigo ?: null;
 
     $sql = "UPDATE clientes SET 
             nombre = :nombre,
@@ -58,7 +59,7 @@ try {
     $stmt->bindParam(':email', $email, PDO::PARAM_STR);
     $stmt->bindParam(':telefono', $telefono, PDO::PARAM_STR);
     $stmt->bindParam(':direccion', $direccion, PDO::PARAM_STR);
-    $stmt->bindParam(':codigo', $codigo_acceso, PDO::PARAM_STR);
+    $stmt->bindParam(':codigo', $codigo, PDO::PARAM_STR);
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
     $stmt->execute();

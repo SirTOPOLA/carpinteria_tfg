@@ -72,8 +72,8 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     </td>
                                     <td class="text-center">
                                         <a href="index.php?vista=editar_usuarios&id=<?= $usuario['id'] ?>"
-                                            class="btn btn-sm btn-warning" title="Editar">
-                                            <i class="bi bi-pencil"></i>
+                                            class="btn btn-sm btn-outline-warning" title="Editar">
+                                            <i class="bi bi-pencil-square"></i>
                                         </a>
                                     </td>
                                 </tr>

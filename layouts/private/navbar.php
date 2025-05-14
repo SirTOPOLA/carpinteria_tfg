@@ -15,3 +15,5 @@
         </a>
     </div>
 </nav>
+<!-- Toast container global -->
+<div id="toast-container"></div>

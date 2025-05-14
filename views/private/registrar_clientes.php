@@ -12,12 +12,12 @@ if (!isset($_SESSION['usuario'])) {
         <div class="card border-0 shadow rounded-4 col-lg-8 mx-auto">
             <div class="card-header bg-info text-white rounded-top-4 py-3">
                 <h5 class="mb-0">
-                    <i class="bi bi-person-lines-fill me-2"></i>Editar Cliente
+                    <i class="bi bi-person-lines-fill me-2"></i>Registar Cliente
                 </h5>
             </div>
 
             <div class="card-body">
-                <form id="formEditarCliente" method="POST" class="row g-3 needs-validation" novalidate>
+                <form id="formRegistarCliente" method="POST" class="row g-3 needs-validation" novalidate>
 
                     <!-- Nombre completo -->
                     <div class="col-md-6">
@@ -50,6 +50,15 @@ if (!isset($_SESSION['usuario'])) {
                                 value=" ">
                         </div>
                     </div>
+                    <!-- DIP* -->
+                    <div class="col-md-6">
+                        <label for="codigo" class="form-label">DIP*</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                            <input type="text" name="codigo" id="codigo" class="form-control"
+                                value=" ">
+                        </div>
+                    </div>
 
                     <!-- Dirección -->
                     <div class="col-md-6">
@@ -67,7 +76,7 @@ if (!isset($_SESSION['usuario'])) {
                             <i class="bi bi-arrow-left-circle me-1"></i>Volver
                         </a>
                         <button type="submit" class="btn btn-outline-success text-outline-dark rounded-pill px-4">
-                            <i class="bi bi-save2-fill me-1"></i>Actualizar
+                            <i class="bi bi-save2-fill me-1"></i>Guardar
                         </button>
                     </div>
 
@@ -81,7 +90,7 @@ if (!isset($_SESSION['usuario'])) {
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('form');
+        const form = document.getElementById('formRegistarCliente');
 
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
@@ -107,8 +116,11 @@ if (!isset($_SESSION['usuario'])) {
                     alert('Cliente registrado con éxito.');
                     form.reset();
                     form.classList.remove('was-validated');
+                    window.location.href = 'index.php?vista=clientes';
                 } else {
                     alert(resultado.error || 'Error al registrar el cliente.');
+                    form.reset();
+                    form.classList.remove('was-validated');
                 }
 
             } catch (error) {

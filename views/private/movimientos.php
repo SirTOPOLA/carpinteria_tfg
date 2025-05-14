@@ -83,8 +83,8 @@ $movimientos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     </td>
                                     <td class="text-center">
                                         <a href="index.php?vista=editar_movimientos&id=<?= $mov['id'] ?>"
-                                            class="btn btn-sm btn-warning" title="Editar">
-                                            <i class="bi bi-pencil"></i>
+                                            class="btn btn-sm btn-outline-warning" title="Editar">
+                                            <i class="bi bi-pencil-square"></i>
                                         </a>
                                         <!-- <a href="eliminar_movimientos_inventario.php?id " class="btn btn-sm btn-danger"
                                        title="Eliminar" onclick="return confirm('¿Está seguro de eliminar este movimiento?');">

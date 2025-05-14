@@ -81,9 +81,8 @@ $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
 
                     <!-- Botones -->
-                    <div class="col-12 d-flex justify-content-center mt-3">
-                        <div class="col-8 col-md-4 d-flex justify-content-between mt-3">
-                            <a href="index.php?vista=usuarios" class="btn btn-outline-secondary rounded-pill px-4">
+                    <div class="col-12 d-flex justify-content-between mt-3">
+                    <a href="index.php?vista=usuarios" class="btn btn-outline-secondary rounded-pill px-4">
                                 <i class="bi bi-arrow-left-circle me-1"></i>Cancelar
                             </a>
 
@@ -92,8 +91,7 @@ $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </button>
 
                         </div>
-                    </div>
-
+                  
 
                 </form>
             </div>

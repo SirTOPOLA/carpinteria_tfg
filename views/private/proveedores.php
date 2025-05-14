@@ -56,8 +56,8 @@ $proveedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <td><?= htmlspecialchars($proveedor['direccion']) ?></td>
                                     <td class="text-center">
                                         <a href="index.php?vista=editar_proveedores&id=<?= $proveedor['id'] ?>"
-                                            class="btn btn-sm btn-warning">
-                                            <i class="bi bi-pencil"></i>
+                                            class="btn btn-sm btn-outline-warning">
+                                            <i class="bi bi-pencil-square"></i>
                                         </a>
 
                                     </td>

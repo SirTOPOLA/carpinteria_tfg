@@ -1,3 +1,6 @@
+
+
+
 <div id="content" class="container container-fluid-ms  py-4">
     <div class="card border-0 shadow rounded-4 col-lg-9 mx-auto">
         <div class="card-header bg-warning text-dark rounded-top-4 py-3">
@@ -57,3 +60,34 @@
     </div>
 </div>
  
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('formRegistrarMaterial');
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault(); // Evita envío tradicional
+
+        const formData = new FormData(form);
+ 
+        fetch('api/guardar_materiales.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Mostrar éxito y redirigir o limpiar
+                alert('Material registrado correctamente');
+                window.location.href = 'index.php?vista=materiales';
+            } else {
+                alert(data.message || 'Ocurrió un error al procesar el formulario.');
+            }
+        })
+        .catch(err => {
+            console.error('Error en la petición:', err);
+            alert('Error al enviar el formulario. Intenta de nuevo.');
+        });
+    });
+});
+</script>

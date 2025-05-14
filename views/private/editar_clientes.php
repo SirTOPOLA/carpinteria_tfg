@@ -1,5 +1,5 @@
 <?php
- 
+
 // Si no hay sesión → redirige a login
 if (!isset($_SESSION['usuario'])) {
     $_SESSION['alerta'] = "Debes registrarte para continuar con esta petición.";
@@ -35,9 +35,9 @@ try {
     exit;
 }
 ?>
-   <!-- Contenido -->
-   <div id="content"  class="container-fluid py-4">
-        <div class="container-fluid container-md px-4 px-sm-3 px-md-4">
+<!-- Contenido -->
+<div id="content" class="container-fluid py-4">
+    <div class="container-fluid container-md px-4 px-sm-3 px-md-4">
         <div class="card border-0 shadow rounded-4 col-lg-8 mx-auto">
             <div class="card-header bg-info text-white rounded-top-4 py-3">
                 <h5 class="mb-0">
@@ -46,8 +46,8 @@ try {
             </div>
 
             <div class="card-body">
-                <form id="formEditarCliente" method="POST" class="row g-3 needs-validation" novalidate>
-
+                <form id="formEditarCliente"  class="row g-3 needs-validation" novalidate>
+                    <input type="hidden" name="id" id="id" value="<?= htmlspecialchars($cliente['id']) ?> ">
                     <!-- Nombre completo -->
                     <div class="col-md-6">
                         <label for="nombre" class="form-label">Nombre completo <span
@@ -79,6 +79,16 @@ try {
                                 value="<?= htmlspecialchars($cliente['telefono']) ?>">
                         </div>
                     </div>
+                     <!-- DIP* -->
+                     <div class="col-md-6">
+                        <label for="codigo" class="form-label">DIP*</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                            <input type="text" name="codigo" id="codigo" class="form-control"
+                            value="<?= htmlspecialchars($cliente['codigo']) ?>">
+                        </div>
+                    </div>
+      
 
                     <!-- Dirección -->
                     <div class="col-md-6">
@@ -105,9 +115,9 @@ try {
         </div>
     </div>
 
-    </div>
+</div>
 
- 
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('formEditarCliente');
@@ -121,11 +131,14 @@ try {
                 return;
             }
 
+            
+
+
             // Reunir los datos del formulario
             const formData = new FormData(form);
 
             try {
-                const response = await fetch('api/actualizar_cliente.php', {
+                const response = await fetch('api/actualizar_clientes.php', {
                     method: 'POST',
                     body: formData
                 });

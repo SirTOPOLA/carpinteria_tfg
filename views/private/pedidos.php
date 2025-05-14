@@ -68,8 +68,7 @@ $solicitudes_pedidos = $stmt->fetch(PDO::FETCH_ASSOC);
                             <th><i class="bi bi-file-text me-1"></i>Cliente</th>
                             <th><i class="bi bi-flag-fill me-1"></i>Descripción</th>
                             <th><i class="bi bi-calendar-event me-1"></i>Creado</th>
-                            <th><i class="bi bi-calendar-check me-1"></i>Estado</th>
-                            <th><i class="bi bi-clock-history me-1"></i>Creado</th>
+                            <th><i class="bi bi-calendar-check me-1"></i>Estado</th> 
                             <th><i class="bi bi-clock-history me-1"></i>Coste</th>
                             <th class="text-center"><i class="bi bi-gear-fill me-1"></i>Acciones</th>
                         </tr>
@@ -92,8 +91,8 @@ $solicitudes_pedidos = $stmt->fetch(PDO::FETCH_ASSOC);
                                             <i class="bi bi-eye"></i>
                                         </a>
                                         <a href="index.php?vista=editar_pedidos&id=<?= $p['id'] ?>"
-                                            class="btn btn-sm btn-outline-primary">
-                                            <i class="bi bi-files"></i>
+                                            class="btn btn-sm btn-outline-warning">
+                                            <i class="bi bi-pencil-square"></i>
                                         </a>
 
                                     </td>

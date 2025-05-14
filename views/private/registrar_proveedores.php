@@ -92,7 +92,7 @@ $proveedor = $stmt->fetch(PDO::FETCH_ASSOC);
     
     <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('form');
+    const form = document.getElementById('formProveedor');
 
     form.addEventListener('submit', function (e) {
         e.preventDefault(); // Evita envío tradicional

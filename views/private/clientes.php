@@ -61,13 +61,10 @@ $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <td><?= htmlspecialchars($cliente['direccion']) ?></td>
                                     <td><?= date("d/m/Y H:i", strtotime($cliente['creado_en'])) ?></td>
                                     <td class="text-center">
-                                        <a href="index.php?vista=editar_clientes&id=<?= $cliente['id'] ?>" class="btn btn-sm btn-warning">
-                                            <i class="bi bi-pencil"></i>
+                                        <a href="index.php?vista=editar_clientes&id=<?= $cliente['id'] ?>" class="btn btn-sm btn-outline-warning">
+                                            <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        <a href="iindex.php?vista=eliminar_clientes&id=<?= $cliente['id'] ?>" class="btn btn-sm btn-danger"
-                                            onclick="return confirm('¿Está seguro de eliminar este cliente?');">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
+                                        
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

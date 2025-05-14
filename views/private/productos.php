@@ -64,8 +64,8 @@ $productos = $stmt_total->fetchAll();
                                 <td><?= date("d/m/Y H:i", strtotime($producto['fecha_creacion'])) ?></td>
                                 <td class="text-center">
                                     <a href="index.php?vista=editar_productos&id=<?= $producto['id'] ?>"
-                                        class="btn btn-sm btn-warning" title="Editar">
-                                        <i class="bi bi-pencil"></i>
+                                        class="btn btn-sm btn-outline-warning" title="Editar">
+                                        <i class="bi bi-pencil-square"></i>
                                     </a>
                                     <!--   <a href="eliminar_producto.php?id=<?= $producto['id'] ?>" class="btn btn-sm btn-danger"
                                         title="Eliminar" onclick="return confirm('¿Está seguro de eliminar este producto?');">

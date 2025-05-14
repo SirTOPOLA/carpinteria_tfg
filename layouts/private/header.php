@@ -416,6 +416,45 @@
                 color: rgb(0, 0, 0);
             }
         } */
+
+        /* --------alerta-------- */
+        #toast-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .toast {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    color: #fff;
+    min-width: 200px;
+    max-width: 320px;
+    animation: fadeInOut 4s ease-in-out forwards;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    backdrop-filter: blur(6px);
+  }
+
+  .toast.success { background-color: #16a34a; }  /* verde */
+  .toast.error   { background-color: #dc2626; }  /* rojo */
+  .toast.warning { background-color: #f59e0b; }  /* naranja */
+  .toast.info    { background-color: #2563eb; }  /* azul */
+
+  @keyframes fadeInOut {
+    0%   { opacity: 0; transform: translateY(-10px); }
+    10%  { opacity: 1; transform: translateY(0); }
+    90%  { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-10px); }
+  }
+        
     </style>
 </head>
 

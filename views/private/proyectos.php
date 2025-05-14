@@ -63,7 +63,7 @@ $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         </a>
                                         <a href="index.php?vista=editar_proyectos&id=<?= $p['id'] ?>"
                                             class="btn btn-sm btn-outline-warning" title="Editar">
-                                            <i class="bi bi-pencil"></i>
+                                            <i class="bi bi-pencil-square"></i>
                                         </a>
                                     </td>
                                 </tr>

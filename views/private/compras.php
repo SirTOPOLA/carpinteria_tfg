@@ -68,11 +68,11 @@ try {
                                     <td>$<?= number_format($compra['total'], 2) ?></td>
                                     <td><?= htmlspecialchars($detalle['material']) ?></td>
                                     <td><?= $detalle['cantidad'] ?></td>
-                                    <td>$<?= number_format($detalle['precio_unitario'], 2) ?></td>
+                                    <td>XAF <?= number_format($detalle['precio_unitario'], 2) ?></td>
                                     <td>
                                         <a href="index.php?vista=editar_compras&id=<?= $compra['id'] ?>"
-                                            class="btn btn-sm btn-warning" title="Editar">
-                                            <i class="bi bi-pencil"></i>
+                                            class="btn btn-sm btn-outline-warning" title="Editar">
+                                            <i class="bi bi-pencil-square"></i>
                                         </a>
 
                                     </td>
