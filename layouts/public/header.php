@@ -90,10 +90,10 @@ try {
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
       <ul class="navbar-nav align-items-lg-center">
         <li class="nav-item"><a class="nav-link" href="index.php?vista=inicio"><i class="bi bi-house-door"></i> Inicio</a></li>
-        <li class="nav-item"><a class="nav-link" href="nosotros.php"><i class="bi bi-people"></i> Nosotros</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.php?vista=nosotros"><i class="bi bi-people"></i> Nosotros</a></li>
         <li class="nav-item"><a class="nav-link" href="index.php?vista=producto"><i class="bi bi-box-seam"></i> Catálogo</a></li>
-        <li class="nav-item"><a class="nav-link" href="pedido_personalizado.php"><i class="bi bi-pencil-square"></i> Pedido</a></li>
-        <li class="nav-item"><a class="nav-link" href="contacto.php"><i class="bi bi-envelope"></i> Contacto</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.php?vista=pedidos"><i class="bi bi-pencil-square"></i> Pedido</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.php?vista=contacto"><i class="bi bi-envelope"></i> Contacto</a></li>
         <li class="nav-item ms-2">
           <a class="btn btn-sm btn-outline-light" href="login.php"><i class="bi bi-person-circle"></i> Acceder</a>
         </li>
