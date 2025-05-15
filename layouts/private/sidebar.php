@@ -79,9 +79,10 @@ $menu = [
         'Dashboard'   => 'dashboard',
         'Mi Perfil'   => 'perfil',
         'Mis Pedidos' => 'mis_pedidos',
+        'Pedidos' => 'pedidos',
     ],
     'sin_permiso' => [
-        'Dashboard' => 'dashboard',
+        'inicio' => 'inicio',
     ],
 ];
 ?>

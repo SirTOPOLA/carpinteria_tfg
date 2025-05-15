@@ -13,7 +13,7 @@ require_once 'components/alerta.php';
  
 
 
-$publicas = ['inicio','producto','contacto'];  // vistas públicas
+$publicas = ['inicio','producto','contacto', 'nosotro'];  // vistas públicas
 
 $vista = $_GET['vista'] ?? 'dashboard';
 

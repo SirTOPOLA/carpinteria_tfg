@@ -178,6 +178,7 @@ CREATE TABLE `empleados` (
   `telefono` varchar(20) NOT NULL,
   `direccion` varchar(100) NOT NULL,
   `email` varchar(100) DEFAULT NULL,
+ 
   `horario_trabajo` varchar(100) NOT NULL,
   `fecha_ingreso` date NOT NULL,
   `creado_en` timestamp NOT NULL DEFAULT current_timestamp()
@@ -316,8 +317,7 @@ INSERT INTO `producciones` (`id`, `proyecto_id`, `responsable_id`, `fecha_inicio
 CREATE TABLE `productos` (
   `id` int(11) NOT NULL,
   `nombre` varchar(100) DEFAULT NULL,
-  `descripcion` text DEFAULT NULL,
-  `categoria_id` int(11) DEFAULT NULL,
+  `descripcion` text DEFAULT NULL, 
   `precio_unitario` decimal(10,2) DEFAULT NULL,
   `stock` int(11) DEFAULT 0,
   `solicitud_id` int(11) DEFAULT NULL
@@ -433,6 +433,7 @@ CREATE TABLE `usuarios` (
   `id` int(11) NOT NULL,
   `usuario` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
+     perfil TEXT ,
   `rol_id` int(11) NOT NULL,
   `empleado_id` int(11) DEFAULT NULL,
   `activo` tinyint(1) DEFAULT 1
