@@ -131,8 +131,8 @@ try {
               Nosotros</a></li>
           <li class="nav-item"><a class="nav-link" href="index.php?vista=producto"><i class="bi bi-box-seam"></i>
               Catálogo</a></li>
-          <li class="nav-item"><a class="nav-link" href="index.php?vista=pedido"><i class="bi bi-pencil-square"></i>
-              Pedido</a></li>
+         <!--  <li class="nav-item"><a class="nav-link" href="index.php?vista=pedido"><i class="bi bi-pencil-square"></i>
+              Pedido</a></li> -->
           <li class="nav-item"><a class="nav-link" href="index.php?vista=contacto"><i class="bi bi-envelope"></i>
               Contacto</a></li>
           <li class="nav-item ms-2">
