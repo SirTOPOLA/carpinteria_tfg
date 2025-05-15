@@ -1,4 +1,8 @@
-<main class="vh-auto">
+
+
+
+
+<main class="pt-5 min-vh-100 d-flex flex-column bg-body-tertiary">
 
  <!-- Hero Seccional -->
   <section class="py-5 text-center text-white position-relative overflow-hidden"
@@ -7,11 +11,7 @@
         <h1 class="display-4 fw-bold">Pedido Personalizado</h1>
         <p class="lead">Solicita muebles hechos a tu medida con calidad y pasión artesanal.</p>
     </div>
-</section>
-
-
-
- 
+</section> 
 
   <!-- Formulario de pedido personalizado -->
   <section class="container py-5">

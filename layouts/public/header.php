@@ -90,13 +90,13 @@ try {
       background-color: #5d4037;
     }
 
-    .hero {
+    /* .hero {
       background: url('<?= htmlspecialchars($heroRuta) ?>') no-repeat center center;
       background-size: cover;
       padding: 120px 0;
       color: #fff;
       text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
-    }
+    } */
 
     .hero h1 {
       font-size: 3rem;
@@ -116,29 +116,25 @@ try {
 
 <body>
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container">
-      <a class="navbar-brand fw-bold" href="index.php"><i class="bi bi-house-door-fill me-1"></i> Carpintería</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav align-items-lg-center">
-          <li class="nav-item"><a class="nav-link" href="index.php?vista=inicio"><i class="bi bi-house-door"></i>
-              Inicio</a></li>
-          <li class="nav-item"><a class="nav-link" href="index.php?vista=nosotro"><i class="bi bi-people"></i>
-              Nosotros</a></li>
-          <li class="nav-item"><a class="nav-link" href="index.php?vista=producto"><i class="bi bi-box-seam"></i>
-              Catálogo</a></li>
-         <!--  <li class="nav-item"><a class="nav-link" href="index.php?vista=pedido"><i class="bi bi-pencil-square"></i>
-              Pedido</a></li> -->
-          <li class="nav-item"><a class="nav-link" href="index.php?vista=contacto"><i class="bi bi-envelope"></i>
-              Contacto</a></li>
-          <li class="nav-item ms-2">
-            <a class="btn btn-sm btn-outline-light" href="login.php"><i class="bi bi-person-circle"></i> Acceder</a>
-          </li>
-        </ul>
-      </div>
+ <!-- Navbar fija arriba -->
+<nav class="navbar navbar-expand-lg navbar-dark  fixed-top shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="index.php">
+      <i class="bi bi-house-door-fill me-1"></i> Carpintería
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav align-items-lg-center">
+        <li class="nav-item"><a class="nav-link" href="index.php?vista=inicio"><i class="bi bi-house-door"></i> Inicio</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.php?vista=nosotro"><i class="bi bi-people"></i> Nosotros</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.php?vista=producto"><i class="bi bi-box-seam"></i> Catálogo</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.php?vista=contacto"><i class="bi bi-envelope"></i> Contacto</a></li>
+        <li class="nav-item ms-2">
+          <a class="btn btn-sm btn-outline-light" href="login.php"><i class="bi bi-person-circle"></i> Acceder</a>
+        </li>
+      </ul>
     </div>
-  </nav>
+  </div>
+</nav>

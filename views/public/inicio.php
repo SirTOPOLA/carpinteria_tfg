@@ -12,15 +12,16 @@ try {
 }
 ?>
 
-<main class="min-vh-100 d-flex flex-column bg-dark text-white">
-
+<main class="pt-5 min-vh-100 d-flex flex-column bg-body-tertiary">
   <!-- Hero Completo a Pantalla -->
-  <section class="hero flex-grow-1 d-flex align-items-center justify-content-center text-center position-relative overflow-hidden">
+  <section
+    class=" flex-grow-1 d-flex align-items-center justify-content-center text-center position-relative overflow-hidden"
+    style="background: linear-gradient(to right, #1f2937cc, #4b5563cc), url('<?= htmlspecialchars($heroRuta) ?>') center/cover no-repeat;">
     <div class="container">
-      <h1 class="display-4 fw-bold text-uppercase mb-3">
-        <i class="bi bi-tree-fill me-2"></i>Diseños únicos en madera
+      <h1 class="display-4 fw-bold text-uppercase mb-3 text-white">
+        <i class="bi bi-tree-fill me-2 text-white"></i>Diseños únicos en madera
       </h1>
-      <p class="lead mb-4">Transformamos tus ideas en muebles personalizados con calidad artesanal.</p>
+      <p class="lead mb-4 text-white">Transformamos tus ideas en muebles personalizados con calidad artesanal.</p>
 
       <div class="d-flex justify-content-center gap-3 flex-wrap mb-5">
         <a href="index.php?vista=producto" class="btn btn-warning btn-lg px-4 rounded-pill shadow-sm">
@@ -33,11 +34,13 @@ try {
 
       <!-- Carrusel si hay imágenes -->
       <?php if (!empty($imagenes)): ?>
-        <div id="heroCarousel" class="carousel slide w-100 mx-auto shadow rounded overflow-hidden" style="max-width: 900px;" data-bs-ride="carousel">
+        <div id="heroCarousel" class="carousel slide w-100 mx-auto shadow rounded overflow-hidden"
+          style="max-width: 900px;" data-bs-ride="carousel">
           <div class="carousel-inner">
             <?php foreach ($imagenes as $index => $img): ?>
               <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
-                <img src="api/<?= htmlspecialchars($img) ?>" class="d-block w-100" style="height: 400px; object-fit: cover;" alt="api/<?= $index + 1 ?>">
+                <img src="api/<?= htmlspecialchars($img) ?>" class="d-block w-100" style="height: 400px; object-fit: cover;"
+                  alt="api/<?= $index + 1 ?>">
               </div>
             <?php endforeach; ?>
           </div>
@@ -55,4 +58,3 @@ try {
   </section>
 
 </main>
- 

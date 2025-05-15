@@ -1,4 +1,5 @@
-<main class="min-vh-100 d-flex flex-column">
+<main class="pt-5 min-vh-100 d-flex flex-column bg-body-tertiary">
+
 
     <!-- Hero Seccional -->
     <section class="hero-contacto py-5 text-center text-white"
