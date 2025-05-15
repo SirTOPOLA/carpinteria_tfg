@@ -4,7 +4,7 @@ try {
     $stmt = $pdo->prepare("SELECT ruta_imagen FROM imagenes_producto ORDER BY RAND() LIMIT 1");
     $stmt->execute();
     $heroImg = $stmt->fetchColumn();
-    $heroRuta = $heroImg ? "uploads/productos/" . $heroImg : "img/hero-default.jpg";
+    $heroRuta = $heroImg ? "api/" . $heroImg : "img/hero-default.jpg";
 } catch (PDOException $e) {
     $heroRuta = "img/hero-default.jpg";
 }
@@ -15,11 +15,17 @@ try {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Carpintería Artesanal</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-  <style>
+  <title>Carpintería sixboku</title>
+      <!-- Bootstrap 5.3 CSS -->
+      <!-- Bootstrap Icons -->
+
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+ 
+
+   <style>
     body {
       font-family: 'Poppins', sans-serif;
       background-color: #f9f7f6;
@@ -96,4 +102,3 @@ try {
   </div>
 </nav>
 
-<

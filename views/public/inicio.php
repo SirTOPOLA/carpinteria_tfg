@@ -3,7 +3,7 @@ try {
     $sql = "SELECT ruta_imagen 
             FROM imagenes_producto 
             ORDER BY RAND() 
-            LIMIT 6"; // selecciona 6 imágenes aleatorias
+            LIMIT 1"; // selecciona 6 imágenes aleatorias
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
@@ -12,6 +12,7 @@ try {
 } catch (PDOException $e) {
     $imagenes = [];
 }
+
 ?>
 
 <!-- Hero Section mejorado -->
@@ -19,10 +20,10 @@ try {
   <div class="container text-center">
     <h1 class="display-4 fw-bold">Diseños únicos en madera</h1>
     <p class="lead mb-4">Creamos muebles a medida con pasión y detalle artesanal.</p>
-    <a href="productos.php" class="btn btn-warning btn-lg px-4 me-2">
+    <a href="index.php?vista=producto" class="btn btn-warning btn-lg px-4 me-2">
       <i class="bi bi-box-seam"></i> Ver Catálogo
     </a>
-    <a href="pedido_personalizado.php" class="btn btn-outline-light btn-lg px-4">
+    <a href="index.php?vista=contacto" class="btn btn-outline-light btn-lg px-4">
       <i class="bi bi-pencil-square"></i> Hacer un pedido
     </a>
   </div>

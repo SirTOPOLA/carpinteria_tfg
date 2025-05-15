@@ -33,9 +33,9 @@ try {
     // -------------------------
     $pdo->beginTransaction();
 
-    $stmt = $pdo->prepare("INSERT INTO productos (nombre, descripcion, categoria_id, precio_unitario, stock)
-                           VALUES (?, ?, ?, ?, ?)");
-    $stmt->execute([$nombre, $descripcion, $categoria_id, $precio_unitario, $stock]);
+    $stmt = $pdo->prepare("INSERT INTO productos (nombre, descripcion, precio_unitario, stock)
+                           VALUES (?, ?,  ?, ?)");
+    $stmt->execute([$nombre, $descripcion,  $precio_unitario, $stock]);
 
     $producto_id = $pdo->lastInsertId();
 

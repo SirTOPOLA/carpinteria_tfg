@@ -10,7 +10,7 @@ function verificarAcceso($vista)
 {
     // Si no hay sesión → redirige a login
     if (!isset($_SESSION['usuario'])) {
-        header("Location: login.php");
+        header("Location: index.php?vista=inicio");
         exit;
     }
     // Validar que el usuario esté activo

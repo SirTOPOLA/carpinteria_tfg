@@ -5,6 +5,9 @@
     </button>
     <span class="navbar-brand mb-0 h5 text-dark"><i class="bi bi-hammer me-2"></i>Panel Carpintería</span>
     <div class="ms-auto user-info">
+        <a href="index.php?vista=inicio" class="btn btn-sm btn-outline-primary ms-2">
+            <i class="bi bi-house-door me-2"></i> Salir
+        </a>
        <!--  <img src="#" alt="Avatar usuario"> -->
         <div>
             <div class="fw-bold"><?= htmlspecialchars($_SESSION['usuario']['nombre']) ?></div>
