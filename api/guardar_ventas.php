@@ -4,12 +4,11 @@ require 'conexion.php';
 try {
     $pdo->beginTransaction();
 
-    $cliente_id = $_POST['cliente_id'];
-    $metodo_pago = $_POST['metodo_pago'];
+    $cliente_id = $_POST['cliente_id']; 
     $fecha = date('Y-m-d H:i:s');
 
-    $stmt = $pdo->prepare("INSERT INTO ventas (cliente_id, metodo_pago, fecha) VALUES (?, ?, ?)");
-    $stmt->execute([$cliente_id, $metodo_pago, $fecha]);
+    $stmt = $pdo->prepare("INSERT INTO ventas (cliente_id,  fecha) VALUES ( ?, ?)");
+    $stmt->execute([$cliente_id,   $fecha]);
     $venta_id = $pdo->lastInsertId();
 
     $tipos = $_POST['tipo'];

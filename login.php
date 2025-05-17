@@ -87,6 +87,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 }
 
+/* ********* CONFIGURACION ****** */
+$stmt = $pdo->prepare("SELECT * FROM configuracion");
+$stmt->execute();
+$configuracion = $stmt->fetch();
+
+if ($configuracion !== false) {
+  $nombre_empresa = $configuracion['nombre_empresa'];
+  $direccion = $configuracion['direccion'];
+  $mision = $configuracion['mision'];
+  $vision = $configuracion['vision'];
+  $telefono = $configuracion['telefono'];
+  $correo = $configuracion['correo'];
+  $logo = $configuracion['logo'];
+  $historia = $configuracion['historia']; // o historia, según tu DB
+  $imagen_portada = $configuracion['imagen'];
+} else {
+  // No hay configuración en la BD
+  $nombre_empresa = '';
+  $logo = '';
+  $correo = '';
+  $direccion = '';
+  $mision = '';
+  $vision = '';
+  $historia = '';
+  $imagen_portada = '';
+}
+
 
 ?>
 
@@ -98,13 +125,89 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login – Carpinteria SIXBOKU</title>
+  <title>Login – <?= htmlspecialchars($nombre_empresa) ?></title>
 
   <!-- Bootstrap y Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
   <link rel="stylesheet" href="./assets/css/public/login.css">
+  <style>
+    /* login.css */
 
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      background-color: #f8f9fa;
+    }
+
+    .login-wrapper {
+      height: 100vh;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 100%;
+      height: 100%;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+      background-color: white;
+      border-radius: 1rem;
+      overflow: hidden;
+    }
+
+    .login-image {
+      background: url('api/<?= $imagen_portada ?>') no-repeat center center;
+      background-size: cover;
+      height: 300px;
+    }
+
+    @media (min-width: 768px) {
+      .login-image {
+        height: 100%;
+      }
+    }
+
+    .form-label-icon {
+      display: flex;
+      align-items: center;
+      font-weight: 600;
+      font-size: 0.95rem;
+      gap: 0.5rem;
+      color: #495057;
+    }
+
+    .form-control,
+    .input-group-text {
+      border-radius: 0.5rem;
+      border: 1px solid #ced4da;
+    }
+
+    .form-control:focus {
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .15);
+      border-color: #80bdff;
+    }
+
+    .btn-toggle-option {
+      font-size: 0.9rem;
+      border-radius: 2rem;
+     /*  padding: 0.6rem 1.2rem; */
+    }
+
+    .btn-submit {
+      padding: 0.6rem;
+      font-weight: 600;
+      border-radius: 2rem;
+    }
+
+    .form-container {
+      
+      
+      background: #ffffff;
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    }
+  </style>
 </head>
 
 <body>
@@ -121,56 +224,77 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
 
       <!-- Formulario -->
-      <div class="col-md-6 p-4 d-flex align-items-center justify-content-center">
+      <div class="col-md-6  d-flex align-items-center justify-content-center form-container">
         <div class="login-form">
-          <h3 class="mb-4 text-center text-success fw-semibold">Bienvenido a la carpinteria <span
-              class="fw-bold">SIXBOKU</span>
+          <h3 class="mb-4 text-center text-success fw-semibold"> <span
+              class="fw-bold"><?= htmlspecialchars($nombre_empresa) ?> </span>
           </h3>
           <?php include_once('components/alerta.php') ?>
-
-
           <form method="POST" id="formLogin" novalidate>
-            <div class="mb-3">
-              <label for="tipo_usuario" class="form-label">Tipo de usuario</label>
-              <select name="tipo_usuario" id="tipo_usuario" class="form-select">
-                <option value="personal">Personal interno</option>
-                <option value="cliente">Cliente</option>
-              </select>
-            </div>
-            <!-- Campos para personal -->
-            <div id="personal_fields">
-              <div class="mb-4">
-                <label for="correo" class="form-label fw-semibold">Usuario</label>
-                <div class="input-group shadow-sm rounded">
-                  <span class="input-group-text bg-white border-end-0"><i class="bi bi-person text-success"></i></span>
-                  <input type="email" id="usuario" name="correo" class="form-control border-start-0"
-                    placeholder="Ingrese su usuario" required>
-                </div>
-              </div>
-              <div class="mb-4">
-                <label for="contrasena" class="form-label fw-semibold">Contraseña</label>
-                <div class="input-group shadow-sm rounded">
-                  <span class="input-group-text bg-white border-end-0"><i class="bi bi-lock text-success"></i></span>
-                  <input type="password" id="clave" name="contrasena" class="form-control border-start-0"
-                    placeholder="Ingrese su contraseña" required>
-                </div>
-              </div>
-            </div>
-            <!-- Campos para cliente -->
-            <div id="cliente_fields" style="display:none;">
+            <!-- Selector tipo usuario -->
+            <div class="mb-4">
+              <label class="form-label-icon mb-2"><i class="bi bi-person-lines-fill text-secondary"></i> Tipo de
+                usuario</label>
+              <div class="d-flex flex-column flex-md-row gap-2">
+                <input type="radio" class="btn-check" name="tipo_usuario" id="tipo_personal" value="personal"
+                  autocomplete="off" checked>
+                <label class="btn btn-outline-success w-100 btn-toggle-option" for="tipo_personal">
+                  <i class="bi bi-people-fill"></i> Personal  
+                </label>
 
-              <div class="mb-4">
-                <label for="codigo" class="form-label fw-semibold">ID de cliente</label>
-                <div class="input-group shadow-sm rounded">
-                  <span class="input-group-text bg-white border-end-0"><i
-                      class="bi bi-person-badge text-success"></i></span>
-                  <input type="text" id="usuario" name="codigo" class="form-control border-start-0"
-                    placeholder="Ingrese su codigo" required>
+                <input type="radio" class="btn-check" name="tipo_usuario" id="tipo_cliente" value="cliente"
+                  autocomplete="off">
+                <label class="btn btn-outline-primary w-100 btn-toggle-option" for="tipo_cliente">
+                  <i class="bi bi-person-badge-fill"></i> Cliente
+                </label>
+              </div>
+            </div>
+
+            <!-- Campos Personal -->
+            <div id="personal_fields">
+              <div class="mb-3">
+                <label for="usuario" class="form-label-icon">
+                  <i class="bi bi-envelope-at text-success"></i> Correo electrónico
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text bg-white"><i class="bi bi-person text-success"></i></span>
+                  <input type="email" id="usuario" name="correo" class="form-control" placeholder="correo@ejemplo.com"
+                    required>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="clave" class="form-label-icon">
+                  <i class="bi bi-shield-lock text-success"></i> Contraseña
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text bg-white"><i class="bi bi-lock text-success"></i></span>
+                  <input type="password" id="clave" name="contrasena" class="form-control" placeholder="••••••••"
+                    required>
                 </div>
               </div>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Acceder</button>
+
+            <!-- Campos Cliente -->
+            <div id="cliente_fields" style="display:none;">
+              <div class="mb-3">
+                <label for="codigo" class="form-label-icon">
+                  <i class="bi bi-person-vcard text-primary"></i> ID de Cliente
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text bg-white"><i class="bi bi-person-badge text-primary"></i></span>
+                  <input type="text" id="codigo" name="codigo" class="form-control" placeholder="Código de cliente"
+                    required>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botón enviar -->
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary btn-submit">Acceder</button>
+            </div>
           </form>
+
           <div class="text-center mt-3">
             <a href="index.php?vista=inicio">← Volver a Inicio</a>
           </div>
@@ -179,30 +303,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     </div>
   </div>
-  </div>
+
 
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    const tipoSelect = document.getElementById('tipo_usuario');
-    const personalFields = document.getElementById('personal_fields');
-    const clienteFields = document.getElementById('cliente_fields');
+    document.addEventListener('DOMContentLoaded', function () {
+      const tipoPersonal = document.getElementById('tipo_personal');
+      const tipoCliente = document.getElementById('tipo_cliente');
+      const personalFields = document.getElementById('personal_fields');
+      const clienteFields = document.getElementById('cliente_fields');
 
-    function toggleFields() {
-      if (tipoSelect.value === 'cliente') {
-        personalFields.style.display = 'none';
-        clienteFields.style.display = 'block';
-      } else {
-        personalFields.style.display = 'block';
-        clienteFields.style.display = 'none';
-      }
-    }
+      tipoPersonal.addEventListener('change', function () {
+        if (this.checked) {
+          personalFields.style.display = 'block';
+          clienteFields.style.display = 'none';
+        }
+      });
 
-    tipoSelect.addEventListener('change', toggleFields);
-    // Mostrar al cargar según selección previa
-    window.addEventListener('DOMContentLoaded', toggleFields);
+      tipoCliente.addEventListener('change', function () {
+        if (this.checked) {
+          personalFields.style.display = 'none';
+          clienteFields.style.display = 'block';
+        }
+      });
+    });
   </script>
+
 </body>
 
 </html>

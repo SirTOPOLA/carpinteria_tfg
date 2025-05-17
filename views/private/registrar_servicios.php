@@ -70,36 +70,39 @@
     </div>
   </div>
 </div>
- 
+
 
 <script>
-  document.getElementById('formServicio').addEventListener('submit', async function (e) {
-    e.preventDefault();
+document.getElementById('formServicio').addEventListener('submit', async function (e) {
+  e.preventDefault();
 
-    const data = {
-      nombre: document.getElementById('nombre').value,
-      descripcion: document.getElementById('descripcion').value,
-      precio_base: document.getElementById('precio_base').value,
-      unidad: document.getElementById('unidad').value,
-      activo: document.getElementById('activo').checked ? 1 : 0
-    };
+  const form = e.target;
+  const formData = new FormData(form);
 
-    console.log(data)
-    const res = await fetch('api/guardar_servicios.php', {
+  // Asegurar que el checkbox esté presente (aunque esté desmarcado)
+  if (!formData.has('activo')) {
+    formData.append('activo', 0); // si no se marcó, enviar como 0
+  }
+
+  try {
+    const response = await fetch('../api/guardar_servicios.php', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+      body: formData
     });
 
-    const resultado = await res.json();
+    const result = await response.json();
+    document.getElementById('mensaje').textContent = result.message;
+    document.getElementById('mensaje').style.color = result.success ? 'green' : 'red';
 
-    console.log(res)
-    const mensaje = document.getElementById('mensaje');
-    if (res.success) {
-      mensaje.innerHTML = `<div class="alert alert-success">${res.message}</div>`;
-      document.getElementById('formServicio').reset();
-    } else {
-      mensaje.innerHTML = `<div class="alert alert-danger">${res.message}</div>`;
+    if (result.success) {
+      form.reset(); // Limpiar formulario
+      window.location.href = 'index.php?vista=servicios'
     }
-  });
+  } catch (error) {
+    document.getElementById('mensaje').textContent = 'Error al enviar el formulario.';
+    document.getElementById('mensaje').style.color = 'red';
+  }
+});
 </script>
+
+ 

@@ -7,60 +7,84 @@ $servicios = $pdo->query("SELECT id, nombre FROM servicios")->fetchAll(PDO::FETC
 ?>
 
 
-<div class="container mt-4">
-    <h3>Registrar Venta</h3>
-    <form id="formVenta" method="POST" action="guardar_venta.php">
-        <div class="mb-3">
-            <label for="cliente_id" class="form-label">Cliente</label>
-            <select name="cliente_id" id="cliente_id" class="form-select" required>
-                <option value="">Seleccione</option>
-                <?php
-                $clientes = $pdo->query("SELECT id, nombre FROM clientes")->fetchAll(PDO::FETCH_ASSOC);
-                foreach ($clientes as $cliente):
-                    ?>
-                    <option value="<?= $cliente['id'] ?>"><?= $cliente['nombre'] ?></option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-12 col-md-6">
-                <label for="metodo_pago" class="form-label">Método de pago</label>
-                <input type="text" name="metodo_pago" id="metodo_pago" class="form-control" required>
+<div id="content" class="container-fluid py-4">
+    <div class="container-fluid container-md px-4 px-sm-3 px-md-4">
+        <div class="card border-0 shadow rounded-4 col-lg-8 mx-auto">
+            <div class="card-header bg-info text-white rounded-top-4 py-3">
+                <h5 class="mb-0">
+                    <i class="bi bi-cart-check-fill me-2"></i>Registrar Venta
+                </h5>
             </div>
-            <div class="col-12 col-md-6">
-                <label for="total_venta" class="form-label fw-bold">XAF (Total):</label>
-                <input type="text" id="total_venta" name="total" class="form-control text-end fw-bold" readonly
-                    value="0.00">
+
+            <div class="card-body">
+                <form id="formVenta" method="POST" action="guardar_venta.php" class="needs-validation" novalidate>
+
+                    
+                    <!-- Método de pago y Total -->
+                    <div class="row g-3 mb-3">
+                        <!-- Cliente -->
+                        <div class="col-md-6 mb-3">
+                            <label for="cliente_id" class="form-label fw-semibold">Cliente <span class="text-danger">*</span></label>
+                            <select name="cliente_id" id="cliente_id" class="form-select" required>
+                                <option value="">Seleccione</option>
+                                <?php
+                                $clientes = $pdo->query("SELECT id, nombre FROM clientes")->fetchAll(PDO::FETCH_ASSOC);
+                                foreach ($clientes as $cliente):
+                                ?>
+                                <option value="<?= $cliente['id'] ?>"><?= htmlspecialchars($cliente['nombre']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="invalid-feedback">Por favor selecciona un cliente.</div>
+                        </div>
+                       
+                        <div class="col-md-6">
+                            <label for="total_venta" class="form-label fw-semibold">Total (XAF):</label>
+                            <input type="text" id="total_venta" name="total" class="form-control text-end fw-bold" readonly value="0.00">
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Botones para agregar filas -->
+                    <div class="mb-4 d-flex gap-2">
+                        <button type="button" class="btn btn-outline-primary flex-fill" onclick="agregarFila('producto')">
+                            <i class="bi bi-box-seam me-1"></i>Agregar producto
+                        </button>
+                        <button type="button" class="btn btn-outline-success flex-fill" onclick="agregarFila('servicio')">
+                            <i class="bi bi-tools me-1"></i>Agregar servicio
+                        </button>
+                    </div>
+
+                    <!-- Tabla detalles -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle" id="tabla-detalles">
+                            <thead class="table-light text-center">
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Item</th>
+                                    <th style="width: 100px;">Cantidad</th>
+                                    <th style="width: 120px;">Precio</th>
+                                    <th style="width: 80px;">Eliminar</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Botón Guardar -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="index.php?vista=ventas" class="btn btn-outline-secondary rounded-pill px-4">
+                            <i class="bi bi-arrow-left-circle me-1"></i>Volver
+                        </a>
+                        <button type="submit" class="btn btn-success rounded-pill px-4">
+                            <i class="bi bi-save2-fill me-1"></i>Guardar Venta
+                        </button>
+                    </div>
+
+                </form>
             </div>
         </div>
-
-        <hr>
-
-        <div class="mb-3">
-            <button type="button" class="btn btn-outline-primary" onclick="agregarFila('producto')">Agregar
-                producto</button>
-            <button type="button" class="btn btn-outline-success" onclick="agregarFila('servicio')">Agregar
-                servicio</button>
-        </div>
-
-        <table class="table table-bordered" id="tabla-detalles">
-            <thead class="table-light">
-                <tr>
-                    <th>Tipo</th>
-                    <th>Item</th>
-                    <th>Cantidad</th>
-                    <th>Precio</th>
-                    <th>Eliminar</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-
-        <div class="text-end">
-            <button type="submit" class="btn btn-success">Guardar Venta</button>
-        </div>
-    </form>
+    </div>
 </div>
 
 <script>

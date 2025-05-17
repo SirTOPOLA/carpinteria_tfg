@@ -1,93 +1,45 @@
 <?php
-// Iniciar sesión si no está iniciada
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Incluir conexión
-require_once '../config/conexion.php';
-
-// Devolver JSON siempre
+require '../config/conexion.php';
 header('Content-Type: application/json');
 
-$response = ['success' => false];
-
-// Validar método POST
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    $response['error'] = 'Método no permitido.';
-    echo json_encode($response);
+// Validación básica
+if (
+    empty($_POST['nombre']) ||
+    !isset($_POST['precio_base']) ||
+    empty($_POST['unidad'])
+) {
+    echo json_encode(['success' => false, 'message' => 'Faltan campos obligatorios.']);
     exit;
 }
 
-// Validar y limpiar campos
-$nombre = trim($_POST['nombre'] ?? '');
-$correo = trim($_POST['correo'] ?? '');
-$codigo = trim($_POST['codigo'] ?? '');
-$telefono = trim($_POST['telefono'] ?? '');
-$direccion = trim($_POST['direccion'] ?? '');
+// Sanitización
+$nombre = trim($_POST['nombre']);
+$descripcion = trim($_POST['descripcion'] ?? '');
+$precio_base = is_numeric($_POST['precio_base']) ? floatval($_POST['precio_base']) : null;
+$unidad = trim($_POST['unidad']);
+$activo = isset($_POST['activo']) && $_POST['activo'] ? 1 : 0;
 
-// Validación mínima del lado del servidor
-if ($nombre === '') {
-    $response['error'] = 'El nombre es obligatorio.';
-    echo json_encode($response);
-    exit;
-}
-
-if ($correo !== '' && !filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-    $response['error'] = 'Correo electrónico inválido.';
-    echo json_encode($response);
+// Validación de precio
+if ($precio_base === null || $precio_base < 0) {
+    echo json_encode(['success' => false, 'message' => 'Precio inválido.']);
     exit;
 }
 
 try {
-    $stmt = $pdo->prepare('SELECT * FROM clientes WHERE codigo = ?');
-    $stmt->execute([$codigo]);
-    $dip = $stmt->fetch(PDO::FETCH_ASSOC);
-    if (!empty($did)) {
-        $sql = "INSERT INTO clientes (nombre, email, codigo, telefono, direccion, creado_en)
-                VALUES (:nombre, :correo, :codigo, :telefono, :direccion, NOW())";
-    
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(':nombre', $nombre);
-        $stmt->bindParam(':correo', $correo);
-        $stmt->bindParam(':codigo', $codigo);
-        $stmt->bindParam(':telefono', $telefono);
-        $stmt->bindParam(':direccion', $direccion);
-        $stmt->execute();
-        $idCliente = $pdo->lastInsertId();
-    
-        // 2. Generar código DIP automático descriptivo (8 caracteres)
-        // Ejemplo: A2C5J824
-        $nombrePart = strtoupper(substr(preg_replace('/[^A-Za-z]/', '', $nombre), 0, 2));
-        $direccionPart = strtoupper(substr(preg_replace('/[^A-Za-z]/', '', $direccion), 0, 1));
-        $año = date('y'); // 2 últimos dígitos del año
-        $codigo = sprintf('%s%s%s%03d', $nombrePart, $direccionPart, $año, $idCliente);
-    
-        // Asegurar que tiene exactamente 8 caracteres
-        $codigo = strtoupper(substr($codigo, 0, 8));
-    
-        // 3. Actualizar cliente con el código generado
-        $update = $pdo->prepare("UPDATE clientes SET codigo_acceso = :codigo WHERE id = :id");
-        $update->bindParam(':codigo', $codigo);
-        $update->bindParam(':id', $idCliente);
-        $update->execute();
-    
-        $response['success'] = true;
-        $response['codigo'] = $codigo;
-        
-    }else {
-        $response['error'] = 'El cliente ya existe';
-        echo json_encode($response);
-        exit;
+    // Verificar si ya existe un servicio con ese nombre
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM servicios WHERE nombre = ?");
+    $stmt->execute([$nombre]);
+    $existe = $stmt->fetchColumn();
 
+    if ($existe > 0) {
+        echo json_encode(['success' => false, 'message' => 'Ya existe un servicio con ese nombre.']);
+        exit;
     }
 
+    $stmt = $pdo->prepare("INSERT INTO servicios (nombre, descripcion, precio_base, unidad, activo) VALUES (?, ?, ?, ?, ?)");
+    $stmt->execute([$nombre, $descripcion, $precio_base, $unidad, $activo]);
 
-
-
-
+    echo json_encode(['success' => true, 'message' => 'Servicio registrado correctamente.']);
 } catch (PDOException $e) {
-    $response['error'] = 'Error al guardar el cliente: ' . $e->getMessage();
+    echo json_encode(['success' => false, 'message' => 'Error al guardar el servicio.']);
 }
-
-echo json_encode($response);

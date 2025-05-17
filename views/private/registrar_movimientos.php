@@ -44,78 +44,112 @@ try {
 
  
 <div id="content" class="container-fluid py-4">
-    <h2>Registrar Movimiento </h2>
-
-    <div class="container col-10 mt-4">
-        <?php if (!empty($errores)): ?>
-            <div class="alert alert-danger">
-                <ul class="mb-0">
-                    <?php foreach ($errores as $error): ?>
-                        <li><?= htmlspecialchars($error) ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        <?php endif; ?>
-
-        <form method="POST" class="row" id="formMovimiento">
-            
-            <div class="col-md-6 mb-3">
-                <label for="tipo" class="form-label">Tipo de movimiento:</label>
-                <select name="tipo" id="tipo" class="form-select" required>
-                    <option value="">Seleccione tipo</option>
-                    <option value="entrada">Entrada</option>
-                    <option value="salida">Salida</option>
-                    <option value="salida">Pendiante</option>
-                </select>
-            </div>
-            <div class="col-md-6 mb-3">
-                <label for="material_id" class="form-label">Material:</label>
-                <select name="material_id" id="material_id" class="form-select" required>
-                    <option value="">Seleccione tipo de movimiento primero</option>
-                </select>
-            </div>
-            <div class="col-md-6 mb-3" id="stockInfo" style="display:none;">
-                <small class="text-muted">Stock actual: <span id="stockActual">0</span> unidades</small>
-            </div>
-
-            <div class="col-md-6 mb-3" id="cantidadContainer" style="display:none;">
-                <label for="cantidad" class="form-label">Cantidad:</label>
-                <select name="cantidad" id="cantidad" class="form-select" required>
-                    <!-- Las opciones se generan dinámicamente -->
-                </select>
-            </div>
-
-            <div class="col-md-6 mb-3" id="mensajeErrorAjax" style="display: none;">
-                <small class="text-danger" id="errorAjaxTexto"></small>
-            </div>
-
-            <div class="col-md-6 mb-3">
-                <label for="produccion_id" class="form-label">Producción asociada:</label>
-                <select name="produccion_id" id="produccion_id" class="form-select" required>
-                    <option value="">Seleccione una producción</option>
-                    <?php foreach ($producciones as $prod): ?>
-                        <option value="<?= $prod['id'] ?>">
-                            <?= htmlspecialchars($prod['nombre_proyecto']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-             
-            <div class="col-md-6 mb-3">
-                <label for="observaciones" class="form-label">Motivo / Observaciones:</label>
-                <textarea name="observaciones" class="form-control"
-                    rows="3"><?= htmlspecialchars($observaciones ?? '') ?></textarea>
-            </div>
-            <div class="d-flex justify-content-between g-3">
-
-                <a href="index.php?vista=movimientos " class="btn btn-secondary"> <i class="bi bi-arrow-left"></i>
-                    Volver</a>
-                <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Guardar movimiento</button>
-            </div>
-        </form>
-    </div>
-</div>
  
+  <div class="row justify-content-center">
+    <div class="col-12 col-xl-11">
+      <div class="card shadow rounded-4">
+        <div class="card-header bg-dark text-white rounded-top-4 d-flex align-items-center">
+          <i class="bi bi-arrow-left-right me-2 fs-4"></i>
+          <h5 class="mb-0">Registrar Movimiento</h5>
+        </div>
+
+        <div class="card-body">
+
+          <?php if (!empty($errores)): ?>
+            <div class="alert alert-danger">
+              <ul class="mb-0">
+                <?php foreach ($errores as $error): ?>
+                  <li><?= htmlspecialchars($error) ?></li>
+                <?php endforeach; ?>
+              </ul>
+            </div>
+          <?php endif; ?>
+
+          <form method="POST" id="formMovimiento" class="needs-validation" novalidate>
+            <div class="row g-3">
+
+              <div class="col-md-6">
+                <label for="tipo" class="form-label">
+                  <i class="bi bi-shuffle text-primary me-1"></i> Tipo de Movimiento
+                  <span class="text-danger">*</span>
+                </label>
+                <select name="tipo" id="tipo" class="form-select" required>
+                  <option value="">Seleccione tipo</option>
+                  <option value="entrada">Entrada</option>
+                  <option value="salida">Salida</option>
+                  <option value="pendiente">Pendiente</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label for="material_id" class="form-label">
+                  <i class="bi bi-box-seam text-success me-1"></i> Material
+                  <span class="text-danger">*</span>
+                </label>
+                <select name="material_id" id="material_id" class="form-select" required>
+                  <option value="">Seleccione tipo de movimiento primero</option>
+                </select>
+              </div>
+
+              <div class="col-md-6" id="stockInfo" style="display:none;">
+                <label class="form-label text-muted">
+                  <i class="bi bi-stack text-secondary me-1"></i> Stock actual:
+                </label>
+                <p class="form-control-plaintext"><strong><span id="stockActual">0</span> unidades</strong></p>
+              </div>
+
+              <div class="col-md-6" id="cantidadContainer" style="display:none;">
+                <label for="cantidad" class="form-label">
+                  <i class="bi bi-plus-slash-minus text-warning me-1"></i> Cantidad
+                  <span class="text-danger">*</span>
+                </label>
+                <select name="cantidad" id="cantidad" class="form-select" required>
+                  <!-- Opciones cargadas dinámicamente -->
+                </select>
+              </div>
+
+              <div class="col-md-6" id="mensajeErrorAjax" style="display:none;">
+                <small class="text-danger" id="errorAjaxTexto"></small>
+              </div>
+
+              <div class="col-md-6">
+                <label for="produccion_id" class="form-label">
+                  <i class="bi bi-hammer text-danger me-1"></i> Producción Asociada
+                  <span class="text-danger">*</span>
+                </label>
+                <select name="produccion_id" id="produccion_id" class="form-select" required>
+                  <option value="">Seleccione una producción</option>
+                  <?php foreach ($producciones as $prod): ?>
+                    <option value="<?= $prod['id'] ?>"><?= htmlspecialchars($prod['nombre_proyecto']) ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+
+              <div class="col-md-12">
+                <label for="observaciones" class="form-label">
+                  <i class="bi bi-chat-left-dots text-secondary me-1"></i> Motivo / Observaciones
+                </label>
+                <textarea name="observaciones" class="form-control" rows="3"><?= htmlspecialchars($observaciones ?? '') ?></textarea>
+              </div>
+
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+              <a href="index.php?vista=movimientos" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+              </a>
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save2"></i> Guardar Movimiento
+              </button>
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 <!-- Script para actualizar dinámicamente el stock -->

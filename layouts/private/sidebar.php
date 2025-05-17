@@ -58,6 +58,7 @@ $menu = [
         'Productos'  => 'productos',
         'Ventas'     => 'ventas',
         'Compras'    => 'compras',
+        'configuracion'    => 'configuracion',
         'Operaciones'=> 'operaciones',
     ],
     'operario' => [

@@ -112,6 +112,10 @@ CREATE TABLE `configuracion` (
   `telefono` varchar(20) DEFAULT NULL,
   `correo` varchar(100) DEFAULT NULL,
   `logo` varchar(255) DEFAULT NULL,
+  imagen TEXT,
+  mision TEXT,
+  vision TEXT,
+  hostoria TEXT,
   `iva` decimal(5,2) DEFAULT NULL,
   `moneda` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -178,8 +182,7 @@ CREATE TABLE `empleados` (
   `telefono` varchar(20) NOT NULL,
   `direccion` varchar(100) NOT NULL,
   `email` varchar(100) DEFAULT NULL,
- 
-  `horario_trabajo` varchar(100) NOT NULL,
+   `horario_trabajo` varchar(100) NOT NULL,
   `fecha_ingreso` date NOT NULL,
   `creado_en` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

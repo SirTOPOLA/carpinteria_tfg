@@ -72,14 +72,15 @@ function verificarAcceso($vista)
             'registrar_ventas',
             'editar_ventas',
 
+            'entidad',
             'compras',
             'operaciones'
         ],
         'operario' => ['dashboard', 'produccion', 'tareas'],
         'vendedor' => ['dashboard', 'ventas', 'clientes'],
         'diseñador' => ['dashboard', 'proyectos', 'diseños'],
-        'cliente' => ['dashboard', 'perfil', 'mis_pedidos', 'pedido'],
-        '' => ['inicio']
+        'cliente' => ['dashboard', 'perfil', 'mis_pedidos', 'pedido']
+       
     ];
 
 

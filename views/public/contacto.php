@@ -1,4 +1,4 @@
-<main class="pt-5 min-vh-100 d-flex flex-column bg-body-tertiary">
+<main class="  min-vh-100 d-flex flex-column bg-body-tertiary">
 
 
     <!-- Hero Seccional -->
@@ -90,7 +90,13 @@
 </main>
 
 <!-- Botón flotante WhatsApp -->
-<a href="https://wa.me/240551718822?text=Hola,%20quiero%20hacer%20una%20consulta%20sobre%20sus%20productos"
+<!-- <a href="https://wa.me/<?= htmlspecialchars($telefono) ?>?text=Hola,%20quiero%20hacer%20una%20consulta%20sobre%20sus%20productos"
+    class="btn btn-success shadow-lg rounded-circle"
+    style="position: fixed; bottom: 20px; right: 20px; z-index: 1050; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;"
+    target="_blank" aria-label="WhatsApp">
+    <i class="bi bi-whatsapp" style="font-size: 28px;"></i>
+</a> -->
+<a href="https://wa.me/240222247194?text=Hola,%20quiero%20hacer%20una%20consulta%20sobre%20sus%20productos"
     class="btn btn-success shadow-lg rounded-circle"
     style="position: fixed; bottom: 20px; right: 20px; z-index: 1050; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;"
     target="_blank" aria-label="WhatsApp">

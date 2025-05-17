@@ -1,11 +1,13 @@
-<main class="pt-5 min-vh-100 d-flex flex-column bg-body-tertiary">
+<main class="py-3 min-vh-100 d-flex flex-column bg-body-tertiary">
+<!-- Canvas de partículas -->
+<div id="tsparticles" class="position-absolute top-0 start-0 w-100 h-100" style="z-index: 0;"></div>
 
   <!-- Hero Seccional -->
   <section class="py-5 text-center text-white position-relative overflow-hidden"
     style="background: linear-gradient(to right, #1f2937cc, #4b5563cc), url('<?= htmlspecialchars($heroRuta) ?>') center/cover no-repeat;">
     <div class="container">
       <h1 class="display-4 fw-bold text-uppercase">Sobre Nosotros</h1>
-      <p class="lead">Tradición, calidad y pasión en cada detalle artesanal.</p>
+      <p class="lead"><?= htmlspecialchars($vision) ?></p>
     </div>
   </section>
 
@@ -17,15 +19,13 @@
     <div class="row justify-content-center">
       <div class="col-lg-10">
         <p class="mb-3">
-          Desde nuestros inicios en 2010, en un modesto taller familiar, nos hemos dedicado a crear muebles únicos con
-          dedicación y esmero. Con el paso del tiempo, nuestra pasión por la carpintería artesanal ha crecido,
-          permitiéndonos convertir cada pieza de madera en una obra que cuenta historias.
+        <?= htmlspecialchars($historia) ?>
         </p>
-        <p>
+       <!--  <p>
           En cada proyecto aplicamos técnicas tradicionales combinadas con diseño contemporáneo, priorizando la calidad
           y sostenibilidad. Nuestra misión es dejar una huella significativa en los hogares de quienes confían en
           nosotros.
-        </p>
+        </p> -->
       </div>
     </div>
   </section>
@@ -38,16 +38,14 @@
           <div class="border rounded-4 bg-white shadow-sm p-4 h-100">
             <i class="bi bi-bullseye display-5 text-warning mb-3"></i>
             <h4 class="fw-semibold text-uppercase">Misión</h4>
-            <p class="mb-0">Ofrecer soluciones de mobiliario personalizadas y de alta calidad, combinando arte,
-              funcionalidad y respeto por la madera.</p>
+            <p class="mb-0"><?= htmlspecialchars($mision) ?></p>
           </div>
         </div>
         <div class="col-md-6">
           <div class="border rounded-4 bg-white shadow-sm p-4 h-100">
             <i class="bi bi-eye display-5 text-primary mb-3"></i>
             <h4 class="fw-semibold text-uppercase">Visión</h4>
-            <p class="mb-0">Ser reconocidos como referentes en diseño artesanal, marcando tendencia en decoración con
-              identidad, elegancia y durabilidad.</p>
+            <p class="mb-0"><?= htmlspecialchars($vision) ?>.</p>
           </div>
         </div>
       </div>
@@ -64,7 +62,7 @@
       <?php if (!empty($equipo)): ?>
         <?php foreach ($equipo as $miembro): ?>
           <div class="col-6 col-md-4 col-lg-3 text-center">
-            <img src="<?= htmlspecialchars($miembro['perfil']) ?>" class="rounded-circle shadow"
+            <img src="api/<?= htmlspecialchars($miembro['perfil']) ?>" class="rounded-circle shadow"
               alt="<?= htmlspecialchars($miembro['nombre'] . ' ' . $miembro['apellido']) ?>" width="120" height="120"
               style="object-fit: cover;">
             <h6 class="mt-3 mb-0 fw-bold">
