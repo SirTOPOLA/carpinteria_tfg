@@ -40,51 +40,58 @@ $iconos = [
 ];
 
 // Menú por rol (usando vistas como clave para extraer íconos automáticamente)
-$menu = [
+$menu = [ 
     'administrador' => [
-        'Dashboard'  => 'dashboard',
-        'Empleados'  => 'empleados',
-        'Usuarios'   => 'usuarios',
-        'clientes'  => 'clientes',
-        'materiales'  => 'materiales',
-        'proveedores'  => 'proveedores',
-        'servicios'  => 'servicios',
-        'movimientos'  => 'movimientos',
-        'pedidos'  => 'pedidos',
-        'producciones'   => 'producciones',
-        'proyectos'   => 'proyectos',
-        'Roles'      => 'roles',
-        'Reportes'   => 'reportes',
-        'Productos'  => 'productos',
-        'Ventas'     => 'ventas',
-        'Compras'    => 'compras',
-        'configuracion'    => 'configuracion',
-        'Operaciones'=> 'operaciones',
+        'Dashboard'     => 'dashboard',
+        'Empleados'     => 'empleados',
+        'Usuarios'      => 'usuarios',
+        'Clientes'      => 'clientes',
+        'Materiales'    => 'materiales',
+        'Proveedores'   => 'proveedores',
+        'Servicios'     => 'servicios',
+        'Movimientos'   => 'movimientos',
+        'Pedidos'       => 'pedidos',
+        'Producciones'  => 'producciones',
+        'Proyectos'     => 'proyectos',
+        'Roles'         => 'roles',
+        'Reportes'      => 'reportes',
+        'Productos'     => 'productos',
+        'Ventas'        => 'ventas',
+        'Compras'       => 'compras',
+        'Configuración' => 'configuracion',
+        'Operaciones'   => 'operaciones',
     ],
     'operario' => [
-        'Dashboard'   => 'dashboard',
-        'Producción'  => 'produccion',
-        'Tareas'      => 'tareas',
+        'Dashboard'     => 'dashboard',
+        'Producción'    => 'produccion',
+        'Tareas'        => 'tareas',
+        'Proyectos'     => 'proyectos', // si aplica
+        'Movimientos'   => 'movimientos', // si lleva control de materiales
     ],
     'vendedor' => [
-        'Dashboard' => 'dashboard',
-        'Ventas'    => 'ventas',
-        'Clientes'  => 'clientes',
+        'Dashboard'     => 'dashboard',
+        'Ventas'        => 'ventas',
+        'Clientes'      => 'clientes',
+        'Pedidos'       => 'pedidos',
+        'Productos'     => 'productos',
+        'Servicios'     => 'servicios',
     ],
     'diseñador' => [
-        'Dashboard' => 'dashboard',
-        'Proyectos' => 'proyectos',
-        'Diseños'   => 'diseños',
+        'Dashboard'     => 'dashboard',
+        'Proyectos'     => 'proyectos',
+        'Diseños'       => 'diseños',
+        'Materiales'    => 'materiales', // si participa en la elección de materiales
     ],
     'cliente' => [
-        'Dashboard'   => 'dashboard',
-        'Mi Perfil'   => 'perfil',
-        'Mis Pedidos' => 'mis_pedidos',
-        'Pedidos' => 'pedidos',
+        'Dashboard'     => 'dashboard',
+        'Mi Perfil'     => 'perfil',
+        'Mis Pedidos'   => 'mis_pedidos',
+        'Pedidos'       => 'pedidos',
+        'Productos'     => 'productos', // si puede ver catálogo
+        'Servicios'     => 'servicios', // si puede ver lo que se ofrece
     ],
-    'sin_permiso' => [
-        'inicio' => 'inicio',
-    ],
+ 
+
 ];
 ?>
   <div class="wrapper">

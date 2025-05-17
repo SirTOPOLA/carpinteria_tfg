@@ -45,8 +45,8 @@ if (!isset($_SESSION['usuario'])) {
                             <span class="input-group-text"><i class="bi bi-gender-ambiguous"></i></span>
                             <select name="genero" id="genero" class="form-select" required>
                                 <option value="">Seleccione el género</option>
-                                <option value="Masculino">Hombre</option>
-                                <option value="Femenino">Mujer</option>
+                                <option value="M">Hombre</option>
+                                <option value="F">Mujer</option>
                             </select>
                             <div class="invalid-feedback">Debe seleccionar un género.</div>
                         </div>

@@ -23,15 +23,7 @@ SET time_zone = "+00:00";
 
 -- --------------------------------------------------------
 
---
--- Table structure for table `categorias_producto`
---
-
-CREATE TABLE `categorias_producto` (
-  `id` int(11) NOT NULL,
-  `nombre` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
+ 
 -- --------------------------------------------------------
 
 --
@@ -198,18 +190,7 @@ INSERT INTO `empleados` (`id`, `nombre`, `apellido`, `fecha_nacimiento`, `codigo
 
 -- --------------------------------------------------------
 
---
--- Table structure for table `facturas`
---
-
-CREATE TABLE `facturas` (
-  `id` int(11) NOT NULL,
-  `venta_id` int(11) DEFAULT NULL,
-  `fecha_emision` date DEFAULT NULL,
-  `monto_total` decimal(10,2) DEFAULT NULL,
-  `estado` enum('pendiente','pagada') DEFAULT 'pendiente'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
+ 
 -- --------------------------------------------------------
 
 --
@@ -264,7 +245,7 @@ INSERT INTO `materiales` (`id`, `nombre`, `descripcion`, `unidad_medida`, `stock
 CREATE TABLE `movimientos_material` (
   `id` int(11) NOT NULL,
   `material_id` int(11) NOT NULL,
-  `tipo_movimiento` enum('entrada','salida') NOT NULL,
+  `tipo_movimiento` enum('pendiente','entrada','salida') NOT NULL,
   `cantidad` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT current_timestamp(),
   `motivo` text DEFAULT NULL,
@@ -273,18 +254,7 @@ CREATE TABLE `movimientos_material` (
 
 -- --------------------------------------------------------
 
---
--- Table structure for table `pagos`
---
-
-CREATE TABLE `pagos` (
-  `id` int(11) NOT NULL,
-  `factura_id` int(11) DEFAULT NULL,
-  `monto_pagado` decimal(10,2) DEFAULT NULL,
-  `fecha_pago` date DEFAULT NULL,
-  `metodo_pago` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
+ 
 -- --------------------------------------------------------
 
 --
@@ -462,19 +432,14 @@ CREATE TABLE `ventas` (
   `cliente_id` int(11) DEFAULT NULL,
   `fecha` timestamp NOT NULL DEFAULT current_timestamp(),
   `total` decimal(10,2) DEFAULT NULL,
-  `metodo_pago` varchar(50) DEFAULT NULL
+   `metodo_pago` enum('efectivo','tarjeta','transferencia') DEFAULT 'efectivo'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Indexes for dumped tables
 --
 
---
--- Indexes for table `categorias_producto`
---
-ALTER TABLE `categorias_producto`
-  ADD PRIMARY KEY (`id`);
-
+ 
 --
 -- Indexes for table `clientes`
 --
@@ -517,13 +482,7 @@ ALTER TABLE `detalles_venta`
 ALTER TABLE `empleados`
   ADD PRIMARY KEY (`id`);
 
---
--- Indexes for table `facturas`
---
-ALTER TABLE `facturas`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `venta_id` (`venta_id`);
-
+ 
 --
 -- Indexes for table `imagenes_producto`
 --
@@ -545,13 +504,7 @@ ALTER TABLE `movimientos_material`
   ADD KEY `material_id` (`material_id`),
   ADD KEY `produccion_id` (`produccion_id`);
 
---
--- Indexes for table `pagos`
---
-ALTER TABLE `pagos`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `factura_id` (`factura_id`);
-
+ 
 --
 -- Indexes for table `producciones`
 --
@@ -617,13 +570,7 @@ ALTER TABLE `ventas`
 --
 -- AUTO_INCREMENT for dumped tables
 --
-
---
--- AUTO_INCREMENT for table `categorias_producto`
---
-ALTER TABLE `categorias_producto`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
+ 
 --
 -- AUTO_INCREMENT for table `clientes`
 --
@@ -660,12 +607,7 @@ ALTER TABLE `detalles_venta`
 ALTER TABLE `empleados`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
---
--- AUTO_INCREMENT for table `facturas`
---
-ALTER TABLE `facturas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
+ 
 --
 -- AUTO_INCREMENT for table `imagenes_producto`
 --
@@ -684,12 +626,7 @@ ALTER TABLE `materiales`
 ALTER TABLE `movimientos_material`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
---
--- AUTO_INCREMENT for table `pagos`
---
-ALTER TABLE `pagos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
+ 
 --
 -- AUTO_INCREMENT for table `producciones`
 --
@@ -769,12 +706,7 @@ ALTER TABLE `detalles_venta`
   ADD CONSTRAINT `detalles_venta_ibfk_2` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`),
   ADD CONSTRAINT `detalles_venta_ibfk_3` FOREIGN KEY (`servicio_id`) REFERENCES `servicios` (`id`);
 
---
--- Constraints for table `facturas`
---
-ALTER TABLE `facturas`
-  ADD CONSTRAINT `facturas_ibfk_1` FOREIGN KEY (`venta_id`) REFERENCES `ventas` (`id`);
-
+ 
 --
 -- Constraints for table `imagenes_producto`
 --
@@ -787,13 +719,7 @@ ALTER TABLE `imagenes_producto`
 ALTER TABLE `movimientos_material`
   ADD CONSTRAINT `movimientos_material_ibfk_1` FOREIGN KEY (`material_id`) REFERENCES `materiales` (`id`),
   ADD CONSTRAINT `movimientos_material_ibfk_2` FOREIGN KEY (`produccion_id`) REFERENCES `producciones` (`id`);
-
---
--- Constraints for table `pagos`
---
-ALTER TABLE `pagos`
-  ADD CONSTRAINT `pagos_ibfk_1` FOREIGN KEY (`factura_id`) REFERENCES `facturas` (`id`);
-
+ 
 --
 -- Constraints for table `producciones`
 --

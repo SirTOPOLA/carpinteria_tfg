@@ -20,3 +20,6 @@ Usuario
     admin@prueba.com
 contrasena
     Admin²prueba123
+
+cliente 
+    

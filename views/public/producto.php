@@ -43,7 +43,7 @@ try {
         </div>
     </section>
 
-    <div class="container ">
+    <div class="container py-3 ">
         <div class="row g-4">
 
             <!-- Productos -->
