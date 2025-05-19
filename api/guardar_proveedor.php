@@ -1,19 +1,25 @@
 <?php
 header('Content-Type: application/json');
-require_once '../config/conexion.php'; // o tu archivo de conexión PDO
+require_once '../config/conexion.php';
 
 try {
-    // Sanitizar y validar datos
+    // Sanitizar entradas
     $nombre    = trim($_POST['nombre'] ?? '');
     $correo    = trim($_POST['correo'] ?? '');
     $contacto  = trim($_POST['contacto'] ?? '');
     $telefono  = trim($_POST['telefono'] ?? '');
     $direccion = trim($_POST['direccion'] ?? '');
 
+    // Validaciones
     if ($nombre === '') {
         throw new Exception('El nombre es obligatorio.');
     }
 
+    if ($correo !== '' && !filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+        throw new Exception('El formato del correo no es válido.');
+    }
+
+    // Insertar proveedor
     $sql = "INSERT INTO proveedores (nombre, email, contacto, telefono, direccion) 
             VALUES (:nombre, :correo, :contacto, :telefono, :direccion)";
     
@@ -26,7 +32,13 @@ try {
         ':direccion' => $direccion ?: null
     ]);
 
-    echo json_encode(['success' => true]);
+    echo json_encode([
+        'success' => true,
+        'message' => 'Proveedor registrado correctamente.'
+    ]);
 } catch (Exception $e) {
-    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage()
+    ]);
 }

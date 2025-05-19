@@ -21,6 +21,7 @@ try {
       $nombre_empresa = '';
       $logo = '';
       $correo = '';
+      $telefono = '';
       $direccion = '';
       $mision = '';
       $vision = '';

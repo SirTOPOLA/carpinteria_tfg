@@ -27,7 +27,7 @@ $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
             <a href="index.php?vista=registrar_clientes" class="btn btn-secondary mb-3"><i class="bi bi-plus"></i>
                 Nuevo
-        Cliente</a>
+                Cliente</a>
 
         </div>
 
@@ -37,16 +37,16 @@ $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <thead>
                         <tr>
                             <th><i class="bi bi-hash me-1"></i>ID</th>
-                            <th><i class="bi bi-person"></i> Nombre</th>
-
-                            <th>Correo</th>
-                            <th>codigo_acceso</th>
-                            <th>DIP</th>
-                            <th>Teléfono</th>
-                            <th>Dirección</th>
-                            <th>Fecha</th>
+                            <th><i class="bi bi-person me-1"></i>Nombre</th>
+                            <th><i class="bi bi-envelope-at me-1"></i>Correo</th>
+                            <th><i class="bi bi-key me-1"></i>Código Acceso</th>
+                            <th><i class="bi bi-person-vcard me-1"></i>DIP</th>
+                            <th><i class="bi bi-telephone me-1"></i>Teléfono</th>
+                            <th><i class="bi bi-geo-alt me-1"></i>Dirección</th>
+                            <th><i class="bi bi-calendar3 me-1"></i>Fecha</th>
                             <th><i class="bi bi-gear-fill me-1"></i>Acciones</th>
                         </tr>
+
                     </thead>
                     <tbody>
                         <?php if (count($clientes) > 0): ?>
@@ -61,10 +61,11 @@ $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <td><?= htmlspecialchars($cliente['direccion']) ?></td>
                                     <td><?= date("d/m/Y H:i", strtotime($cliente['creado_en'])) ?></td>
                                     <td class="text-center">
-                                        <a href="index.php?vista=editar_clientes&id=<?= $cliente['id'] ?>" class="btn btn-sm btn-outline-warning">
+                                        <a href="index.php?vista=editar_clientes&id=<?= $cliente['id'] ?>"
+                                            class="btn btn-sm btn-outline-warning">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        
+
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -79,6 +80,6 @@ $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 
-  
+
 
 </div>

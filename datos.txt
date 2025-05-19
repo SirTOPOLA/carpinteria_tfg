@@ -18,8 +18,11 @@ la creatividad y el trato cercano.
 
 Usuario
     admin@prueba.com
+    vendedor@prueba.com
 contrasena
     Admin²prueba123
+    Vendedor@prueba123
+
 
 cliente 
     

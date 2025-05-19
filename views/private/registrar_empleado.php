@@ -73,7 +73,7 @@ if (!isset($_SESSION['usuario'])) {
 
                     <!-- Email -->
                     <div class="col-md-6">
-                        <label class="form-label">Email</label>
+                        <label class="form-label">Email (Opcional)</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
                             <input type="email" name="email" class="form-control">
@@ -167,8 +167,8 @@ if (!isset($_SESSION['usuario'])) {
 
             const result = await response.json();
 
-            if (result.success) {
-                alert('Empleado registrado correctamente');
+            if (result.status) {
+                alert('Exito: '+ result.message);
                 window.location.href = 'index.php?vista=empleados'; // redirige al listado
             } else {
                 alert('Error: ' + result.message);
@@ -177,43 +177,5 @@ if (!isset($_SESSION['usuario'])) {
             console.error('Error en la solicitud:', error);
             alert('Ocurrió un error al guardar el empleado.');
         }
-    });
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const salarioInput = document.getElementById("salario");
-        const monedaSelect = document.getElementById("moneda");
-        const form = document.getElementById("form");
-
-        function formatMoneda(valor, currency) {
-            if (valor === '') return '';
-            const numero = parseFloat(valor.replace(/[^0-9.,]/g, '').replace(',', '.'));
-            if (isNaN(numero)) return '';
-
-            return new Intl.NumberFormat('fr-FR', {
-                style: 'currency',
-                currency: currency,
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            }).format(numero);
-        }
-
-        function limpiarFormato(valor) {
-            return valor.replace(/[^0-9,\.]/g, '').replace(',', '.');
-        }
-
-        function actualizarFormato() {
-            let valor = salarioInput.value;
-            valor = limpiarFormato(valor);
-            salarioInput.value = formatMoneda(valor, monedaSelect.value);
-        }
-
-        salarioInput.addEventListener('input', actualizarFormato);
-        monedaSelect.addEventListener('change', actualizarFormato);
-
-        form.addEventListener('submit', function () {
-            let limpio = limpiarFormato(salarioInput.value);
-            salarioInput.value = parseFloat(limpio).toFixed(2);
-        });
     });
 </script>

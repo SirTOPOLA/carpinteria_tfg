@@ -214,7 +214,7 @@ if (!$empleado) {
             const result = await response.json();
 
             if (result.success) {
-                alert('Error: ' + result.message);
+                alert('Exito: ' + result.message);
                // alert('Empleado registrado correctamente');
                 window.location.href = 'index.php?vista=empleados'; // redirige al listado
             } else {

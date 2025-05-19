@@ -83,6 +83,9 @@ try {
                                         </span>
                                     <?php endif; ?>
 
+                                    <a href="index.php?vista=contacto" class="btn btn-outline-primary btn-sm w-100 mt-2 rounded-pill" >
+                                        <i class="bi bi-arrow-save me-1"></i> Solicitar
+                                    </a>
                                     <button class="btn btn-outline-primary btn-sm w-100 mt-2 rounded-pill" data-bs-toggle="modal"
                                         data-bs-target="#vistaRapidaModal"
                                         data-info='<?= json_encode($producto, JSON_HEX_APOS | JSON_UNESCAPED_UNICODE) ?>'>

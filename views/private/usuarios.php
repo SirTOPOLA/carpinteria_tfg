@@ -46,6 +46,8 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <thead>
                         <tr>
                             <th><i class="bi bi-hash me-1"></i>ID</th>
+                            <th><i class="bi bi-image me-1"></i>Perfil</th>
+
                             <th><i class="bi bi-person-circle me-1"></i>Usuario</th>
                             <th><i class="bi bi-person-badge me-1"></i>Empleado</th>
                             <th><i class="bi bi-person-gear me-1"></i>Rol</th>
@@ -58,6 +60,11 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <?php foreach ($usuarios as $usuario): ?>
                                 <tr>
                                     <td><?= $usuario['id'] ?></td>
+                                    <td>
+                                        <img src="api/<?= htmlspecialchars($usuario['perfil']) ?>" alt="Perfil" width="60"
+                                            class="img-thumbnail">
+                                    </td>
+
                                     <td><?= htmlspecialchars($usuario['usuario']) ?></td>
                                     <td><?= htmlspecialchars($usuario['empleado_nombre'] . ' ' . $usuario['empleado_apellido']) ?>
                                     </td>
@@ -117,7 +124,7 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     .then(data => {
                         if (data.ok) {
                             // Puedes recargar la tabla, cambiar íconos, texto, etc.
-                           // alert("Estado actualizado correctamente");
+                            // alert("Estado actualizado correctamente");
                             location.reload(); // o actualiza solo la fila si prefieres
                         } else {
                             alert("Error al actualizar estado");

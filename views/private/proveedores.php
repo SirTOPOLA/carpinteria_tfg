@@ -36,13 +36,14 @@ $proveedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <thead>
                         <tr>
                             <th><i class="bi bi-hash me-1"></i>ID</th>
-                            <th><i class="bi bi-person"></i> Nombre</th>
-                            <th>Contacto</th>
-                            <th>Teléfono</th>
-                            <th>Correo</th>
-                            <th>Dirección</th>
+                            <th><i class="bi bi-person me-1"></i>Nombre</th>
+                            <th><i class="bi bi-person-lines-fill me-1"></i>Contacto</th>
+                            <th><i class="bi bi-telephone me-1"></i>Teléfono</th>
+                            <th><i class="bi bi-envelope-at me-1"></i>Correo</th>
+                            <th><i class="bi bi-geo-alt me-1"></i>Dirección</th>
                             <th><i class="bi bi-gear-fill me-1"></i>Acciones</th>
                         </tr>
+
                     </thead>
                     <tbody>
                         <?php if ($proveedores): ?>
@@ -76,6 +77,3 @@ $proveedores = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 </div>
-
-
- 

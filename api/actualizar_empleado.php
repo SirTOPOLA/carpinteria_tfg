@@ -24,10 +24,13 @@ try {
     $horario_trabajo  = trim($_POST['horario_trabajo'] ?? '');
     $salario = trim($_POST['salario'] ?? '');
 
-    if (floatval($salario) < -1) {
-        $errores[] = 'El salario debe ser un número positivo.';
-    }
-    // Validación de campos obligatorios
+   if($salario !== ''){
+
+       if (floatval($salario) < 0) {
+           $errores[] = 'El salario debe ser un número positivo.';
+       }
+   }
+   // Validación de campos obligatorios
     if ($nombre === '') $errores[ ] = 'El nombre es obligatorio.';
     if ($apellido === '') $errores[ ] = 'El apellido es obligatorio.';
     if (!in_array($genero, ['M', 'F'])) $errores[ ] = 'El género es inválido.';
@@ -43,16 +46,8 @@ try {
     }
 
     // Validación de email
-    if ($email === ''  ) {
-        $errores[ ] = 'El correo electrónico es inválido.';
-    }
-
-    // Validar duplicados por código y email (excluyendo al mismo ID)
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM empleados WHERE (codigo = ? OR LOWER(email) = LOWER(?)) AND id != ?");
-    $stmt->execute([$codigo, $email, $id]);
-    if ($stmt->fetchColumn() > 0) {
-        $errores[ ] = 'Ya existe otro empleado con ese código o correo electrónico.';
-    }
+   
+    
 
     // Validar fecha de nacimiento (mínimo 10 años atrás)
     if ($fecha_nacimiento !== '') {

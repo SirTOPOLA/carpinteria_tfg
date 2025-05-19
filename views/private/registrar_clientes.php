@@ -87,6 +87,24 @@ if (!isset($_SESSION['usuario'])) {
 
 </div>
 
+<!-- Autorelleno de los datos provinientes del logs.txt notificacion -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const cliente = JSON.parse(localStorage.getItem("clienteTemporal"));
+    if (cliente) {
+        if (document.getElementById("nombre")) {
+            document.getElementById("nombre").value = cliente.nombre || "";
+            document.getElementById("correo").value = cliente.correo || "";
+            document.getElementById("telefono").value = cliente.telefono || "";
+            document.getElementById("codigo").value = cliente.codigo || "";
+            document.getElementById("direccion").value = cliente.direccion || "";
+        }
+
+        // Limpiar storage para no rellenar en la próxima visita
+        localStorage.removeItem("clienteTemporal");
+    }
+});
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -112,15 +130,15 @@ if (!isset($_SESSION['usuario'])) {
 
                 const resultado = await response.json();
 
-                if (resultado.success) {
+                if (resultado.ok) {
                     alert('Cliente registrado con éxito.');
                     form.reset();
                     form.classList.remove('was-validated');
                     window.location.href = 'index.php?vista=clientes';
                 } else {
-                    alert(resultado.error || 'Error al registrar el cliente.');
-                    form.reset();
-                    form.classList.remove('was-validated');
+                    alert(resultado.mensaje || 'Error al registrar el cliente.');
+                  //  form.reset();
+                  //  form.classList.remove('was-validated');
                 }
 
             } catch (error) {
@@ -130,3 +148,4 @@ if (!isset($_SESSION['usuario'])) {
         });
     });
 </script>
+

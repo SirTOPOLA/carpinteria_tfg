@@ -30,10 +30,18 @@ try {
     if ($apellido === '') $errores[] = 'El apellido es obligatorio.';
     if (!in_array($genero, ['M', 'F'])) $errores[] = 'El género es inválido.';
     if ($codigo === '' || strlen($codigo) < 6) $errores[] = 'El código debe tener al menos 6 caracteres.';
-    if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errores[] = 'Correo electrónico inválido.';
-    if ($salario !== '' && (!is_numeric($salario) || floatval($salario) < 0)) $errores[] = 'El salario debe ser un número positivo.';
+    if ($email !== '' ){
 
-    if (!empty($telefono) && !preg_match('/^\d{4,}$/', $telefono)) {
+        if(!filter_var($email, FILTER_VALIDATE_EMAIL)) $errores[] = 'Correo electrónico inválido.';
+    } 
+    if($salario !== ""){ 
+        if ( (!is_numeric($salario) || floatval($salario) < 0)){
+
+            $errores[] = 'El salario debe ser un número positivo.';
+        } 
+    }
+
+    if (!empty($telefono) && !preg_match('/^\d{9,}$/', $telefono)) {
         $errores[] = 'El teléfono debe tener al menos 9 dígitos.';
     }
 

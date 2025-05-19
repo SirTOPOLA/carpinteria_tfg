@@ -77,9 +77,9 @@ function verificarAcceso($vista)
             'operaciones'
         ],
         'operario' => ['dashboard', 'produccion', 'tareas'],
-        'vendedor' => ['dashboard', 'ventas', 'clientes'],
+        'vendedor' => ['dashboard', 'ventas', 'clientes', 'pedidos','registrar_pedidos','productos', 'servicios'],
         'diseñador' => ['dashboard', 'proyectos', 'diseños'],
-        'cliente' => ['dashboard', 'perfil', 'mis_pedidos', 'pedido']
+        'cliente' => ['dashboard', 'perfil', 'mis_pedidos', 'pedidos']
        
     ];
 

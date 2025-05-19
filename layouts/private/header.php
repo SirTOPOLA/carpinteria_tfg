@@ -455,6 +455,17 @@
     100% { opacity: 0; transform: translateY(-10px); }
   }
         
+/* ------------ logs.txt del formulario de contacto---------- */
+ 
+.card-text strong {
+    color: #333;
+}
+.card-title {
+    color: #0d6efd;
+}
+ 
+
+
     </style>
 </head>
 

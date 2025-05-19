@@ -33,7 +33,7 @@ $proveedor = $stmt->fetch(PDO::FETCH_ASSOC);
 
         <!-- Correo -->
         <div class="col-md-6">
-          <label for="correo" class="form-label">Correo electrónico</label>
+          <label for="correo" class="form-label">Correo electrónico (Opcional)</label>
           <div class="input-group">
             <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
             <input type="email" name="correo" id="correo" class="form-control"

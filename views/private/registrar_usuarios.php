@@ -24,7 +24,7 @@ $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
             <div class="card-body">
-                <form id="formUsuario" method="POST" class="row g-3 needs-validation" novalidate>
+                <form id="formUsuario" method="POST" class="row g-3 needs-validation" enctype="multipart/form-data" novalidate>
 
                     <!-- Nombre de Usuario -->
                     <div class="col-md-6">
@@ -47,7 +47,11 @@ $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <div class="invalid-feedback">La contraseña es obligatoria.</div>
                         </div>
                     </div>
-
+                    <!--  Perfil -->
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="bi bi-image-fill"></i> Foto</label>
+                        <input type="file" name="imagen" class="form-control" accept="image/*">
+                    </div>
                     <!-- Rol -->
                     <div class="col-md-6">
                         <label for="rol" class="form-label">Rol <span class="text-danger">*</span></label>
@@ -82,16 +86,16 @@ $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                     <!-- Botones -->
                     <div class="col-12 d-flex justify-content-between mt-3">
-                    <a href="index.php?vista=usuarios" class="btn btn-outline-secondary rounded-pill px-4">
-                                <i class="bi bi-arrow-left-circle me-1"></i>Cancelar
-                            </a>
+                        <a href="index.php?vista=usuarios" class="btn btn-outline-secondary rounded-pill px-4">
+                            <i class="bi bi-arrow-left-circle me-1"></i>Cancelar
+                        </a>
 
-                            <button type="submit" class="btn btn-outline-success rounded-pill px-4">
-                                <i class="bi bi-save-fill me-1"></i>Registrar
-                            </button>
+                        <button type="submit" class="btn btn-outline-success rounded-pill px-4">
+                            <i class="bi bi-save-fill me-1"></i>Registrar
+                        </button>
 
-                        </div>
-                  
+                    </div>
+
 
                 </form>
             </div>
@@ -108,26 +112,21 @@ $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
         form.addEventListener('submit', async function (e) {
             e.preventDefault(); // Evita el envío tradicional
 
-            const datos = {
-                usuario: document.getElementById('usuario').value.trim(),
-                password: document.getElementById('password').value,
-                rol: document.getElementById('rol').value,
-                empleado_id: document.getElementById('empleado_id').value
-            };
+            // Crear FormData directamente desde el formulario
+            const formData = new FormData(form);
 
             try {
                 const respuesta = await fetch('api/guardar_usuario.php', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(datos)
+                    body: formData // No se establece Content-Type manualmente
                 });
 
                 const resultado = await respuesta.json();
 
                 // Mostrar mensaje
-                alert(resultado.mensaje);
+                alert(resultado.message);
 
-                if (resultado.ok) {
+                if (resultado.status) {
                     window.location.href = 'index.php?vista=usuarios';
                 }
 
