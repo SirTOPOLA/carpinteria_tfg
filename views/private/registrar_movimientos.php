@@ -8,8 +8,10 @@ $observaciones = '';
 
 // Obtener materiales y producciones
 try {
-  $stmt = $pdo->query("SELECT id, nombre, stock_actual FROM materiales ORDER BY nombre ASC");
+  $stmt = $pdo->query("SELECT id, nombre, stock_actual, stock_minimo FROM materiales ORDER BY nombre ASC");
   $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  
 
   $sql = "SELECT 
                 p.id,
@@ -53,86 +55,41 @@ try {
           <h5 class="mb-0">Registrar Movimiento</h5>
         </div>
 
-        <div class="card-body">
+        <div class="card-body"> 
 
-          <?php if (!empty($errores)): ?>
-            <div class="alert alert-danger">
-              <ul class="mb-0">
-                <?php foreach ($errores as $error): ?>
-                  <li><?= htmlspecialchars($error) ?></li>
+          <form method="POST" id="form" class="needs-validation" novalidate>
+
+            <!-- Selección de producción -->
+            <div class="mb-3">
+              <label for="produccion_id" class="form-label">
+                <i class="bi bi-hammer text-danger me-1"></i> Producción Asociada
+                <span class="text-danger">*</span>
+              </label>
+              <select name="produccion_id" id="produccion_id" class="form-select" required>
+                <option value="">Seleccione una producción</option>
+                <?php foreach ($producciones as $prod): ?>
+                  <option value="<?= $prod['id'] ?>"><?= htmlspecialchars($prod['nombre_proyecto']) ?></option>
                 <?php endforeach; ?>
-              </ul>
-            </div>
-          <?php endif; ?>
-
-          <form method="POST" id="formMovimiento" class="needs-validation" novalidate>
-            <div class="row g-3">
-
-              <div class="col-md-6">
-                <label for="tipo" class="form-label">
-                  <i class="bi bi-shuffle text-primary me-1"></i> Tipo de Movimiento
-                  <span class="text-danger">*</span>
-                </label>
-                <select name="tipo" id="tipo" class="form-select" required>
-                  <option value="">Seleccione tipo</option>
-                  <option value="entrada">Entrada</option>
-                  <option value="salida">Salida</option>
-                  <option value="pendiente">Pendiente</option>
-                </select>
-              </div>
-
-              <div class="col-md-6">
-                <label for="material_id" class="form-label">
-                  <i class="bi bi-box-seam text-success me-1"></i> Material
-                  <span class="text-danger">*</span>
-                </label>
-                <select name="material_id" id="material_id" class="form-select" required>
-                  <option value="">Seleccione tipo de movimiento primero</option>
-                </select>
-                <p class="form-control-plaintext" id="stockInfo" style="display:none;">
-                  <i class="bi bi-stack text-secondary me-1"></i> Stock actual: <strong><span id="stockActual">0</span>
-                    unidades</strong>
-                </p>
-              </div>
-
-              <div class="col-md-6" id="cantidadContainer" style="display:none;">
-                <label for="cantidad" class="form-label">
-                  <i class="bi bi-plus-slash-minus text-warning me-1"></i> Cantidad
-                  <span class="text-danger">*</span>
-                </label>
-                <select name="cantidad" id="cantidad" class="form-select" required>
-                  <!-- Opciones cargadas dinámicamente -->
-                </select>
-              </div>
-
-              <div class="col-md-6" id="mensajeErrorAjax" style="display:none;">
-                <small class="text-danger" id="errorAjaxTexto"></small>
-              </div>
-
-              <div class="col-md-6">
-                <label for="produccion_id" class="form-label">
-                  <i class="bi bi-hammer text-danger me-1"></i> Producción Asociada
-                  <span class="text-danger">*</span>
-                </label>
-                <select name="produccion_id" id="produccion_id" class="form-select" required>
-                  <option value="">Seleccione una producción</option>
-                  <?php foreach ($producciones as $prod): ?>
-                    <option value="<?= $prod['id'] ?>"><?= htmlspecialchars($prod['nombre_proyecto']) ?></option>
-                  <?php endforeach; ?>
-                </select>
-              </div>
-
-              <div class="col-md-12">
-                <label for="observaciones" class="form-label">
-                  <i class="bi bi-chat-left-dots text-secondary me-1"></i> Motivo / Observaciones
-                </label>
-                <textarea name="observaciones" class="form-control"
-                  rows="3"><?= htmlspecialchars($observaciones ?? '') ?></textarea>
-              </div>
-
+              </select>
             </div>
 
-            <div class="d-flex justify-content-between mt-4">
+            <!-- Contenedor dinámico de materiales -->
+            <div id="materialesContainer"></div>
+
+            <button type="button" class="btn btn-outline-success mb-3" id="btnAgregarMaterial">
+              <i class="bi bi-plus-circle"></i> Agregar Material
+            </button>
+
+            <!-- Observaciones generales -->
+            <div class="mb-3">
+              <label for="observaciones" class="form-label">
+                <i class="bi bi-chat-left-dots text-secondary me-1"></i> Observaciones generales
+              </label>
+              <textarea name="observaciones" class="form-control" rows="3"></textarea>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex justify-content-between">
               <a href="index.php?vista=movimientos" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left"></i> Volver
               </a>
@@ -140,9 +97,9 @@ try {
                 <i class="bi bi-save2"></i> Guardar Movimiento
               </button>
             </div>
-
           </form>
 
+          <div id="mensaje"></div>
         </div>
       </div>
     </div>
@@ -151,6 +108,180 @@ try {
 
 
 <!-- Script para actualizar dinámicamente el stock -->
+
+
+<script>
+
+  
+  
+  document.addEventListener("DOMContentLoaded", () => {
+  const stockMateriales = <?= json_encode($materiales) ?>;
+  const materialesContainer = document.getElementById("materialesContainer");
+  const btnAgregarMaterial = document.getElementById("btnAgregarMaterial");
+  let grupoIndex = 0;
+
+  const obtenerMaterialesDisponibles = (modoActual, indexActual) => {
+    const seleccionados = new Set();
+
+    document.querySelectorAll('.grupo-material').forEach((grupo, index) => {
+      if (index !== indexActual) {
+        const tipo = grupo.querySelector('[name="tipo[]"]').value;
+        const material = grupo.querySelector('[name="material_id[]"]').value;
+        if (tipo === 'entrada') seleccionados.add(material);
+      }
+    });
+
+    return stockMateriales.filter(mat =>
+      modoActual !== 'entrada' || !seleccionados.has(String(mat.id))
+    );
+  };
+
+  const actualizarOpcionesMaterial = (select, tipoMovimiento, index) => {
+    const materiales = obtenerMaterialesDisponibles(tipoMovimiento, index);
+    select.innerHTML = `<option value="">Seleccione material</option>`;
+    materiales.forEach(mat => {
+      select.innerHTML += `<option value="${mat.id}">${mat.nombre}</option>`;
+    });
+  };
+
+  const crearGrupoMaterial = () => {
+    const index = grupoIndex++;
+    const div = document.createElement("div");
+    div.className = "row g-3 mb-3 border p-3 rounded bg-light grupo-material";
+
+    div.innerHTML = `
+      <div class="col-md-4">
+        <label class="form-label">Tipo de Movimiento <span class="text-danger">*</span></label>
+        <select name="tipo[]" class="form-select tipo" required>
+          <option value="">Seleccione tipo</option>
+          <option value="entrada">Entrada</option>
+          <option value="salida">Salida</option>
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Material <span class="text-danger">*</span></label>
+        <select name="material_id[]" class="form-select material" required disabled>
+          <option value="">Seleccione tipo primero</option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Cantidad <span class="text-danger">*</span></label>
+        <input type="number" name="cantidad[]" class="form-control cantidad" min="1" required disabled>
+        <div class="form-text text-danger info-stock"></div>
+      </div>
+
+      <div class="col-md-1 d-flex align-items-end">
+        <button type="button" class="btn btn-danger btn-sm btnEliminarGrupo">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+    `;
+
+    materialesContainer.appendChild(div);
+
+    const tipoSel = div.querySelector(".tipo");
+    const matSel = div.querySelector(".material");
+    const cantidadInput = div.querySelector(".cantidad");
+    const infoStock = div.querySelector(".info-stock");
+
+    tipoSel.addEventListener("change", () => {
+      matSel.disabled = false;
+      actualizarOpcionesMaterial(matSel, tipoSel.value, index);
+      cantidadInput.value = "";
+      cantidadInput.disabled = true;
+      infoStock.textContent = "";
+    });
+
+    matSel.addEventListener("change", () => {
+      cantidadInput.disabled = false;
+      const material = stockMateriales.find(m => m.id == matSel.value);
+      const tipo = tipoSel.value;
+
+      if (!material) return;
+
+      if (tipo === "salida") {
+        cantidadInput.max = material.stock_actual - material.stock_minimo;
+        infoStock.textContent = `Stock disponible: ${material.stock_actual}, mínimo: ${material.stock_minimo}`;
+      } else {
+        cantidadInput.removeAttribute("max");
+        infoStock.textContent = "";
+      }
+    });
+
+    cantidadInput.addEventListener("input", () => {
+      const tipo = tipoSel.value;
+      const material = stockMateriales.find(m => m.id == matSel.value);
+      if (!material) return;
+
+      const val = parseInt(cantidadInput.value);
+      if (tipo === "salida" && val > material.stock_actual - material.stock_minimo) {
+        infoStock.textContent = "Cantidad excede el stock permitido.";
+        cantidadInput.setCustomValidity("Cantidad excede límite");
+      } else {
+        infoStock.textContent = "";
+        cantidadInput.setCustomValidity("");
+      }
+    });
+
+    div.querySelector(".btnEliminarGrupo").addEventListener("click", () => {
+      div.remove();
+      actualizarTodosLosSelects();
+    });
+  };
+
+  const actualizarTodosLosSelects = () => {
+    document.querySelectorAll('.grupo-material').forEach((grupo, index) => {
+      const tipo = grupo.querySelector('[name="tipo[]"]').value;
+      const select = grupo.querySelector('[name="material_id[]"]');
+      actualizarOpcionesMaterial(select, tipo, index);
+    });
+  };
+
+  btnAgregarMaterial.addEventListener("click", () => {
+    crearGrupoMaterial();
+  });
+
+  // Uno por defecto
+  crearGrupoMaterial();
+
+  // Manejo de envío
+  const form = document.getElementById("formMovimiento");
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    if (!form.checkValidity()) {
+      form.classList.add("was-validated");
+      return;
+    }
+
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch("guardar_movimiento_multiple.php", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        alert("Movimiento registrado correctamente.");
+        window.location.href = "index.php?vista=movimientos";
+      } else {
+        alert("Error: " + data.message);
+      }
+
+    } catch (err) {
+      console.error(err);
+      alert("Error en el servidor.");
+    }
+  });
+});
+</script>
+
+
+<!-- 
 <script>
 
   document.addEventListener("DOMContentLoaded", () => {
@@ -184,7 +315,7 @@ try {
       try {
         const res = await fetch(`api/obtener_materiales.php?id=${materialId}`)
         const data = await res.json()
-        
+
         if (data.success) {
           mensajeError.style.display = "none";
           currentStock = parseInt(data.stock) || 0;
@@ -204,7 +335,7 @@ try {
         stockInfo.style.display = "none";
         errorAjaxTexto.textContent = "Error al conectar con el servidor.";
         mensajeError.style.display = "block";
-       // console.log(err)
+        // console.log(err)
       };
     }
 
@@ -282,53 +413,55 @@ try {
 
   /* -------------------- */
 
- 
 
-document.getElementById('form').addEventListener('submit', async function (e) {
-        e.preventDefault(); // Prevenir envío tradicional
-        let mensaje = document.getElementById('mensaje');
-        // Validación nativa de Bootstrap
-        if (!this.checkValidity()) {
-            this.classList.add('was-validated');
-            return;
-        }
 
-        const form = e.target;
-        const formData = new FormData(form);
-        try {
-            const res = await fetch('api/guardar_produccion.php', {
-                method: 'POST', body: formData
-            })
-            const data = await res.json(); // Esperamos JSON del backend
-            if (data.success) {
-                mensaje.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
-                setTimeout(() => {
-                    mensaje.style.opacity = 0;
-                    setTimeout(() => {
-                        mensaje.textContent = '';
-                        mensaje.style.opacity = 1;
-                        window.location.href = 'index.php?vista=producciones'; // redirige si es exitoso
+  document.getElementById('form').addEventListener('submit', async function (e) {
+    e.preventDefault(); // Prevenir envío tradicional
+    let mensaje = document.getElementById('mensaje');
+    // Validación nativa de Bootstrap
+    if (!this.checkValidity()) {
+      this.classList.add('was-validated');
+      return;
+    }
 
-                    }, 300); // espera a que se desvanezca
-                }, 2000);
+    const form = e.target;
+    const formData = new FormData(form);
+    try {
+      const res = await fetch('api/guardar_movimientos.php', {
+        method: 'POST', body: formData
+      })
+      const data = await res.json(); // Esperamos JSON del backend
+      if (data.success) {
+        mensaje.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+        setTimeout(() => {
+          mensaje.style.opacity = 0;
+          setTimeout(() => {
+            mensaje.textContent = '';
+            mensaje.style.opacity = 1;
+            window.location.href = 'index.php?vista=movimientos'; // redirige si es exitoso
 
-            } else {
-                mensaje.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
-                setTimeout(() => {
-                    mensaje.textContent = '';
-                }, 2000)
+          }, 300); // espera a que se desvanezca
+        }, 2000);
 
-            }
-        } catch (error) {
-            mensaje.innerHTML = `<div class="alert alert-danger">${error}</div>`;
-            setTimeout(() => {
-                mensaje.textContent = '';
-            }, 2000)
-        };
+      } else {
+        mensaje.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+        setTimeout(() => {
+          mensaje.textContent = '';
+        }, 2000)
 
-    })
- 
+      }
+    } catch (error) {
+      mensaje.innerHTML = `<div class="alert alert-danger">${error}</div>`;
+      setTimeout(() => {
+        mensaje.textContent = '';
+      }, 2000)
+    };
+
+  })
+
 
 
 
 </script>
+
+ -->
