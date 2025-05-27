@@ -100,6 +100,7 @@ $equipo = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <?php endif; ?>
 
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <!-- Preconexiones para mejorar carga externa -->
   <link rel="dns-prefetch" href="//cdn.jsdelivr.net" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -123,6 +124,7 @@ $equipo = $stmt->fetchAll(PDO::FETCH_ASSOC);
       background-color: #f9f7f6;
       color: #444;
       font-family: 'Segoe UI', sans-serif;
+      font-family: 'Inter', sans-serif;
 
     }
 

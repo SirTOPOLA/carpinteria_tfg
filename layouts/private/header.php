@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <!-- Bootstrap 5.3 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<!-- Bootstrap Icons -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
 
 
@@ -63,6 +63,10 @@
         .sidebar.collapsed {
             width: 80px;
             background-color: #1d2124;
+        }
+
+        .sidebar.collapsed .link-text {
+            display: none; /* ocultar las letras en menu colapsado  */
         }
 
         .sidebar .nav-link {
@@ -333,7 +337,7 @@
 
         .table-custom thead {
             background-color: #e9ecef;
-            color:rgb(255, 255, 255);
+            color: rgb(255, 255, 255);
             font-weight: 600;
             border-bottom: 2px solid #dee2e6;
         }
@@ -419,54 +423,105 @@
 
         /* --------alerta-------- */
         #toast-container {
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
 
-  .toast {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    font-size: 0.9rem;
-    color: #fff;
-    min-width: 200px;
-    max-width: 320px;
-    animation: fadeInOut 4s ease-in-out forwards;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    backdrop-filter: blur(6px);
-  }
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            color: #fff;
+            min-width: 200px;
+            max-width: 320px;
+            animation: fadeInOut 4s ease-in-out forwards;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(6px);
+        }
 
-  .toast.success { background-color: #16a34a; }  /* verde */
-  .toast.error   { background-color: #dc2626; }  /* rojo */
-  .toast.warning { background-color: #f59e0b; }  /* naranja */
-  .toast.info    { background-color: #2563eb; }  /* azul */
+        .toast.success {
+            background-color: #16a34a;
+        }
 
-  @keyframes fadeInOut {
-    0%   { opacity: 0; transform: translateY(-10px); }
-    10%  { opacity: 1; transform: translateY(0); }
-    90%  { opacity: 1; transform: translateY(0); }
-    100% { opacity: 0; transform: translateY(-10px); }
-  }
-        
-/* ------------ logs.txt del formulario de contacto---------- */
- 
-.card-text strong {
-    color: #333;
+        /* verde */
+        .toast.error {
+            background-color: #dc2626;
+        }
+
+        /* rojo */
+        .toast.warning {
+            background-color: #f59e0b;
+        }
+
+        /* naranja */
+        .toast.info {
+            background-color: #2563eb;
+        }
+
+        /* azul */
+
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            10% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            90% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+
+        /* ------------ logs.txt del formulario de contacto---------- */
+
+        .card-text strong {
+            color: #333;
+        }
+
+        .card-title {
+            color: #0d6efd;
+        }
+    
+        /* impresion Factura */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #factura-container, #factura-container * {
+        visibility: visible;
+    }
+    #factura-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white;
+    }
+    .modal-footer,
+    .modal-header {
+        display: none !important;
+    }
 }
-.card-title {
-    color: #0d6efd;
-}
- 
+</style>
 
-
-    </style>
 </head>
 
 <body>

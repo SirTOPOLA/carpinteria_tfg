@@ -26,3 +26,17 @@ contrasena
 
 cliente 
     
+
+
+
+
+
+ERROR XAMPP
+
+1. acceder a XAMPP
+2. carpeta data
+3. la carpeta data la remplazamos por otro nombre
+4. creamos la carpeta data 
+5. copiamos todo lo que esta en la carpeta Backup
+6. carpeta data-old copiamos ibd-data1 lo reemplazamos en data
+7. 

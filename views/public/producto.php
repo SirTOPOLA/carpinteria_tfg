@@ -31,8 +31,8 @@ try {
 </script>
 
 <main class="min-vh-100 d-flex flex-column bg-body-tertiary">
-<!-- Canvas de partículas -->
-<div id="tsparticles" class="position-absolute top-0 start-0 w-100 h-100" style="z-index: 0;"></div>
+    <!-- Canvas de partículas -->
+    <div id="tsparticles" class="position-absolute top-0 start-0 w-100 h-100" style="z-index: 0;"></div>
 
     <!-- Hero Seccional -->
     <section class="py-5 text-center text-white position-relative overflow-hidden"
@@ -53,14 +53,16 @@ try {
                         <div class="card shadow-sm border-0 rounded-4 h-100">
                             <?php if ($producto['imagen']): ?>
                                 <img src="api/<?= htmlspecialchars($producto['imagen']) ?>" class="card-img-top rounded-top-4"
-                                    style="aspect-ratio: 1/1; object-fit: cover;" alt="<?= htmlspecialchars($producto['nombre']) ?>">
+                                    style="aspect-ratio: 1/1; object-fit: cover;"
+                                    alt="<?= htmlspecialchars($producto['nombre']) ?>">
                             <?php else: ?>
                                 <img src="img/no-image.png" class="card-img-top rounded-top-4"
                                     style="aspect-ratio: 1/1; object-fit: cover;" alt="Sin imagen">
                             <?php endif; ?>
 
                             <div class="card-body d-flex flex-column position-relative">
-                                <h5 class="card-title text-primary-emphasis text-uppercase fw-bold mb-2" style="letter-spacing: 0.05em;">
+                                <h5 class="card-title text-primary-emphasis text-uppercase fw-bold mb-2"
+                                    style="letter-spacing: 0.05em;">
                                     <i class="bi bi-box-seam me-2"></i><?= htmlspecialchars($producto['nombre']) ?>
                                 </h5>
 
@@ -83,11 +85,12 @@ try {
                                         </span>
                                     <?php endif; ?>
 
-                                    <a href="index.php?vista=contacto" class="btn btn-outline-primary btn-sm w-100 mt-2 rounded-pill" >
+                                    <a href="index.php?vista=contacto"
+                                        class="btn btn-outline-primary btn-sm w-100 mt-2 rounded-pill">
                                         <i class="bi bi-arrow-save me-1"></i> Solicitar
                                     </a>
-                                    <button class="btn btn-outline-primary btn-sm w-100 mt-2 rounded-pill" data-bs-toggle="modal"
-                                        data-bs-target="#vistaRapidaModal"
+                                    <button class="btn btn-outline-primary btn-sm w-100 mt-2 rounded-pill"
+                                        data-bs-toggle="modal" data-bs-target="#vistaRapidaModal"
                                         data-info='<?= json_encode($producto, JSON_HEX_APOS | JSON_UNESCAPED_UNICODE) ?>'>
                                         <i class="bi bi-eye me-1"></i> Vista rápida
                                     </button>
@@ -102,6 +105,11 @@ try {
                     <h5 class="fw-semibold">No hay productos disponibles por el momento.</h5>
                 </div>
             <?php endif; ?>
+
+            <!-- salto de linea o division de seccion -->
+            <div class="w-100 my-5 text-center">
+                <i class="bi bi-stars fs-3 text-primary-emphasis"></i> 
+            </div>
 
             <!-- Servicios -->
             <?php if (!empty($servicios)): ?>
@@ -143,48 +151,46 @@ try {
         </div>
     </div>
 
-    <!-- Modal Vista Rápida -->
-    <div class="modal fade" id="vistaRapidaModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content border-0 rounded-4 shadow">
-                <div class="modal-header text-white rounded-top-4"
-                    style="background: linear-gradient(to right, #1f2937, #4b5563);">
-                    <h5 class="modal-title text-uppercase fw-bold" id="vistaRapidaTitle" style="letter-spacing: 0.05em;">
-                        <!-- Título dinámico -->
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Cerrar"></button>
+
+</main>
+<!-- Modal Vista Rápida -->
+<div class="modal fade" id="vistaRapidaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 rounded-4 shadow">
+            <div class="modal-header text-white rounded-top-4"
+                style="background: linear-gradient(to right, #1f2937, #4b5563);">
+                <h5 class="modal-title text-uppercase fw-bold" id="vistaRapidaTitle" style="letter-spacing: 0.05em;">
+                    <!-- Título dinámico -->
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body row g-3">
+                <div class="col-md-6 d-flex justify-content-center align-items-center">
+                    <img id="vistaRapidaImagen" src="" alt="Imagen producto" class="img-fluid rounded-3 shadow-sm"
+                        style="max-height: 300px; width: 100%; object-fit: cover;">
                 </div>
-                <div class="modal-body row g-3">
-                    <div class="col-md-6 d-flex justify-content-center align-items-center">
-                        <img id="vistaRapidaImagen" src="" alt="Imagen producto"
-                            class="img-fluid rounded-3 shadow-sm"
-                            style="max-height: 300px; width: 100%; object-fit: cover;">
-                    </div>
-                    <div class="col-md-6 d-flex flex-column justify-content-center">
-                        <p id="vistaRapidaDescripcion" class="text-secondary bg-light p-3 rounded-3"
-                            style="backdrop-filter: saturate(180%) blur(6px); font-size: 0.95rem;">
-                            <!-- Descripción dinámica -->
-                        </p>
-                        <p class="fw-bold text-success fs-5 mt-3 mb-1" id="vistaRapidaPrecio">
-                            <!-- Precio dinámico -->
-                        </p>
-                        <p class="text-muted small mb-0" id="vistaRapidaStock">
-                            <!-- Stock dinámico -->
-                        </p>
-                    </div>
+                <div class="col-md-6 d-flex flex-column justify-content-center">
+                    <p id="vistaRapidaDescripcion" class="text-secondary bg-light p-3 rounded-3"
+                        style="backdrop-filter: saturate(180%) blur(6px); font-size: 0.95rem;">
+                        <!-- Descripción dinámica -->
+                    </p>
+                    <p class="fw-bold text-success fs-5 mt-3 mb-1" id="vistaRapidaPrecio">
+                        <!-- Precio dinámico -->
+                    </p>
+                    <p class="text-muted small mb-0" id="vistaRapidaStock">
+                        <!-- Stock dinámico -->
+                    </p>
                 </div>
-                <div class="modal-footer border-0 pt-0">
-                    <button type="button" class="btn btn-outline-primary rounded-pill w-100"
-                        data-bs-dismiss="modal">
-                        <i class="bi bi-x-circle me-2"></i> Cerrar
-                    </button>
-                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-outline-primary rounded-pill w-100" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i> Cerrar
+                </button>
             </div>
         </div>
     </div>
-
-</main>
+</div>
 
 <script>
     const modal = document.getElementById('vistaRapidaModal');

@@ -2,10 +2,10 @@
 session_start();
 header('Content-Type: application/json');
 
-require_once '../config/conexion.php'; 
+require_once '../config/conexion.php';
 
 if (!isset($_SESSION['usuario'])) {
-    echo json_encode(['error' => 'No hay sesión activa']);
+    echo json_encode(['success' => false, 'message' => 'No hay sesión activa']);
     exit;
 }
 
@@ -16,46 +16,49 @@ $tarjetas = [];
 switch ($rol) {
     case 'administrador':
         $tarjetas = [
-            ['titulo' => 'Total Clientes',     'tabla' => 'clientes'],
-            ['titulo' => 'Total Empleados',    'tabla' => 'empleados'],
-            ['titulo' => 'Total Ventas',       'tabla' => 'ventas'],
-            ['titulo' => 'Total Compras',      'tabla' => 'compras'],
-            ['titulo' => 'Total Productos',    'tabla' => 'productos'],
-            ['titulo' => 'Total Servicios',    'tabla' => 'servicios'],
-            ['titulo' => 'Total Materiales',   'tabla' => 'materiales'],
-            ['titulo' => 'Proyectos Activos',  'tabla' => 'proyectos', 'filtro' => "estado != 'finalizado'"],
+            ['titulo' => 'Total Clientes', 'tabla' => 'clientes', 'icono' => 'bi-people-fill'],
+            ['titulo' => 'Total Empleados', 'tabla' => 'empleados', 'icono' => 'bi-person-badge-fill'],
+            ['titulo' => 'Total Ventas', 'tabla' => 'ventas', 'icono' => 'bi-cash-stack'],
+            ['titulo' => 'Total Compras', 'tabla' => 'compras', 'icono' => 'bi-bag-check-fill'],
+            ['titulo' => 'Total Productos', 'tabla' => 'productos', 'icono' => 'bi-box-seam'],
+            ['titulo' => 'Total Servicios', 'tabla' => 'servicios', 'icono' => 'bi-gear-fill'],
+            ['titulo' => 'Total Materiales', 'tabla' => 'materiales', 'icono' => 'bi-hammer'],
+            ['titulo' => 'Proyectos Activos', 'tabla' => 'proyectos', 'filtro' => "estado != 'finalizado'", 'icono' => 'bi-kanban-fill'],
         ];
         break;
+    /*  */
+
+    /*  */
 
     case 'vendedor':
         $tarjetas = [
-            ['titulo' => 'Mis Ventas', 'tabla' => 'ventas'],
-            ['titulo' => 'Clientes',   'tabla' => 'clientes']
+            ['titulo' => 'Mis Ventas', 'tabla' => 'ventas', 'icono' => 'bi-cash-stack'],
+            ['titulo' => 'Clientes', 'tabla' => 'clientes', 'icono' => 'bi-people-fill']
         ];
         break;
 
     case 'operario':
         $tarjetas = [
-            ['titulo' => 'Producciones Activas', 'tabla' => 'producciones', 'filtro' => "estado != 'terminado'"],
-            ['titulo' => 'Total Materiales',     'tabla' => 'materiales']
+            ['titulo' => 'Producciones Activas', 'tabla' => 'producciones', 'filtro' => "estado != 'terminado'", 'icono' => 'bi-tools'],
+            ['titulo' => 'Total Materiales', 'tabla' => 'materiales', 'icono' => 'bi-hammer']
         ];
         break;
 
     case 'diseñador':
         $tarjetas = [
-            ['titulo' => 'Proyectos en diseño', 'tabla' => 'proyectos', 'filtro' => "estado = 'en diseño'"]
+            ['titulo' => 'Proyectos en diseño', 'tabla' => 'proyectos', 'filtro' => "estado = 'en diseño'", 'icono' => 'bi-pencil-square']
         ];
         break;
 
     case 'cliente':
         $cliente_id = $_SESSION['usuario']['id'];
         $tarjetas = [
-            ['titulo' => 'Mis Pedidos', 'tabla' => 'solicitudes_proyecto', 'filtro' => "cliente_id = $cliente_id"]
+            ['titulo' => 'Mis Pedidos', 'tabla' => 'solicitudes_proyecto', 'filtro' => "cliente_id = $cliente_id", 'icono' => 'bi-cart-check']
         ];
         break;
 
     default:
-        echo json_encode(['error' => 'Rol no reconocido']);
+        echo json_encode(['success' => false, 'message' => 'Rol no reconocido']);
         exit;
 }
 
@@ -65,20 +68,22 @@ foreach ($tarjetas as $card) {
     $tabla = $card['tabla'];
     $titulo = $card['titulo'];
     $filtro = isset($card['filtro']) ? "WHERE {$card['filtro']}" : '';
+    $icono = $card['icono'] ?? 'bi-card-text'; // icono por defecto
 
     try {
         $stmt = $pdo->query("SELECT COUNT(*) as total FROM $tabla $filtro");
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         $resultado[] = [
             'titulo' => $titulo,
-            'total'  => $row['total']
+            'total' => $row['total'],
+            'icono' => $icono
         ];
     } catch (PDOException $e) {
         $resultado[] = [
             'titulo' => $titulo,
-            'total'  => 'Error'
+            'total' => 'Error',
+            'icono' => $icono
         ];
     }
 }
-
-echo json_encode($resultado);
+echo json_encode(['success' => true, 'data' => $resultado]);

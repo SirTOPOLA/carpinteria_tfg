@@ -36,9 +36,9 @@
             </button>
 
             <!-- Botón logout -->
-            <a href="logout.php" class="btn btn-sm btn-outline-danger d-flex align-items-center">
+            <button id="cerrarSession" class="btn btn-sm btn-outline-danger d-flex align-items-center">
                 <i class="bi bi-box-arrow-right me-1"></i> Salir
-            </a>
+            </button>
         </div>
     </div>
 </nav>

@@ -22,7 +22,7 @@ $iconos = [
   'reportes'      => 'bi-graph-up',
   'productos'     => 'bi-box-seam',
   'ventas'        => 'bi-cash-stack',
-  'compras'       => 'bi-cart-plus',
+  'compras'       => 'bi-bag-check-fill',
   'operaciones'   => 'bi-tools',
   'produccion'    => 'bi-gear-wide',
   'producciones'  => 'bi-hammer',           // ícono relacionado a fabricación
@@ -37,6 +37,8 @@ $iconos = [
   'servicios'     => 'bi-plug',             // ícono relacionado a servicios
   'movimientos'   => 'bi-arrow-left-right', // entradas/salidas
   'pedidos'       => 'bi-bag',              // ícono relacionado a órdenes
+  'configuracion' => 'bi-gear-wide-connected',
+
 ];
 
 // Menú por rol (usando vistas como clave para extraer íconos automáticamente)
@@ -104,15 +106,13 @@ $menu = [
     ?>
       <li class="nav-item mb-1">
         <a href="index.php?vista=<?= $vistaName ?>" class="nav-link <?= $active ?>">
-          <i class="bi <?= $icon ?> me-2"></i><?= $label ?>
+          <i class="bi <?= $icon ?> me-2"></i>
+          <span class="link-text"><?= $label ?></span>
         </a>
       </li>
     <?php endforeach; ?>
-    <li class="nav-item mt-3">
-      <a href="logout.php" class="nav-link text-danger">
-        <i class="bi bi-box-arrow-right me-2"></i> Salir
-      </a>
-    </li>
+   
+    
   </ul>
 </div>
  

@@ -15,9 +15,9 @@ if ($usuario === '' || !filter_var($usuario, FILTER_VALIDATE_EMAIL)) {
 }
 
 if (strlen($password) < 6) {
-    $errores[] = 'La contraseña debe tener al menos 6 caracteres.';
+    $errores[] = 'La contraseña debe tener al menos 5 caracteres.';
 }
-if (!preg_match('/[A-Z]/', $password)) {
+/* if (!preg_match('/[A-Z]/', $password)) {
     $errores[] = 'La contraseña debe contener al menos una letra mayúscula.';
 }
 if (!preg_match('/[a-z]/', $password)) {
@@ -28,7 +28,7 @@ if (!preg_match('/\d/', $password)) {
 }
 if (!preg_match('/[^a-zA-Z\d]/', $password)) {
     $errores[] = 'La contraseña debe contener al menos un carácter especial.';
-}
+} */
 
 // Validación del rol
 if (!$rol) {

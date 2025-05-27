@@ -1,27 +1,30 @@
 <?php
-require_once '../includes/conexion.php';
+require_once '../config/conexion.php';
 
 header('Content-Type: application/json');
 
 $tipo = $_GET['tipo'] ?? '';
-
+$id = $_GET['id'] ?? '';
+$materiales = [];
+$stock = '';
 try {
-    if ($tipo === 'entrada'  || $tipo === 'salida') {
+    if ($tipo === 'entrada' || $tipo === 'salida' || $tipo === 'pendiente') {
         $stmt = $pdo->query("SELECT id, nombre FROM materiales ORDER BY nombre ASC");
         $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    /* } elseif ($tipo === 'salida') {
-        $sql = "SELECT DISTINCT m.id, m.nombre
-                FROM detalles_compra dc
-                INNER JOIN materiales m ON dc.material_id = m.id
-                WHERE dc.cantidad > 0
-                ORDER BY m.nombre ASC";
-        $stmt = $pdo->query($sql);
-        $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC); */
-    } else {
-        throw new Exception("Tipo de movimiento no válido");
+    }
+    if ($id) {
+        $stmt = $pdo->prepare("SELECT stock_actual FROM materiales WHERE id = ?");
+        $stmt->execute([$id]);
+        $material_stock = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stock = $material_stock['stock_actual'];
+
     }
 
-    echo json_encode(['success' => true, 'materiales' => $materiales]);
+    echo json_encode([
+        'success' => true,
+        'materiales' => $materiales,
+        'stock' => $stock 
+    ]);
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }

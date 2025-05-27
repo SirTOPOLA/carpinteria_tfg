@@ -57,6 +57,7 @@ INSERT INTO `clientes` (`id`, `nombre`, `codigo`, `telefono`, `direccion`, `crea
 CREATE TABLE `compras` (
   `id` int(11) NOT NULL,
   `proveedor_id` int(11) DEFAULT NULL,
+  `codigo` VARCHAR(100) NOT NULL
   `fecha` date DEFAULT NULL,
   `total` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -156,7 +157,8 @@ CREATE TABLE `detalles_venta` (
   `servicio_id` int(11) DEFAULT NULL,
   `cantidad` int(11) DEFAULT 1,
   `precio_unitario` decimal(10,2) NOT NULL,
-  `subtotal` decimal(10,2) GENERATED ALWAYS AS (`cantidad` * `precio_unitario`) STORED
+  `descuento` DECIMAL(10,2) DEFAULT 0,
+  `subtotal` decimal(10,2) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------

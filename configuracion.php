@@ -210,7 +210,11 @@
               <label class="form-label"><i class="bi bi-image-fill"></i> Foto</label>
               <input type="file" name="imagen" class="form-control" accept="image/*">
             </div>
-            <input type="hidden" name="rol" value="1">
+
+
+
+            <input type="hidden" name="rol" id="id_rol" value="">
+
             <div class="col-md-12">
               <label class="form-label"><i class="bi bi-person-vcard"></i> Empleado vinculado</label>
               <select name="empleado_id" id="empleado_id" class="form-select" required>
@@ -252,7 +256,23 @@
         pasos[pasoActual].classList.add("active");
         indicadores[pasoActual].classList.add("active");
       }
+      // Cargar Roles si aun no hay registro anteriormente
+      function cargarRoles() {
+        fetch('api/guardar_roles.php')
+          .then(res => res.json())
+          .then(data => {
+            console.log(data); // 👈 revisa esto en la consola
+            if (data.status) {
+              document.getElementById('id_rol').value = data.data;
+            } else {
+              alert('Info: ' + data.message + ' Rol Admin: ' + data.data);
+            }
+          });
 
+
+      }
+
+      cargarRoles();
       // Paso 1: Guardar empresa
       document.getElementById("empresaForm").addEventListener("submit", async (e) => {
         e.preventDefault();

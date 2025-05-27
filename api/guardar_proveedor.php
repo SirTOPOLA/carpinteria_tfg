@@ -4,10 +4,10 @@ require_once '../config/conexion.php';
 
 try {
     // Sanitizar entradas
-    $nombre    = trim($_POST['nombre'] ?? '');
-    $correo    = trim($_POST['correo'] ?? '');
-    $contacto  = trim($_POST['contacto'] ?? '');
-    $telefono  = trim($_POST['telefono'] ?? '');
+    $nombre = trim($_POST['nombre'] ?? '');
+    $correo = trim($_POST['correo'] ?? '');
+    $contacto = trim($_POST['contacto'] ?? '');
+    $telefono = trim($_POST['telefono'] ?? '');
     $direccion = trim($_POST['direccion'] ?? '');
 
     // Validaciones
@@ -22,19 +22,23 @@ try {
     // Insertar proveedor
     $sql = "INSERT INTO proveedores (nombre, email, contacto, telefono, direccion) 
             VALUES (:nombre, :correo, :contacto, :telefono, :direccion)";
-    
+
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
-        ':nombre'    => $nombre,
-        ':correo'    => $correo ?: null,
-        ':contacto'  => $contacto ?: null,
-        ':telefono'  => $telefono ?: null,
+        ':nombre' => $nombre,
+        ':correo' => $correo ?: null,
+        ':contacto' => $contacto ?: null,
+        ':telefono' => $telefono ?: null,
         ':direccion' => $direccion ?: null
     ]);
 
     echo json_encode([
         'success' => true,
-        'message' => 'Proveedor registrado correctamente.'
+        'message' => 'Proveedor registrado correctamente.',
+        'material' => [
+            'id' => $pdo->lastInsertId(),
+            'nombre' => $nombre
+        ]
     ]);
 } catch (Exception $e) {
     echo json_encode([

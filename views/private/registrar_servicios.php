@@ -1,12 +1,9 @@
+<div id="content" class="container-fliud">
+  <div class="card shadow-sm border-0 mb-4">
 
-
-
-
-<div id="content" class="container container-fluid-ms  py-4">
-  <div class="card border-0 shadow rounded-4 col-lg-9 mx-auto">
     <div class="card-header bg-warning text-dark rounded-top-4 py-3">
       <h5 class="mb-0 text-white">
-        <i class="bi bi-gear-wide-connected fs-4 me-2"></i>
+        <i class="bi bi-plug fs-4 me-2"></i>
         Registrar Servicio
       </h5>
     </div>
@@ -47,12 +44,12 @@
         </div>
 
         <div class="col-md-12">
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" name="activo" id="activo" checked>
-            <label class="form-check-label" for="activo">
-              <i class="bi bi-toggle-on me-1 text-success"></i> Servicio Activo
-            </label>
-          </div>
+          <a href="#" id="toggleActivo" class="btn btn-sm btn-success toggle-estado" data-estado="1">
+            <i class="bi bi-toggle-on me-1"></i>
+            Servicio Activado
+          </a>
+          <!-- Input oculto que se enviará con el formulario -->
+          <input type="hidden" name="activo" id="activo" value="1">
         </div>
 
         <div class="col-12 d-flex justify-content-between pt-3">
@@ -73,36 +70,73 @@
 
 
 <script>
-document.getElementById('formServicio').addEventListener('submit', async function (e) {
-  e.preventDefault();
+  document.getElementById('formServicio').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    let mensaje = document.getElementById('mensaje');
+    const form = e.target;
+    const formData = new FormData(form);
 
-  const form = e.target;
-  const formData = new FormData(form);
-
-  // Asegurar que el checkbox esté presente (aunque esté desmarcado)
-  if (!formData.has('activo')) {
-    formData.append('activo', 0); // si no se marcó, enviar como 0
-  }
-
-  try {
-    const response = await fetch('../api/guardar_servicios.php', {
-      method: 'POST',
-      body: formData
-    });
-
-    const result = await response.json();
-    document.getElementById('mensaje').textContent = result.message;
-    document.getElementById('mensaje').style.color = result.success ? 'green' : 'red';
-
-    if (result.success) {
-      form.reset(); // Limpiar formulario
-      window.location.href = 'index.php?vista=servicios'
+    // Asegurar que el checkbox esté presente (aunque esté desmarcado)
+    if (!formData.has('activo')) {
+      formData.append('activo', 0); // si no se marcó, enviar como 0
     }
-  } catch (error) {
-    document.getElementById('mensaje').textContent = 'Error al enviar el formulario.';
-    document.getElementById('mensaje').style.color = 'red';
-  }
-});
-</script>
 
- 
+    try {
+      const response = await fetch('api/guardar_servicios.php', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        mensaje.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+        form.reset(); // Limpiar formulario 
+        setTimeout(() => {
+          mensaje.style.opacity = 0;
+          setTimeout(() => {
+            mensaje.textContent = '';
+            mensaje.style.opacity = 1;
+            if (data.success) {
+              window.location.href = 'index.php?vista=servicios';
+            }
+          }, 300); // espera a que se desvanezca
+        }, 2000);
+
+      }
+    } catch (error) {
+      mensaje.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+      setTimeout(() => {
+        mensaje.textContent = '';
+      }, 2000)
+    }
+  });
+
+
+  function alterarEstato() {
+    const toggle = document.getElementById('toggleActivo');
+    const input = document.getElementById('activo');
+
+    toggle.addEventListener('click', (e) => {
+      e.preventDefault();
+
+      const estadoActual = toggle.getAttribute('data-estado');
+      const nuevoEstado = estadoActual === '1' ? '0' : '1';
+
+      // Actualiza ícono, clase y texto
+      toggle.setAttribute('data-estado', nuevoEstado);
+      input.value = nuevoEstado;
+
+      if (nuevoEstado === '1') {
+        toggle.classList.remove('btn-danger');
+        toggle.classList.add('btn-success');
+        toggle.innerHTML = '<i class="bi bi-toggle-on me-1"></i> Servicio Activado';
+      } else {
+        toggle.classList.remove('btn-success');
+        toggle.classList.add('btn-danger');
+        toggle.innerHTML = '<i class="bi bi-toggle-off me-1"></i> Servicio Desactivado';
+      }
+    });
+  }
+
+  alterarEstato()
+</script>

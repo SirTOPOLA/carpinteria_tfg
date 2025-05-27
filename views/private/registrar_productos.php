@@ -1,5 +1,6 @@
-<div id="content" class="container-fluid py-4">
-    <div class="container container-fliud-ms py-4">
+<div id="content" class="container-fliud">
+    <!-- Card con tabla de roles -->
+    <div class="card shadow-sm border-0 mb-4">
         <div class="card border-0 shadow rounded-4">
             <div class="card-header bg-primary text-white rounded-top-4 py-3">
                 <h5 class="mb-0">
@@ -34,22 +35,6 @@
                         </div>
                     </div>
 
-                    <!-- Categoría -->
-                    <!--   <div class="col-md-6">
-                        <label for="categoria_id" class="form-label">Categoría <span class="text-danger">*</span></label>
-                        <div class="input-group has-validation">
-                            <span class="input-group-text"><i class="bi bi-collection-fill"></i></span>
-                            <select name="categoria_id" id="categoria_id" class="form-select" required>
-                                <option value="">Seleccione una categoría</option>
-                                <?php foreach ($categorias as $cat): ?>
-                                    <option value="<?= htmlspecialchars($cat['id']) ?>">
-                                        <?= htmlspecialchars($cat['nombre']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                            <div class="invalid-feedback">Seleccione una categoría.</div>
-                        </div>
-                    </div> -->
 
                     <!-- Stock -->
                     <div class="col-md-6">
@@ -86,7 +71,7 @@
 
                     <!-- Botones -->
                     <div class="col-12 d-flex justify-content-between mt-3">
-                        <a href="productos.php" class="btn btn-outline-secondary rounded-pill px-4">
+                        <a href="index.php?vista=productos" class="btn btn-outline-secondary rounded-pill px-4">
                             <i class="bi bi-arrow-left-circle me-1"></i>Cancelar
                         </a>
 
@@ -96,21 +81,22 @@
                     </div>
 
                 </form>
+                <div id="mensaje" class="mt-3"></div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-function agregarCampoImagen() {
-    const container = document.getElementById('imagenesContainer');
+    function agregarCampoImagen() {
+        const container = document.getElementById('imagenesContainer');
 
-    const div = document.createElement('div');
-    div.classList.add('mb-3');
+        const div = document.createElement('div');
+        div.classList.add('mb-3');
 
-    const uniqueId = `imgPreview${Date.now()}`;
+        const uniqueId = `imgPreview${Date.now()}`;
 
-    div.innerHTML = `
+        div.innerHTML = `
         <div class="input-group col-md-6">
             <span class="input-group-text"><i class="bi bi-file-earmark-image"></i></span>
             <input type="file" name="imagenes[]" accept="image/*" class="form-control" onchange="mostrarPreview(this, '${uniqueId}')" required>
@@ -123,35 +109,33 @@ function agregarCampoImagen() {
         </div>
     `;
 
-    container.appendChild(div);
-}
-
-function eliminarCampoImagen(btn) {
-    btn.closest('.mb-3').remove();
-}
-
-function mostrarPreview(input, previewId) {
-    const file = input.files[0];
-    const preview = document.getElementById(previewId);
-
-    if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            preview.src = e.target.result;
-            preview.classList.remove('d-none');
-        };
-        reader.readAsDataURL(file);
-    } else {
-        preview.src = "";
-        preview.classList.add('d-none');
+        container.appendChild(div);
     }
-}
-</script>
 
-<script>
-    document.getElementById('formProducto').addEventListener('submit', function (e) {
+    function eliminarCampoImagen(btn) {
+        btn.closest('.mb-3').remove();
+    }
+
+    function mostrarPreview(input, previewId) {
+        const file = input.files[0];
+        const preview = document.getElementById(previewId);
+
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+            };
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = "";
+            preview.classList.add('d-none');
+        }
+    }
+
+    document.getElementById('formProducto').addEventListener('submit', async function (e) {
         e.preventDefault(); // Prevenir envío tradicional
-
+        let mensaje = document.getElementById('mensaje');
         // Validación nativa de Bootstrap
         if (!this.checkValidity()) {
             this.classList.add('was-validated');
@@ -160,23 +144,36 @@ function mostrarPreview(input, previewId) {
 
         const form = e.target;
         const formData = new FormData(form);
-
-        fetch('api/guardar_productos.php', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json()) // Esperamos JSON del backend
-            .then(data => {
-                if (data.success) {
-                    alert('Producto registrado correctamente.');
-                    window.location.href = 'index.php?vista=productos'; // redirige si es exitoso
-                } else {
-                    alert('Error: ' + data.message);
-                }
+        try {
+            const res = await fetch('api/guardar_productos_actualizar.php', {
+                method: 'POST', body: formData
             })
-            .catch(error => {
-                console.error('Error al guardar:', error);
-                alert('Hubo un error al procesar la solicitud.');
-            });
-    });
+            const data = await res.json(); // Esperamos JSON del backend
+            if (data.success) {
+                mensaje.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                setTimeout(() => {
+                    mensaje.style.opacity = 0;
+                    setTimeout(() => {
+                        mensaje.textContent = '';
+                        mensaje.style.opacity = 1;
+                        window.location.href = 'index.php?vista=productos'; // redirige si es exitoso
+
+                    }, 300); // espera a que se desvanezca
+                }, 2000);
+
+            } else {
+                mensaje.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+                setTimeout(() => {
+                    mensaje.textContent = '';
+                }, 2000)
+
+            }
+        } catch (error) {
+            mensaje.innerHTML = `<div class="alert alert-danger">${error}</div>`;
+            setTimeout(() => {
+                mensaje.textContent = '';
+            }, 2000)
+        };
+
+    })
 </script>

@@ -1,8 +1,5 @@
-
-
- 
 <div id="content" class="container-fluid py-4">
- 
+
   <div class="row justify-content-center">
     <div class="col-12 col-xl-11">
       <div class="card shadow rounded-4">
@@ -12,7 +9,7 @@
         </div>
 
         <div class="card-body">
-          <form id="formulario" method="POST" class="needs-validation" novalidate>
+          <form id="form-proyecto" method="POST" class="needs-validation" novalidate>
 
             <div class="row g-3">
               <div class="col-md-6">
@@ -75,29 +72,37 @@
   </div>
 </div>
 
- 
+
 <script>
-    document.getElementById('form-proyecto').addEventListener('submit', function (e) {
-  e.preventDefault();
+  let form = document.getElementById('form-proyecto');
 
-  const datos = new FormData(this);
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
 
-  fetch('guardar_proyecto.php', {
-    method: 'POST',
-    body: datos
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.exito) {
-      alert('Proyecto guardado correctamente.');
-      // Opcional: limpiar formulario o redirigir
-    } else {
-      alert('Error: ' + data.mensaje);
+    // Reunir los datos del formulario
+    const formData = new FormData(form);
+    try {
+
+
+      const response = await fetch('api/guardar_proyecto.php', {
+        method: 'POST',
+        body: formData
+      })
+      const data = await response.json()
+
+      if (data.success) {
+        alert('Proyecto guardado correctamente.');
+        location.reload();
+        location.href = 'index.php?vista=proyectos';
+        // Opcional: limpiar formulario o redirigir
+      } else {
+        alert('Error: ' + data.message);
+      }
+
+    } catch (error) {
+      console.error('Error en la petición:', error);
+
     }
   })
-  .catch(error => {
-    console.error('Error en la petición:', error);
-  });
-});
 
 </script>

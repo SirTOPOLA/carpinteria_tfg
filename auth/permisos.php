@@ -71,7 +71,7 @@ function verificarAcceso($vista)
             'ventas',
             'registrar_ventas',
             'editar_ventas',
-
+            'configuracion',
             'entidad',
             'compras',
             'operaciones'

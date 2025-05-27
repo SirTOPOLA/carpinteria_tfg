@@ -164,6 +164,20 @@
                 }
             });
     });
+
+
+    function cerrarSession() {
+    document.getElementById('cerrarSession').addEventListener('click', () => {
+        if (confirm('¿Estás seguro de que deseas cerrar la sesión?')) {
+           // console.log('mola')
+            // Redirecciona o ejecuta la lógica de cierre
+            window.location.href = 'logout.php'; // Cambia a tu ruta real
+        }
+    });
+}
+
+cerrarSession();
+
 </script>
 
 </body>

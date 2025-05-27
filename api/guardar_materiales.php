@@ -63,7 +63,14 @@ try {
         ':descripcion' => $descripcion !== '' ? $descripcion : null
     ]);
 
-    echo json_encode(['success' => true, 'message' => 'Material registrado correctamente.']);
+    echo json_encode([
+        'success' => true,
+        'message' => 'Material registrado correctamente.',
+        'material' => [
+            'id' => $pdo->lastInsertId(),
+            'nombre' => $nombre
+        ]
+    ]);
 
 } catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Error de base de datos: ' . $e->getMessage()]);
