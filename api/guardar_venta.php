@@ -42,19 +42,23 @@ try {
 
     foreach ($_POST['tipo'] as $i => $tipo) {
         $tipo = trim($tipo);
+        $itemId = isset($_POST['item_id'][$i]) ? intval($_POST['item_id'][$i]) : null;
         $cantidad = isset($_POST['cantidad'][$i]) ? intval($_POST['cantidad'][$i]) : 1;
         $precio = isset($_POST['precio_unitario'][$i]) ? floatval($_POST['precio_unitario'][$i]) : 0;
         $descuento = isset($_POST['descuento'][$i]) ? floatval($_POST['descuento'][$i]) : 0;
-
-        if (!in_array($tipo, ['producto', 'servicio'])) {
+    
+        if (!in_array($tipo, ['producto', 'servicio']) || !$itemId) {
             continue; // Saltar si no es válido
         }
-
-        $productoId = $tipo === 'producto' ? intval($_POST['producto_id'][$i]) : null;
-        $servicioId = $tipo === 'servicio' ? intval($_POST['servicio_id'][$i]) : null;
-
-        $subtotal = ($precio * $cantidad) - $descuento;
-
+    
+        $productoId = $tipo === 'producto' ? $itemId : null;
+        $servicioId = $tipo === 'servicio' ? $itemId : null;
+    
+        $subtotal = ($precio * $cantidad);
+        if ($descuento > 0) {
+            $subtotal -= ($subtotal * $descuento / 100);
+        }
+    
         $stmtDetalle->execute([
             $ventaId,
             $tipo,
@@ -66,7 +70,7 @@ try {
             $subtotal
         ]);
     }
-
+    
     $pdo->commit();
 
     echo json_encode([

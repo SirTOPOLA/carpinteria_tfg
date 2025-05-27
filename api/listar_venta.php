@@ -43,8 +43,8 @@ $html = '';
 foreach ($ventas as $venta) {
      // Botón eliminar solo para administradores
      $link = ($_SESSION['usuario']['rol'] === 'Administrador') 
-     ? "<a href='#' class='btn btn-sm btn-danger btn-eliminar' data-id='{$venta['id']}'><i class='bi bi-trash-fill'></i></a>"
-     : '';
+ ? "<a href='#' class='btn btn-sm btn-danger btn-eliminar' data-id='{$venta['id']}'><i class='bi bi-trash-fill'></i></a>"
+ : '';
     $fechaFormateada = date('d/m/Y', strtotime($venta['fecha']));
     $html .= "
     <tr>

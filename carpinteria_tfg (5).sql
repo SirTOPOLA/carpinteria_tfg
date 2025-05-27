@@ -27,11 +27,11 @@ SET time_zone = "+00:00";
 -- Table structure for table `categorias_producto`
 --
 
-CREATE TABLE `categorias_producto` (
-  `id` int(11) NOT NULL,
-  `nombre` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
+ --CREATE TABLE `categorias_producto` (
+ -- `id` int(11) NOT NULL,
+ -- `nombre` varchar(100) NOT NULL
+--) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  
 -- --------------------------------------------------------
 
 --

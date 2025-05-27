@@ -1,12 +1,12 @@
 <?php
- 
+
 
 $id = $_GET['id'] ?? null;
 if (!$id) {
     die('ID no especificado');
 }
 
- 
+
 // Obtener venta
 $stmt = $pdo->prepare("SELECT * FROM ventas WHERE id = ?");
 $stmt->execute([$id]);
@@ -23,99 +23,121 @@ $productos = $pdo->query("SELECT id, nombre FROM productos")->fetchAll(PDO::FETC
 $servicios = $pdo->query("SELECT id, nombre FROM servicios")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<div class="container mt-4">
-    <h3>Editar Venta</h3>
-    <form id="formEditarVenta">
-        <input type="hidden" name="venta_id" value="<?= $venta['id'] ?>">
+<div id="content" class="container-fliud">
+    <div class="card shadow-sm border-0 mb-4">
 
-        <div class="mb-3">
-            <label for="cliente_id" class="form-label">Cliente</label>
-            <select name="cliente_id" id="cliente_id" class="form-select" required>
-                <option value="">Seleccione</option>
-                <?php foreach ($clientes as $cliente): ?>
-                    <option value="<?= $cliente['id'] ?>" <?= $cliente['id'] == $venta['cliente_id'] ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($cliente['nombre']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
+        <div class="card-header bg-warning text-dark rounded-top-4 py-3">
+            <h5 class="mb-0 text-white">
+                <i class="bi bi-cart-check-fill me-2"></i>Registrar Venta
+            </h5>
         </div>
 
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label for="metodo_pago" class="form-label">Método de pago</label>
-                <input type="text" name="metodo_pago" id="metodo_pago" class="form-control" required value="<?= htmlspecialchars($venta['metodo_pago']) ?>">
-            </div>
-            <div class="col-md-6">
-                <label for="total_venta" class="form-label">Total (XAF)</label>
-                <input type="text" id="total_venta" name="total" class="form-control text-end fw-bold" readonly value="<?= $venta['total'] ?>">
-            </div>
+        <div class="card-body">
+                <form id="formEditarVenta">
+                    <input type="hidden" name="venta_id" value="<?= $venta['id'] ?>">
+
+                    <div class="mb-3">
+                        <label for="cliente_id" class="form-label">Cliente</label>
+                        <select name="cliente_id" id="cliente_id" class="form-select" required>
+                            <option value="">Seleccione</option>
+                            <?php foreach ($clientes as $cliente): ?>
+                                <option value="<?= $cliente['id'] ?>" <?= $cliente['id'] == $venta['cliente_id'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($cliente['nombre']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="metodo_pago" class="form-label">Método de pago</label>
+                            <input type="text" name="metodo_pago" id="metodo_pago" class="form-control" required
+                                value="<?= htmlspecialchars($venta['metodo_pago']) ?>">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="total_venta" class="form-label">Total (XAF)</label>
+                            <input type="text" id="total_venta" name="total" class="form-control text-end fw-bold"
+                                readonly value="<?= $venta['total'] ?>">
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-outline-primary" onclick="agregarFila('producto')">Agregar
+                            producto</button>
+                        <button type="button" class="btn btn-outline-success" onclick="agregarFila('servicio')">Agregar
+                            servicio</button>
+                    </div>
+
+                    <table class="table table-bordered" id="tabla-detalles">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Item</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                                <th>Eliminar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($detalles as $detalle): ?>
+                                <tr>
+                                    <td>
+                                        <input type="hidden" name="tipo[]" value="<?= $detalle['tipo'] ?>">
+                                        <?= $detalle['tipo'] ?>
+                                    </td>
+                                    <td>
+                                        <select name="<?= $detalle['tipo'] ?>_id[]" class="form-select">
+                                            <?php
+                                            $items = $detalle['tipo'] === 'producto' ? $productos : $servicios;
+                                            foreach ($items as $item) {
+                                                $selected = $item['id'] == $detalle['item_id'] ? 'selected' : '';
+                                                echo "<option value='{$item['id']}' $selected>{$item['nombre']}</option>";
+                                            }
+                                            ?>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" name="cantidad[]" class="form-control"
+                                            value="<?= $detalle['cantidad'] ?>" min="1" required></td>
+                                    <td><input type="number" step="0.01" name="precio_unitario[]" class="form-control"
+                                            value="<?= $detalle['precio_unitario'] ?>" required></td>
+                                    <td><button type="button" class="btn btn-danger btn-sm"
+                                            onclick="this.closest('tr').remove()">X</button></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+ <!-- Botones -->
+ <div class="col-12 d-flex justify-content-between mt-3">
+                        <a href="index.php?vista=ventas" class="btn btn-outline-secondary rounded-pill px-4">
+                            <i class="bi bi-arrow-left-circle me-1"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-warning rounded-pill px-4">
+                            <i class="bi bi-save2-fill me-1"></i>Actualizar 
+                        </button>
+                    </div>
+                </form>
         </div>
-
-        <hr>
-
-        <div class="mb-3">
-            <button type="button" class="btn btn-outline-primary" onclick="agregarFila('producto')">Agregar producto</button>
-            <button type="button" class="btn btn-outline-success" onclick="agregarFila('servicio')">Agregar servicio</button>
         </div>
-
-        <table class="table table-bordered" id="tabla-detalles">
-            <thead class="table-light">
-                <tr>
-                    <th>Tipo</th>
-                    <th>Item</th>
-                    <th>Cantidad</th>
-                    <th>Precio</th>
-                    <th>Eliminar</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($detalles as $detalle): ?>
-                    <tr>
-                        <td>
-                            <input type="hidden" name="tipo[]" value="<?= $detalle['tipo'] ?>">
-                            <?= $detalle['tipo'] ?>
-                        </td>
-                        <td>
-                            <select name="<?= $detalle['tipo'] ?>_id[]" class="form-select">
-                                <?php
-                                $items = $detalle['tipo'] === 'producto' ? $productos : $servicios;
-                                foreach ($items as $item) {
-                                    $selected = $item['id'] == $detalle['item_id'] ? 'selected' : '';
-                                    echo "<option value='{$item['id']}' $selected>{$item['nombre']}</option>";
-                                }
-                                ?>
-                            </select>
-                        </td>
-                        <td><input type="number" name="cantidad[]" class="form-control" value="<?= $detalle['cantidad'] ?>" min="1" required></td>
-                        <td><input type="number" step="0.01" name="precio_unitario[]" class="form-control" value="<?= $detalle['precio_unitario'] ?>" required></td>
-                        <td><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">X</button></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-
-        <div class="text-end">
-            <button type="submit" class="btn btn-success">Guardar Cambios</button>
-            <a href="ventas.php" class="btn btn-secondary">Cancelar</a>
-        </div>
-    </form>
+    </div>
 </div>
 
 <script>
-const productos = <?= json_encode($productos) ?>;
-const servicios = <?= json_encode($servicios) ?>;
+    const productos = <?= json_encode($productos) ?>;
+    const servicios = <?= json_encode($servicios) ?>;
 
-function agregarFila(tipo) {
-    const tbody = document.querySelector("#tabla-detalles tbody");
-    const tr = document.createElement("tr");
+    function agregarFila(tipo) {
+        const tbody = document.querySelector("#tabla-detalles tbody");
+        const tr = document.createElement("tr");
 
-    let opciones = '';
-    const items = tipo === 'producto' ? productos : servicios;
-    items.forEach(item => {
-        opciones += `<option value="${item.id}">${item.nombre}</option>`;
-    });
+        let opciones = '';
+        const items = tipo === 'producto' ? productos : servicios;
+        items.forEach(item => {
+            opciones += `<option value="${item.id}">${item.nombre}</option>`;
+        });
 
-    tr.innerHTML = `
+        tr.innerHTML = `
         <td>
             <input type="hidden" name="tipo[]" value="${tipo}">
             ${tipo}
@@ -127,51 +149,48 @@ function agregarFila(tipo) {
         <td><input type="number" step="0.01" name="precio_unitario[]" class="form-control" value="0.00" required></td>
         <td><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">X</button></td>
     `;
-    tbody.appendChild(tr);
-    calcularTotalVenta();
-}
-
-function calcularTotalVenta() {
-    let total = 0;
-    document.querySelectorAll('#tabla-detalles tbody tr').forEach(fila => {
-        const cantidad = parseFloat(fila.querySelector('input[name="cantidad[]"]').value) || 0;
-        const precio = parseFloat(fila.querySelector('input[name="precio_unitario[]"]').value) || 0;
-        total += cantidad * precio;
-    });
-    document.getElementById('total_venta').value = total.toFixed(2);
-}
-
-document.addEventListener('input', function(e) {
-    if (e.target.name === 'cantidad[]' || e.target.name === 'precio_unitario[]') {
+        tbody.appendChild(tr);
         calcularTotalVenta();
     }
-});
-</script>
 
-<!-- Fetch para actualizar -->
-<script>
-document.getElementById('formEditarVenta').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const formData = new FormData(this);
-
-    try {
-        const response = await fetch('api/actualizar_venta.php', {
-            method: 'POST',
-            body: formData
+    function calcularTotalVenta() {
+        let total = 0;
+        document.querySelectorAll('#tabla-detalles tbody tr').forEach(fila => {
+            const cantidad = parseFloat(fila.querySelector('input[name="cantidad[]"]').value) || 0;
+            const precio = parseFloat(fila.querySelector('input[name="precio_unitario[]"]').value) || 0;
+            total += cantidad * precio;
         });
-
-        const result = await response.json();
-
-        if (result.success) {
-            alert(result.message);
-            window.location.href = 'index.php?vista=ventas';
-        } else {
-            alert('Error: ' + result.message);
-        }
-    } catch (err) {
-        console.error(err);
-        alert('Error inesperado');
+        document.getElementById('total_venta').value = total.toFixed(2);
     }
-});
+
+    document.addEventListener('input', function (e) {
+        if (e.target.name === 'cantidad[]' || e.target.name === 'precio_unitario[]') {
+            calcularTotalVenta();
+        }
+    });
+ 
+    document.getElementById('formEditarVenta').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        try {
+            const response = await fetch('api/actualizar_ventas.php', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert(result.message);
+                window.location.href = 'index.php?vista=ventas';
+            } else {
+                alert('Error: ' + result.message);
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Error inesperado');
+        }
+    });
 </script>

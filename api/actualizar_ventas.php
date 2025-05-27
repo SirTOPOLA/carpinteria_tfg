@@ -3,7 +3,7 @@ require '../config/conexion.php';
 header('Content-Type: application/json');
 
 try {
-    if (!isset($_POST['venta_id'], $_POST['cliente_id'], $_POST['metodo_pago'], $_POST['tipo'])) {
+    if (!isset($_POST['venta_id'], $_POST['cliente_id'],  $_POST['tipo'])) {
         throw new Exception('Faltan datos requeridos');
     }
 
@@ -32,7 +32,7 @@ try {
         $cantidad = $cantidades[$i];
         $precio_unitario = $precios[$i];
 
-        $stmt = $pdo->prepare("INSERT INTO detalles_venta (venta_id, tipo, item_id, cantidad, precio_unitario) VALUES (?, ?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO detalles_venta ( venta_id, tipo, producto_id, servicio_id, cantidad, precio_unitario, descuento, subtotal) VALUES (?, ?, ?, ?, ?)");
         $stmt->execute([$venta_id, $tipo, $item_id, $cantidad, $precio_unitario]);
     }
 

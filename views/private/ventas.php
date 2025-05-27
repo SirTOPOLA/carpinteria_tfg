@@ -93,8 +93,8 @@
         </div>
       </div>
       <div class="modal-footer d-print-none">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary" onclick="window.print()">Imprimir</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-arrow-left"></i> Cerrar</button>
+ 
       </div>
     </div>
   </div>
@@ -104,7 +104,7 @@
 
 <script>
     const buscador = document.getElementById('buscador');
-
+    manejarEventosAjaxTbody()
     function cargarVentas(pagina = 1, termino = '') {
         const formData = new FormData();
         formData.append('pagina', pagina);
@@ -125,7 +125,47 @@
             });
     }
 
+    function manejarEventosAjaxTbody() {
+        document.getElementById("tbodyVentas").addEventListener("click", function (e) {
+            //eliminar un registro de la fila por ID            
+            if (e.target.closest(".btn-eliminar")) {
+                const id = e.target.closest(".btn-eliminar").dataset.id;
+                eliminar(id);
+            }
+       
+            
+
+
+        });
+
+    }
+
    
+    async function eliminar(id) {
+    if (confirm('¿Seguro que quieres eliminar esta venta?')) {
+        try {
+            const formData = new FormData();
+            formData.append('id', id);
+
+            const response = await fetch('api/eliminar_ventas.php', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert(data.message);
+                location.reload();
+            } else {
+                alert(data.message || 'Error al eliminar la venta.');
+            }
+        } catch (error) {
+            alert('Error en la petición: ' + error.message);
+        }
+    }
+}
+
     
     function inicializarBotonesDetalle() {
     document.querySelectorAll('.btn-toggle').forEach(btn => {

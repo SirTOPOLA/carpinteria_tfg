@@ -354,7 +354,9 @@ $servicios = $pdo->query("SELECT id, nombre, precio_base FROM servicios")->fetch
         </div>
     </div>
 </div>
-
+<!-- 
+<select name="${tipo}_id[]" class="form-select item-select"></select>
+ -->
 <script>
     const productos = <?= json_encode($productos) ?>;
     const servicios = <?= json_encode($servicios) ?>;
@@ -382,12 +384,16 @@ $servicios = $pdo->query("SELECT id, nombre, precio_base FROM servicios")->fetch
 
         tr.innerHTML = `
         <td>
-            <input type="hidden" name="tipo[]" value="${tipo}">
+        <input type="hidden" name="tipo[]" value="${tipo}">
+
+              
             ${tipo}
         </td>
         <td>
             <div class="input-group">
-                <select name="${tipo}_id[]" class="form-select item-select">
+            <select name="item_id[]" class="form-select item-select" data-tipo="${tipo}">
+
+                
                     ${opciones}
                 </select>
                 <button type="button" class="btn btn-outline-primary btn-sm" onclick="abrirModal('${tipo}')">
@@ -439,7 +445,9 @@ $servicios = $pdo->query("SELECT id, nombre, precio_base FROM servicios")->fetch
     document.addEventListener('change', function (e) {
         if (e.target.classList.contains('item-select')) {
             const fila = e.target.closest('tr');
-            const tipo = fila.querySelector('input[name="tipo[]"]').value;
+           // const tipo = fila.querySelector('input[name="tipo[]"]').value;
+            const tipo = e.target.getAttribute('data-tipo');
+
             const id = parseInt(e.target.value);
 
             const lista = tipo === 'producto' ? productos : servicios;
@@ -473,6 +481,89 @@ $servicios = $pdo->query("SELECT id, nombre, precio_base FROM servicios")->fetch
             
             if (resultado.success) {
                 alert('Venta registrada correctamente');
+                window.location.href = 'index.php?vista=ventas';
+            } else {
+                alert('Error: ' + resultado.message);
+            }
+        } catch (error) {
+            alert('Error en la solicitud: ' + error.message);
+        }
+    });
+    // Si agregas una fila dinámicamente, vuelve a calcular
+    document.getElementById('formRegistarCliente').addEventListener('submit', async function (e) {
+        e.preventDefault(); // Evita el envío tradicional
+        
+        const form = e.target;
+        const formData = new FormData(form);
+       // console.log(form)
+        //console.log(form)
+        
+        try {
+            const response = await fetch('api/guardar_clientes.php', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const resultado = await response.json();
+            console.log(resultado)
+            
+            if (resultado.success) {
+                alert('cliente registrada correctamente');
+                window.location.href = 'index.php?vista=ventas';
+            } else {
+                alert('Error: ' + resultado.message);
+            }
+        } catch (error) {
+            alert('Error en la solicitud: ' + error.message);
+        }
+    });
+    // Si agregas una fila dinámicamente, vuelve a calcular
+    document.getElementById('formProducto').addEventListener('submit', async function (e) {
+        e.preventDefault(); // Evita el envío tradicional
+        
+        const form = e.target;
+        const formData = new FormData(form);
+       // console.log(form)
+        //console.log(form)
+        
+        try {
+            const response = await fetch('api/guardar_productos.php', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const resultado = await response.json();
+            console.log(resultado)
+            
+            if (resultado.success) {
+                alert('productos registrada correctamente');
+                window.location.href = 'index.php?vista=ventas';
+            } else {
+                alert('Error: ' + resultado.message);
+            }
+        } catch (error) {
+            alert('Error en la solicitud: ' + error.message);
+        }
+    });
+    document.getElementById('formServicio').addEventListener('submit', async function (e) {
+        e.preventDefault(); // Evita el envío tradicional
+        
+        const form = e.target;
+        const formData = new FormData(form);
+       // console.log(form)
+        //console.log(form)
+        
+        try {
+            const response = await fetch('api/guardar_servicios.php', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const resultado = await response.json();
+            console.log(resultado)
+            
+            if (resultado.success) {
+                alert('servicio registrada correctamente');
                 window.location.href = 'index.php?vista=ventas';
             } else {
                 alert('Error: ' + resultado.message);

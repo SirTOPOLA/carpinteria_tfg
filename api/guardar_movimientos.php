@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Recoger datos
-$tipo = $_POST['tipo'] ?? '';
+$tipo = $_POST['tipo'] ?? [];
 $materiales = $_POST['material_id'] ?? [];
 $cantidades = $_POST['cantidad'] ?? [];
 $motivos = $_POST['motivo'] ?? [];
