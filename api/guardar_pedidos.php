@@ -5,11 +5,18 @@ require_once '../config/conexion.php';
 try { 
     $pdo->beginTransaction();
 
-    // CLIENTE
+    // CLIENTE 
     $cliente_id = $_POST['responsable_id'];
     $fecha_solicitud = date('Y-m-d');
     $estado = $_POST['estado'] ?? 'cotizado';
     $fecha_inicio = $_POST['fecha_inicio'];
+
+    // Este es el campo nuevo: precio_obra (mano de obra)
+    $precio_obra = isset($_POST['mano_obra']) ? $_POST['mano_obra'] : 0;
+
+    $total = isset($_POST['total']) ? $_POST['total'] : 0;
+
+    $descripcion = $_POST['descripcion'] ?? 'Cotización generada automáticamente';
 
     // PROYECTO: crear nuevo si aplica
     if ($_POST['opcion'] === 'f') {
@@ -22,20 +29,22 @@ try {
     }
 
     // SERVICIO (opcional)
-    $servicio_id = !empty($_POST['servicio_id']) ? $_POST['servicio_id'] : null;
+    $servicio_id = !empty($_POST['servicio_id']) ? trim($_POST['servicio_id'] ) : null;
     $coste_servicio = !empty($_POST['coste_servicio']) ? $_POST['coste_servicio'] : 0;
 
     // Registrar solicitud (cotización)
     $stmt = $pdo->prepare("INSERT INTO solicitudes_proyecto 
-        (cliente_id, proyecto_id, descripcion, fecha_solicitud, estado, estimacion_total) 
-        VALUES (?, ?, ?, ?, ?, ?)");
+        (cliente_id, proyecto_id, descripcion, fecha_solicitud, estado, estimacion_total, servicio_id, precio_obra) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->execute([
         $cliente_id,
         $proyecto_id,
-        'Cotización generada automáticamente',
+        $descripcion,
         $fecha_solicitud,
         $estado,
-        0 // temporal, se actualizará luego
+        0, // temporal, se actualizará luego
+        $servicio_id,
+        $precio_obra
     ]);
     $solicitud_id = $pdo->lastInsertId();
 
@@ -56,18 +65,13 @@ try {
                 $cantidades[$i],
                 $precios[$i]
             ]);
-            $subtotal_total += $cantidades[$i] * $precios[$i];
+           // $subtotal_total += $cantidades[$i] * $precios[$i];
         }
-    }
-
-    // Sumar costo del servicio si aplica
-    if ($servicio_id) {
-        $subtotal_total += $coste_servicio;
     }
 
     // Actualizar estimación total
     $stmt = $pdo->prepare("UPDATE solicitudes_proyecto SET estimacion_total = ? WHERE id = ?");
-    $stmt->execute([$subtotal_total, $solicitud_id]);
+    $stmt->execute([$total, $solicitud_id]);
 
     $pdo->commit();
     echo json_encode(['success' => true, 'message' => 'Cotización registrada correctamente.']);

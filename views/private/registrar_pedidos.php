@@ -252,7 +252,7 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <!-- Total -->
                     <div class="col-md-6">
                         <label for="mano_obra" class="form-label">Costo de la mano de obra</label>
-                        <input type="number" id="mano_obra" class="form-control" value="0" min="0"
+                        <input type="number" name="mano_obra" id="mano_obra" class="form-control" value="0" min="0"
                             oninput="calcularTotal()">
                     </div>
                     <div class="col-md-6">

@@ -491,6 +491,7 @@ CREATE TABLE `solicitudes_proyecto` (
   `id` int(11) NOT NULL,
   `cliente_id` int(11) NOT NULL,
   `proyecto_id` int(11) NOT NULL,
+  `servicio_id ` INT NULL
   `descripcion` text DEFAULT NULL,
   `fecha_solicitud` date NOT NULL,
   `estado` enum('pendiente','cotizado','aprobado','rechazado','en_produccion','finalizado') DEFAULT 'pendiente',
