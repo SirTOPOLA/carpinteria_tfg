@@ -303,6 +303,16 @@ CREATE TABLE `movimientos_material` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
+CREATE TABLE `detalles_solicitud_material` (
+  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `solicitud_id` INT NOT NULL,
+  `material_id` INT NOT NULL,
+  `cantidad` INT NOT NULL,
+  `precio_unitario` DECIMAL(10,2) NOT NULL,
+  `subtotal` DECIMAL(10,2) GENERATED ALWAYS AS (cantidad * precio_unitario) STORED,
+  FOREIGN KEY (`solicitud_id`) REFERENCES solicitudes_proyecto(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`material_id`) REFERENCES materiales(`id`) ON DELETE CASCADE
+);
 
 --
 -- Table structure for table `pagos`

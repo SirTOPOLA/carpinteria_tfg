@@ -13,12 +13,12 @@ if (isset($data['id'])) {
 
     // Mensaje personalizado que quieres enviar al frontend
     echo json_encode([
-        'ok' => true,
+        'success' => true,
         'mensaje' => 'El estado del usuario se actualizó correctamente.'
     ]);
 } else {
     echo json_encode([
-        'ok' => false,
+        'success' => false,
         'mensaje' => 'ID no válido o faltante.'
     ]);
 }

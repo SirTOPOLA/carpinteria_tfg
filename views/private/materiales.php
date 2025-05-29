@@ -39,7 +39,7 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <th><i class="bi bi-gear-fill me-1"></i>Acciones</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="tbody">
           <?php if (count($materiales) > 0): ?>
             <?php foreach ($materiales as $material): ?>
               <tr>
@@ -67,6 +67,11 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </tbody>
       </table>
     </div>
+    <div class="card-footer row py-2 d-flex justify-content-between">
+            <div id="resumen-paginacion" class="col-12 col-md-4 text-muted small  text-center "></div>
+            <!-- Controles de paginación -->
+            <div id="paginacion" class="col-12 col-md-7  d-flex justify-content-center "></div>
+        </div>
   </div>
 </div>
 
@@ -74,6 +79,112 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </div>
 
 
+<script>
+
+    const buscador = document.getElementById('buscador');
+    let paginaActual = 1;
+
+    //cargar las funciones al cargarse la pagina completamente
+    document.addEventListener('DOMContentLoaded', () => {
+        cargarDatos();
+        clickPaginacion()
+        manejarEventosAjaxTbody(); // Necesario cuando cargamos html por ajax
+       // buscar()
+
+    });
+
+    function manejarEventosAjaxTbody() {
+        document.getElementById("tbody").addEventListener("click", function (e) {
+            //eliminar un registro de la fila por ID            
+            if (e.target.closest(".btn-eliminar")) {
+                const id = e.target.closest(".btn-eliminar").dataset.id;
+                eliminar(id);
+            }
+         
+           
+
+
+        });
+
+    }
+
+    async function eliminar(id) {
+        if (confirm('¿Seguro que quieres eliminar este cliente?')) {
+            try {
+                const response = await fetch(`api/eliminar_clientes.php?id=${id}`, {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert(data.message || 'Error al eliminar el cliente.');
+                }
+            } catch (error) {
+                alert('Error en la petición.');
+            }
+        }
+    }
+
+ 
+    async function cargarDatos(pagina = 1, termino = '') {
+        const formData = new FormData();
+        formData.append('pagina', pagina);
+        formData.append('termino', termino);
+        try {
+            const res = await fetch('api/listar_clientes.php', {
+                method: 'POST',
+                body: formData
+            })
+
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById('tbody').innerHTML = data.html;
+                document.getElementById('paginacion').innerHTML = data.paginacion;
+                document.getElementById('resumen-paginacion').textContent = data.resumen;
+                paginaActual = pagina; // actualizar página actual
+            } else {
+                alert(data.message);
+                console.log()
+            }
+
+        } catch (error) {
+            alert('Error al cargar datos:', error);
+            console.log(error)
+        }
+
+    }
+
+    // Buscar
+    function buscar() {
+        buscador.addEventListener('input', async () => {
+            paginaActual = 1;
+            await cargarDatos(paginaActual, buscador.value.trim());
+        });
+
+    }
+    // Manejar clics en paginación
+    function clickPaginacion() {
+        document.getElementById('paginacion').addEventListener('click', async e => {
+            const btn = e.target.closest('.pagina-link');
+            if (btn) {
+                e.preventDefault();
+                const nuevaPagina = parseInt(btn.dataset.pagina);
+                if (!isNaN(nuevaPagina)) {
+                    paginaActual = nuevaPagina;
+                    await cargarDatos(paginaActual, buscador.value.trim());
+                }
+            }
+        });
+
+    }
+
+
+</script>
 
 
 

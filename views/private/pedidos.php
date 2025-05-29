@@ -1,18 +1,5 @@
 <?php
-
-
-/* if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    header("Location: pedidos.php");
-    exit;
-} */
-
-//$id = (int) $_GET['id'];
-
-/* $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
-if ($id <= 0)
-    die("ID inválido.");
-
- */
+ 
 $sql = "SELECT sp.*,
         c.nombre AS cliente,
         p.nombre AS proyecto    
@@ -24,21 +11,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $pedidos = $stmt->fetch(PDO::FETCH_ASSOC);
 
-/* $sql = "SELECT sp.*,
-        c.nombre AS cliente
-        FROM solicitudes_pedidos sp
-        INNER JOIN clientes c ON sp.cliente_id = c.id 
-         ";
-$stmt = $pdo->prepare($sql);
-$stmt->execute();
-$solicitudes_pedidos = $stmt->fetch(PDO::FETCH_ASSOC);
-
- */
-
-/* if (!$pedidos) {
-    header("Location: pedidoss.php");
-    exit;
-} */
+ 
 ?>
 
 
@@ -51,7 +24,7 @@ $solicitudes_pedidos = $stmt->fetch(PDO::FETCH_ASSOC);
             </h4>
             <div class="input-group w-100 w-md-auto" style="max-width: 300px;">
                 <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                <input type="text" class="form-control" placeholder="Buscar pedido..." id="buscador-pedidoss">
+                <input type="text" class="form-control" placeholder="Buscar pedido..." id="buscador">
             </div>
             <a href="index.php?vista=registrar_pedidos" class="btn btn-secondary">
 
@@ -64,8 +37,8 @@ $solicitudes_pedidos = $stmt->fetch(PDO::FETCH_ASSOC);
                     <thead>
                         <tr>
                             <th><i class="bi bi-hash me-1"></i>ID</th>
-                            <th><i class="bi bi-card-heading me-1"></i>Proyecto</th>
                             <th><i class="bi bi-file-text me-1"></i>Cliente</th>
+                            <th><i class="bi bi-card-heading me-1"></i>Proyecto</th>
                             <th><i class="bi bi-flag-fill me-1"></i>Descripción</th>
                             <th><i class="bi bi-calendar-event me-1"></i>Creado</th>
                             <th><i class="bi bi-calendar-check me-1"></i>Estado</th> 
@@ -73,7 +46,7 @@ $solicitudes_pedidos = $stmt->fetch(PDO::FETCH_ASSOC);
                             <th class="text-center"><i class="bi bi-gear-fill me-1"></i>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="tbody" >
                         <?php if (!empty($pedidos) === 0): ?>
 
                             <?php foreach ($pedidos as $p): ?>
@@ -107,6 +80,11 @@ $solicitudes_pedidos = $stmt->fetch(PDO::FETCH_ASSOC);
                 </table>
             </div>
         </div>
+        <div class="card-footer row py-2 d-flex justify-content-between">
+            <div id="resumen-paginacion" class="col-12 col-md-4 text-muted small  text-center "></div>
+            <!-- Controles de paginación -->
+            <div id="paginacion" class="col-12 col-md-7  d-flex justify-content-center "></div>
+        </div>
     </div>
 
 
@@ -114,136 +92,107 @@ $solicitudes_pedidos = $stmt->fetch(PDO::FETCH_ASSOC);
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        fetch('api/obtener_datos_pedido.php')
-            .then(res => res.json())
-            .then(data => {
-                cargarClientes(data.clientes);
-                cargarMateriales(data.materiales);
-                cargarServicios(data.servicios);
-                cargarProyectos(data.proyectos);
-            });
-            console.log
-        function cargarClientes(clientes) {
-            const select = document.getElementById("clientes");
-            clientes.forEach(c => {
-                const option = document.createElement("option");
-                option.value = c.id;
-                option.textContent = c.nombre;
-                select.appendChild(option);
-            });
+
+const buscador = document.getElementById('buscador');
+let paginaActual = 1;
+
+//cargar las funciones al cargarse la pagina completamente
+document.addEventListener('DOMContentLoaded', () => {
+    cargarDatos();
+    clickPaginacion()
+    manejarEventosAjaxTbody(); // Necesario cuando cargamos html por ajax
+    // buscar()
+
+});
+
+function manejarEventosAjaxTbody() {
+    document.getElementById("tbody").addEventListener("click", function (e) {
+        //eliminar un registro de la fila por ID            
+        if (e.target.closest(".btn-eliminar")) {
+            const id = e.target.closest(".btn-eliminar").dataset.id;
+            eliminar(id);
         }
+         
 
-        function cargarMateriales(materiales) {
-            window.materialesData = materiales; // Para referencia global
-            actualizarSelectMateriales();
-        }
 
-        function actualizarSelectMateriales() {
-            const filas = document.querySelectorAll('#tabla-materiales tbody tr');
-            filas.forEach(fila => {
-                const select = fila.querySelector('select[name="material_id[]"]');
-                select.innerHTML = '<option value="">Seleccione</option>';
-                window.materialesData.forEach(mat => {
-                    const opt = document.createElement("option");
-                    opt.value = mat.id;
-                    opt.textContent = `${mat.nombre} - ${mat.precio_unitario} XAF`;
-                    opt.dataset.precio = mat.precio_unitario;
-                    select.appendChild(opt);
-                });
-            });
-        }
+    });
 
-        function cargarServicios(servicios) {
-            const select = document.getElementById("servicio");
-            servicios.forEach(s => {
-                const option = document.createElement("option");
-                option.value = s.id;
-                option.textContent = `${s.nombre} - ${s.precio_base} XAF`;
-                option.dataset.precio = s.precio_base;
-                select.appendChild(option);
+}
+
+async function eliminar(id) {
+    if (confirm('¿Seguro que quieres eliminar este pedido?')) {
+        try {
+            const response = await fetch(`api/eliminar_pedidos.php?id=${id}`, {
+                method: 'GET',
+                headers: { 'Accept': 'application/json' }
             });
 
-            select.addEventListener('change', e => {
-                const precio = e.target.selectedOptions[0]?.dataset.precio || 0;
-                document.getElementById("mano_obra").value = precio;
-                actualizarTotal();
-            });
-        }
+            const data = await response.json();
 
-        function cargarProyectos(proyectos) {
-            const select = document.getElementById("proyecto");
-            proyectos.forEach(p => {
-                const option = document.createElement("option");
-                option.value = p.id;
-                option.textContent = p.nombre;
-                select.appendChild(option);
-            });
-        }
-
-        // Eventos en materiales
-        document.addEventListener("change", e => {
-            if (e.target.matches('select[name="material_id[]"]')) {
-                const precio = e.target.selectedOptions[0]?.dataset.precio || 0;
-                const fila = e.target.closest("tr");
-                fila.querySelector('input[name="precio_unitario[]"]').value = precio;
-                calcularSubtotalFila(fila);
-                actualizarTotal();
+            if (data.success) {
+                alert(data.message);
+                location.reload();
+            } else {
+                alert(data.message || 'Error al eliminar el pedido.');
             }
-        });
+        } catch (error) {
+            alert('Error en la petición.');
+        }
+    }
+}
 
-        document.addEventListener("input", e => {
-            if (e.target.name === "cantidad[]" || e.target.name === "precio_unitario[]") {
-                const fila = e.target.closest("tr");
-                calcularSubtotalFila(fila);
-                actualizarTotal();
-            }
-        });
+ 
+async function cargarDatos(pagina = 1, termino = '') {
+    const formData = new FormData();
+    formData.append('pagina', pagina);
+    formData.append('termino', termino);
+    try {
+        const res = await fetch('api/listar_pedidos.php', {
+            method: 'POST',
+            body: formData
+        })
 
-        function calcularSubtotalFila(fila) {
-            const cantidad = parseFloat(fila.querySelector('input[name="cantidad[]"]').value) || 0;
-            const precio = parseFloat(fila.querySelector('input[name="precio_unitario[]"]').value) || 0;
-            fila.querySelector(".subtotal").value = (cantidad * precio).toFixed(2);
+        const data = await res.json();
+        if (data.success) {
+            document.getElementById('tbody').innerHTML = data.html;
+            document.getElementById('paginacion').innerHTML = data.paginacion;
+            document.getElementById('resumen-paginacion').textContent = data.resumen;
+            paginaActual = pagina; // actualizar página actual
+        } else {
+            alert(data.message);
+            console.log()
         }
 
-        function actualizarTotal() {
-            let total = 0;
-            document.querySelectorAll(".subtotal").forEach(input => {
-                total += parseFloat(input.value) || 0;
-            });
-            const manoObra = parseFloat(document.getElementById("mano_obra").value) || 0;
-            document.getElementById("total").value = (total + manoObra).toFixed(2);
+    } catch (error) {
+        alert('Error al cargar datos:', error);
+        console.log(error)
+    }
+
+}
+
+// Buscar
+function buscar() {
+    buscador.addEventListener('input', async () => {
+        paginaActual = 1;
+        await cargarDatos(paginaActual, buscador.value.trim());
+    });
+
+}
+// Manejar clics en paginación
+function clickPaginacion() {
+    document.getElementById('paginacion').addEventListener('click', async ( e )=> {
+        const btn = e.target.closest('.pagina-link');
+        if (btn) {
+            e.preventDefault();
+            const nuevaPagina = parseInt(btn.dataset.pagina);
+            if (!isNaN(nuevaPagina)) {
+                paginaActual = nuevaPagina;
+                await cargarDatos(paginaActual, buscador.value.trim());
+            }
         }
     });
 
+}
 
-
-
-
-
-
-
-
-    document.querySelector('#cantidad').addEventListener('input', validarStock);
-    document.querySelector('#estado').addEventListener('change', validarStock);
-    document.querySelector('#material').addEventListener('change', validarStock);
-
-    function validarStock() {
-        const estado = document.querySelector('#estado').value;
-        const cantidad = parseInt(document.querySelector('#cantidad').value, 10);
-        const selectedMaterialId = parseInt(document.querySelector('#material').value, 10);
-        const material = materiales.find(m => m.id === selectedMaterialId);
-
-        if (!material || isNaN(cantidad)) return;
-
-        if (estado === 'aprobado' && cantidad > material.stock_actual) {
-            alert(`El stock disponible del material "${material.nombre}" es ${material.stock_actual}. 
-                    No puedes aprobar el pedido con una cantidad superior.
-
-                    Puedes:
-                    ✅ Cambiar el estado a "pendiente", o
-                    🛠️ Ajustar la cantidad a un valor menor.`);
-                            }
-    }
 
 </script>

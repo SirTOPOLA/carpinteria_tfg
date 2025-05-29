@@ -1,96 +1,82 @@
+<?php
+// archivo: gestion_pedidos.php
+include("../config/conexion.php");
+$pdo = new Conexion();
+$sql = "SELECT p.id, p.cliente_id, c.nombre AS cliente, p.fecha_pedido, p.estado, p.total
+        FROM pedidos p
+        INNER JOIN clientes c ON p.cliente_id = c.id
+        ORDER BY p.id DESC";
+$stmt = $pdo->prepare($sql);
+$stmt->execute();
+$pedidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
 
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0 text-primary"><i class="bi bi-bag-check me-2"></i>Gestión de Pedidos</h3>
+    <button class="btn btn-success d-flex align-items-center" onclick="nuevoPedido()">
+      <i class="bi bi-plus-circle me-2"></i>Nuevo Pedido
+    </button>
+  </div>
 
-
-
-<main class="pt-5 min-vh-100 d-flex flex-column bg-body-tertiary">
-
- <!-- Hero Seccional -->
-  <section class="py-5 text-center text-white position-relative overflow-hidden"
-    style="background: linear-gradient(to right, #1f2937cc, #4b5563cc), url('<?= htmlspecialchars($heroRuta) ?>') center/cover no-repeat;">
-    <div class="container">
-        <h1 class="display-4 fw-bold">Pedido Personalizado</h1>
-        <p class="lead">Solicita muebles hechos a tu medida con calidad y pasión artesanal.</p>
-    </div>
-</section> 
-
-  <!-- Formulario de pedido personalizado -->
-  <section class="container py-5">
-    <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <div class="border rounded-4 shadow p-4 bg-white">
-          <h2 class="text-center mb-4 text-dark fw-semibold">
-            <i class="bi bi-clipboard-check me-2"></i>Formulario de Pedido
-          </h2>
-          
-          <form action="guardar_pedido_personalizado.php" method="POST" enctype="multipart/form-data" novalidate>
-
-            <!-- Nombre -->
-            <div class="mb-3">
-              <label for="nombre" class="form-label fw-semibold">
-                <i class="bi bi-person-fill me-2 text-primary"></i>Nombre Completo
-              </label>
-              <input type="text" class="form-control rounded-pill" id="nombre" name="nombre" required>
-            </div>
-
-            <!-- Código -->
-            <div class="mb-3">
-              <label for="codigo" class="form-label fw-semibold">
-                <i class="bi bi-hash me-2 text-secondary"></i>Código del Cliente
-              </label>
-              <input type="text" class="form-control rounded-pill" id="codigo" name="codigo" required>
-            </div>
-
-            <!-- Teléfono -->
-            <div class="mb-3">
-              <label for="telefono" class="form-label fw-semibold">
-                <i class="bi bi-telephone-fill me-2 text-success"></i>Teléfono
-              </label>
-              <input type="tel" class="form-control rounded-pill" id="telefono" name="telefono">
-            </div>
-
-            <!-- Dirección -->
-            <div class="mb-3">
-              <label for="direccion" class="form-label fw-semibold">
-                <i class="bi bi-geo-alt-fill me-2 text-danger"></i>Dirección
-              </label>
-              <input type="text" class="form-control rounded-pill" id="direccion" name="direccion">
-            </div>
-
-            <!-- Email -->
-            <div class="mb-3">
-              <label for="email" class="form-label fw-semibold">
-                <i class="bi bi-envelope-fill me-2 text-warning"></i>Correo Electrónico
-              </label>
-              <input type="email" class="form-control rounded-pill" id="email" name="email">
-            </div>
-
-            <!-- Descripción del pedido -->
-            <div class="mb-3">
-              <label for="descripcion" class="form-label fw-semibold">
-                <i class="bi bi-card-text me-2 text-info"></i>Descripción del Pedido
-              </label>
-              <textarea class="form-control rounded-4" id="descripcion" name="descripcion" rows="5" required></textarea>
-            </div>
-
-            <!-- Imagen de referencia -->
-            <div class="mb-4">
-              <label for="imagen" class="form-label fw-semibold">
-                <i class="bi bi-image-fill me-2 text-muted"></i>Imagen de Referencia (opcional)
-              </label>
-              <input type="file" class="form-control" id="imagen" name="imagen" accept="image/*">
-            </div>
-
-            <!-- Botón enviar -->
-            <div class="text-center">
-              <button type="submit" class="btn btn-primary rounded-pill px-4 py-2 shadow-sm">
-                <i class="bi bi-send-fill me-2"></i>Enviar Pedido
-              </button>
-            </div>
-
-          </form>
-        </div>
+  <div class="card shadow rounded-4 border-0">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle text-center" id="tablaPedidos">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Cliente</th>
+              <th>Fecha</th>
+              <th>Estado</th>
+              <th>Total</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($pedidos as $index => $pedido): ?>
+              <tr>
+                <td><?= $index + 1 ?></td>
+                <td><?= htmlspecialchars($pedido['cliente']) ?></td>
+                <td><?= date("d/m/Y", strtotime($pedido['fecha_pedido'])) ?></td>
+                <td>
+                  <span class="badge bg-<?= $pedido['estado'] == 'pendiente' ? 'warning' : 'success' ?>">
+                    <?= ucfirst($pedido['estado']) ?>
+                  </span>
+                </td>
+                <td>$<?= number_format($pedido['total'], 2) ?></td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary me-1" onclick="editarPedido(<?= $pedido['id'] ?>)">
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" onclick="eliminarPedido(<?= $pedido['id'] ?>)">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </td>
+              </tr>
+            <?php endforeach ?>
+          </tbody>
+        </table>
       </div>
     </div>
-  </section>
+  </div>
+</div>
 
-</main>
+<script>
+function nuevoPedido() {
+  // Lógica para abrir modal nuevo pedido
+  console.log("Nuevo pedido");
+}
+
+function editarPedido(id) {
+  // Lógica para abrir modal edición
+  console.log("Editar pedido", id);
+}
+
+function eliminarPedido(id) {
+  if (confirm("¿Deseas eliminar este pedido?")) {
+    // Lógica de eliminación con fetch
+    console.log("Eliminar pedido", id);
+  }
+}
+</script>
