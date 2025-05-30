@@ -55,7 +55,7 @@ foreach ($proyectos as $p) {
         <td>" . htmlspecialchars($p['fecha_entrega']) . "</td>
         <td>" . htmlspecialchars($p['creado_en']) . "</td>
         <td class='text-center'>
-            <a href='index.php?vista=editar_proyecto&id={$p['id']}' class='btn btn-sm btn-outline-warning' title='Editar'>
+            <a href='index.php?vista=editar_proyectos&id={$p['id']}' class='btn btn-sm btn-outline-warning' title='Editar'>
                 <i class='bi bi-pencil-square'></i>
             </a>
              $linkEliminar

@@ -1,5 +1,4 @@
-<main class="  min-vh-100 d-flex flex-column bg-body-tertiary">
-
+<main class="min-vh-100 d-flex flex-column bg-body-tertiary">
 
     <!-- Hero Seccional -->
     <section class="hero-contacto py-5 text-center text-white"
@@ -76,6 +75,7 @@
                                 placeholder="Dirección completa">
                         </div>
                     </div>
+
                     <!-- Descripción -->
                     <div class="mb-4">
                         <label for="descripcion" class="form-label fw-semibold">Descripción</label>
@@ -95,13 +95,13 @@
                     </div>
 
                 </form>
+
                 <!-- Botón de WhatsApp flotante (activador del formulario) -->
                 <a href="#" id="btnWhatsapp" class="btn btn-success shadow-lg rounded-circle"
                     style="position: fixed; bottom: 20px; right: 20px; z-index: 1050; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;"
                     aria-label="WhatsApp">
                     <i class="bi bi-whatsapp" style="font-size: 28px;"></i>
                 </a>
-
 
             </div>
         </div>
@@ -116,13 +116,10 @@
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3941.419013030712!2d8.774311815142819!3d3.750838198785769!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xfc11a7ac63bc2d3%3A0x4e89e1a96e0a3f70!2sBarrio%20Perez%20Mercamar%2C%20Malabo!5e0!3m2!1ses!2ses!4v1652035000000!5m2!1ses!2ses"
                 width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade" title="Mapa de Carpintería en Pérez Mercamar"></iframe>
-
-
         </div>
     </section>
 
 </main>
-
 
 <!-- Validación Bootstrap 5 -->
 <script>
@@ -142,29 +139,34 @@
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    document.getElementById("btnWhatsappFlotante").addEventListener("click", function (e) {
-        e.preventDefault();
 
-        Swal.fire({
-            title: '¿Deseas escribir por WhatsApp?',
-            text: 'Primero completa el formulario. Luego se abrirá WhatsApp automáticamente.',
-            icon: 'info',
-            confirmButtonText: 'Ir al formulario',
-            cancelButtonText: 'Cancelar',
-            showCancelButton: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                document.getElementById("formContacto").scrollIntoView({ behavior: "smooth" });
-                setTimeout(() => {
-                    document.getElementById("nombre").focus();
-                }, 800);
-            }
-        });
-    });
-</script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        // Botón WhatsApp - Previene error si no existe y agrega evento click
+        const btnWhatsapp = document.getElementById("btnWhatsapp");
+        if (btnWhatsapp) {
+            btnWhatsapp.addEventListener("click", function (e) {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: '¿Deseas escribir por WhatsApp?',
+                    text: 'Primero completa el formulario. Luego se abrirá WhatsApp automáticamente.',
+                    icon: 'info',
+                    confirmButtonText: 'Ir al formulario',
+                    cancelButtonText: 'Cancelar',
+                    showCancelButton: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById("formContacto").scrollIntoView({ behavior: "smooth" });
+                        setTimeout(() => {
+                            document.getElementById("nombre").focus();
+                        }, 800);
+                    }
+                });
+            });
+        }
+
+        // Envío del formulario con validación y envío vía fetch
         const form = document.getElementById("formContacto");
 
         form.addEventListener("submit", async function (e) {
@@ -206,26 +208,32 @@
                 const codigo = formData.get("codigo") || "Sin código";
                 const telefono = formData.get("telefono") || "No especificado";
                 const direccion = formData.get("direccion") || "No especificada";
-                const email = formData.get("email") || "No especificado";
-                const descripcion = formData.get("descripcion") || "Sin descripción";
+                const descripcion = formData.get("descripcion") || "No hay descripción";
 
-                const mensaje = `Hola, quiero registrarme. Mis datos son:%0A` +
-                    `👤 Nombre: ${nombre}%0A` +
-                    `🔢 Código: ${codigo}%0A` +
-                    `📞 Teléfono: ${telefono}%0A` +
-                    `📍 Dirección: ${direccion}%0A` +
-                    `📧 Email: ${email}%0A` +
-                    `📝 Descripción: ${descripcion}`;
+                // Número de teléfono WhatsApp de contacto (reemplaza con tu número real)
+                const numeroWhatsapp = "<?= htmlspecialchars($telefono) ?>";
 
-                const numero = <?= htmlspecialchars($telefono)?> ; // <-- Reemplaza con tu número real
-                const url = `https://wa.me/${numero}?text=${mensaje}`;
-                window.open(url, "_blank");
-                form.reset(); // Limpia los campos
-                form.classList.remove('was-validated'); // Quita la clase de validación
+                // Mensaje formateado para WhatsApp
+                const mensaje = encodeURIComponent(
+                    `Hola, me llamo *${nombre}*.\n` +
+                    `Mi código DIP es: *${codigo}*.\n` +
+                    `Teléfono: ${telefono}.\n` +
+                    `Dirección: ${direccion}.\n` +
+                    `Descripción: ${descripcion}`
+                );
 
-            } catch (err) {
-                console.error("Error en el envío:", err);
-                Swal.fire("Error", "No se pudo enviar el formulario. Intenta de nuevo.", "error");
+                // Abrir WhatsApp en nueva pestaña
+                window.open(`https://wa.me/${numeroWhatsapp}?text=${mensaje}`, "_blank");
+
+                // Opcional: mostrar mensaje de éxito
+                Swal.fire("¡Gracias!", "Tu mensaje ha sido enviado correctamente.", "success");
+
+                form.reset();
+                form.classList.remove('was-validated');
+
+            } catch (error) {
+                Swal.fire("Error", "No se pudo enviar el formulario. Intenta nuevamente.", "error");
+                console.error(error);
             }
         });
     });

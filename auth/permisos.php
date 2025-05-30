@@ -76,11 +76,38 @@ function verificarAcceso($vista)
             'compras',
             'operaciones'
         ],
+        'vendedor' => [
+            'dashboard',
+            'ventas',
+            'clientes',
+            'pedidos',
+            'registrar_clientes',
+            'editar_clientes',
+            'registrar_pedidos',
+            'productos',
+            'servicios',
+            'ventas',
+            'registrar_ventas',
+            'editar_ventas'
+        ],
+        'diseñador' => [
+            'dashboard',
+            'proyectos',
+            'clientes',            
+            'pedidos',
+            'registrar_pedidos',
+            'editar_pedidos',
+            'detalles_pedidos',
+            'registrar_proyectos',
+            'editar_proyectos',
+            'producciones',
+            'registrar_producciones',
+            'editar_producciones',
+            'diseños'
+        ],
         'operario' => ['dashboard', 'produccion', 'tareas'],
-        'vendedor' => ['dashboard', 'ventas', 'clientes', 'pedidos','registrar_pedidos','productos', 'servicios'],
-        'diseñador' => ['dashboard', 'proyectos', 'diseños'],
         'cliente' => ['dashboard', 'perfil', 'mis_pedidos', 'pedidos']
-       
+
     ];
 
 

@@ -26,36 +26,38 @@ switch ($rol) {
             ['titulo' => 'Proyectos Activos', 'tabla' => 'proyectos', 'filtro' => "estado != 'finalizado'", 'icono' => 'bi-kanban-fill'],
         ];
         break;
-    /*  */
+        /*  */
+        
+        /*  */
 
-    /*  */
-
-    case 'vendedor':
-        $tarjetas = [
-            ['titulo' => 'Mis Ventas', 'tabla' => 'ventas', 'icono' => 'bi-cash-stack'],
-            ['titulo' => 'Clientes', 'tabla' => 'clientes', 'icono' => 'bi-people-fill']
-        ];
+        case 'vendedor':
+            $tarjetas = [
+                ['titulo' => 'Mis Ventas', 'tabla' => 'ventas', 'icono' => 'bi-cash-stack'],
+                ['titulo' => 'Clientes', 'tabla' => 'clientes', 'icono' => 'bi-people-fill']
+            ];
         break;
-
+        
     case 'operario':
         $tarjetas = [
             ['titulo' => 'Producciones Activas', 'tabla' => 'producciones', 'filtro' => "estado != 'terminado'", 'icono' => 'bi-tools'],
             ['titulo' => 'Total Materiales', 'tabla' => 'materiales', 'icono' => 'bi-hammer']
         ];
         break;
-
+        
     case 'diseñador':
         $tarjetas = [
-            ['titulo' => 'Proyectos en diseño', 'tabla' => 'proyectos', 'filtro' => "estado = 'en diseño'", 'icono' => 'bi-pencil-square']
+            ['titulo' => 'Proyectos en diseño', 'tabla' => 'proyectos', 'filtro' => "estado = 'en diseño'", 'icono' => 'bi-pencil-square'],
+            ['titulo' => 'Proyectos Activos', 'tabla' => 'proyectos', 'filtro' => "estado != 'finalizado'", 'icono' => 'bi-kanban-fill'],
+            ['titulo' => 'Total Clientes', 'tabla' => 'clientes', 'icono' => 'bi-people-fill']
         ];
         break;
-
-    case 'cliente':
-        $cliente_id = $_SESSION['usuario']['id'];
-        $tarjetas = [
-            ['titulo' => 'Mis Pedidos', 'tabla' => 'solicitudes_proyecto', 'filtro' => "cliente_id = $cliente_id", 'icono' => 'bi-cart-check']
-        ];
-        break;
+        
+        case 'cliente':
+            $cliente_id = $_SESSION['usuario']['id'];
+            $tarjetas = [
+                ['titulo' => 'Mis Pedidos', 'tabla' => 'solicitudes_proyecto', 'filtro' => "cliente_id = $cliente_id", 'icono' => 'bi-cart-check']
+            ];
+            break;
 
     default:
         echo json_encode(['success' => false, 'message' => 'Rol no reconocido']);

@@ -37,25 +37,28 @@ $html = '';
 foreach ($servicios as $servicio) {
     $activo = $servicio['activo'] ? 'btn-success bi-toggle-on' : 'btn-danger bi-toggle-off';
     $estadoTexto = $servicio['activo'] ? 'Activado' : 'Desactivado';
- // Botón eliminar solo para administradores
- $link = ($_SESSION['usuario']['rol'] === 'Administrador') 
- ? "<a href='#' class='btn btn-sm btn-danger btn-eliminar' data-id='{$servicio['id']}'><i class='bi bi-trash-fill'></i></a>"
- : '';
+    // Botón eliminar solo para administradores
+    $link = ($_SESSION['usuario']['rol'] === 'Administrador')
+                    ? "  <td class='text-center'>
+                        <a href='#' class='btn btn-sm {$activo} toggle-estado' data-id='{$servicio['id']}' data-estado='{$servicio['activo']}'>
+                            {$estadoTexto}
+                        </a>
+                    </td>
+                    <td class='text-center'><a href='#' class='btn btn-sm btn-danger btn-eliminar' data-id='{$servicio['id']}'><i class='bi bi-trash-fill'></i></a>
+                      <a href='index.php?vista=editar_servicios&id={$servicio['id']}' class='btn btn-sm btn-outline-warning'><i class='bi bi-pencil-square'></i></a> </td>"
+                    : '';
+
     $html .= "
     <tr>
         <td>{$servicio['id']}</td>
         <td>" . htmlspecialchars($servicio['nombre']) . "</td>
         <td>" . htmlspecialchars($servicio['unidad']) . "</td>
         <td>XAF " . number_format($servicio['precio_base'], 2) . "</td>
-        <td class='text-center'>
-            <a href='#' class='btn btn-sm {$activo} toggle-estado' data-id='{$servicio['id']}' data-estado='{$servicio['activo']}'>
-                {$estadoTexto}
-            </a>
-        </td>
-        <td class='text-center'>
-            <a href='index.php?vista=editar_servicios&id={$servicio['id']}' class='btn btn-sm btn-outline-warning'><i class='bi bi-pencil-square'></i></a>
+       
+      
+            
            $link
-            </td>
+            
     </tr>";
 }
 
@@ -89,7 +92,7 @@ $resumen = "Mostrando $desde-$hasta de $totalRegistros resultados";
 
 
 echo json_encode([
-    'success'=> true,
+    'success' => true,
     'html' => $html ?: "<tr><td colspan='6' class='text-muted text-center py-3'>No se encontraron servicios.</td></tr>",
     'paginacion' => $paginacion,
     'resumen' => $resumen

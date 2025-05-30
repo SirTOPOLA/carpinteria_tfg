@@ -47,11 +47,13 @@ $solicitudes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Renderizar tabla
 $html = '';
 foreach ($solicitudes as $solicitud) {
-    $btnDetalle = "
+    $btnDetalle =(($_SESSION['usuario']['rol'] === 'Administrador') || ($_SESSION['usuario']['rol'] === 'Diseñador')) 
+    ? "
         <a href='views/private/cotizacion.php?id={$solicitud['id']}' target='_blank' class='btn btn-sm btn-outline-primary'>
             <i class='bi bi-file-earmark-text'></i> Detalles
         </a>
-    ";
+    ": '';
+     
 
     $html .= "
         <tr>
@@ -63,7 +65,7 @@ foreach ($solicitudes as $solicitud) {
             <td><span class='badge bg-secondary'>{$solicitud['estado']}</span></td>
             <td>S/ " . number_format($solicitud['estimacion_total'], 2) . "</td>
             <td class='text-center'>
-                $btnDetalle
+                $btnDetalle 
             </td>
         </tr>
     ";

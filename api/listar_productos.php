@@ -42,13 +42,18 @@ $html = '';
 
 foreach ($productos as $producto) {
     // Botón eliminar solo para administradores
-    $link = ($_SESSION['usuario']['rol'] === 'Administrador') 
+    $link = ($_SESSION['usuario']['rol'] === 'Administrador')
         ? "<a href='#' class='btn btn-sm btn-danger btn-eliminar' data-id='{$producto['id']}'><i class='bi bi-trash-fill'></i></a>"
+        : '';
+    $linkEdit = (($_SESSION['usuario']['rol'] === 'Administrador') || ($_SESSION['usuario']['rol'] === 'Diseñador'))
+        ? " <a href='index.php?vista=editar_productos&id={$producto['id']}' class='btn btn-sm btn-outline-warning'>
+                    <i class='bi bi-pencil-square'></i>
+                </a>"
         : '';
 
     // Mostrar imagen si existe
     if (!empty($producto['imagen']) && file_exists($producto['imagen'])) {
-        $rutaImagen ="api/". $producto['imagen'];
+        $rutaImagen = "api/" . $producto['imagen'];
         $img = "
             <img src='$rutaImagen' 
                  class='img-thumbnail img-modal-trigger'
@@ -69,9 +74,8 @@ foreach ($productos as $producto) {
             <td>" . htmlspecialchars($producto['stock']) . "</td>
             <td>XAF " . number_format($producto['precio_unitario'], 2) . "</td>
             <td class='text-center'>
-                <a href='index.php?vista=editar_productos&id={$producto['id']}' class='btn btn-sm btn-outline-warning'>
-                    <i class='bi bi-pencil-square'></i>
-                </a>
+               
+                $linkEdit
                 $link
             </td>
         </tr>
@@ -108,7 +112,7 @@ $resumen = "Mostrando $desde-$hasta de $totalRegistros resultados";
 
 
 echo json_encode([
-    'success'=> true,
+    'success' => true,
     'html' => $html ?: "<tr><td colspan='6' class='text-muted text-center py-3'>No se encontraron productos.</td></tr>",
     'paginacion' => $paginacion,
     'resumen' => $resumen

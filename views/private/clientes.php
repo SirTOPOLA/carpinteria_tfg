@@ -11,6 +11,7 @@ $sql = "
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']['rol'])) : '';
 ?>
 
 
@@ -25,9 +26,11 @@ $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
                 <input type="text" class="form-control" placeholder="Buscar cliente..." id="buscador">
             </div>
-            <a href="index.php?vista=registrar_clientes" class="btn btn-secondary mb-3"><i class="bi bi-plus"></i>
-                Nuevo
-                Cliente</a>
+            <?php if (!in_array($rol, ['diseñador'])): ?>
+                <a href="index.php?vista=registrar_clientes" class="btn btn-secondary mb-3"><i class="bi bi-plus"></i>
+                    Nuevo
+                    Cliente</a>
+            <?php endif; ?>
 
         </div>
 
@@ -44,7 +47,9 @@ $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <th><i class="bi bi-telephone me-1"></i>Teléfono</th>
                             <th><i class="bi bi-geo-alt me-1"></i>Dirección</th>
                             <th><i class="bi bi-calendar3 me-1"></i>Fecha</th>
+                             <?php if (!in_array($rol, ['diseñador'])): ?>
                             <th><i class="bi bi-gear-fill me-1"></i>Acciones</th>
+                                <?php endif; ?>
                         </tr>
 
                     </thead>
@@ -65,7 +70,7 @@ $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                             class="btn btn-sm btn-outline-warning">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        
+
 
                                     </td>
                                 </tr>
@@ -102,7 +107,7 @@ $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         cargarDatos();
         clickPaginacion()
         manejarEventosAjaxTbody(); // Necesario cuando cargamos html por ajax
-       // buscar()
+        // buscar()
 
     });
 
@@ -113,8 +118,8 @@ $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 const id = e.target.closest(".btn-eliminar").dataset.id;
                 eliminar(id);
             }
-         
-           
+
+
 
 
         });
@@ -143,7 +148,7 @@ $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     }
 
- 
+
     async function cargarDatos(pagina = 1, termino = '') {
         const formData = new FormData();
         formData.append('pagina', pagina);

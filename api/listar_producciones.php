@@ -50,10 +50,20 @@ $producciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // HTML
 $html = '';
 foreach ($producciones as $prod) {
-    $linkEliminar = ($_SESSION['usuario']['rol'] === 'Administrador') 
-    ? "<a href='#' class='btn btn-sm btn-danger btn-eliminar' data-id='{$prod['id']}' title='Eliminar'>
+    $linkAdmin = ($_SESSION['usuario']['rol'] === 'Administrador') 
+    ? " <td class='text-center'>
+            <a href='index.php?vista=editar_producciones&id={$prod['id']}' class='btn btn-sm btn-outline-warning' title='Editar'>
+                <i class='bi bi-pencil-square'></i>
+            </a>
+             <a href='#' class='btn btn-sm btn-danger btn-eliminar' data-id='{$prod['id']}' title='Eliminar'>
             <i class='bi bi-trash-fill'></i>
-       </a>"
+       </a>
+            <!--
+            <a href='registrar_proceso_produccionesid={$prod['id']}' class='btn btn-sm btn-outline-primary' title='Procesar'>
+                <i class='bi bi-play-circle'></i>
+            </a>
+            -->
+        </td>"
     : '';
     $html .= "
     <tr>
@@ -65,17 +75,7 @@ foreach ($producciones as $prod) {
         <td>" . htmlspecialchars($prod['estado']) . "</td>
         <td>" . htmlspecialchars($prod['empleado_nombre']) . "</td>
         <td>" . htmlspecialchars($prod['created_at']) . "</td>
-        <td class='text-center'>
-            <a href='index.php?vista=editar_producciones&id={$prod['id']}' class='btn btn-sm btn-outline-warning' title='Editar'>
-                <i class='bi bi-pencil-square'></i>
-            </a>
-             $linkEliminar
-            <!--
-            <a href='registrar_proceso_produccionesid={$prod['id']}' class='btn btn-sm btn-outline-primary' title='Procesar'>
-                <i class='bi bi-play-circle'></i>
-            </a>
-            -->
-        </td>
+        $linkAdmin 
     </tr>
     ";
 }

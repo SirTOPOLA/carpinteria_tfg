@@ -34,8 +34,16 @@ $clientes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Renderizar tabla
 $html = '';
 foreach ($clientes as $cliente) {
-    $linkEliminar = ($_SESSION['usuario']['rol'] === 'Administrador') 
-        ? "<a href='#' class='btn btn-sm btn-danger btn-eliminar' data-id='{$cliente['id']}'><i class='bi bi-trash-fill'></i></a>"
+    $linkAdmin = ($_SESSION['usuario']['rol'] === 'Administrador') 
+        ? " <td class='text-center'>
+                <a href='index.php?vista=editar_clientes&id={$cliente['id']}' class='btn btn-sm btn-outline-warning'>
+                    <i class='bi bi-pencil-square'></i>
+                </a>
+                <a href='#' class='btn btn-sm btn-danger btn-eliminar' data-id='{$cliente['id']}'><i class='bi bi-trash-fill'></i></a>
+            </td> "
+        : '';
+    $linkDesign = ($_SESSION['usuario']['rol'] === 'Diseñador') 
+        ? " "
         : '';
 
     $html .= "
@@ -48,12 +56,7 @@ foreach ($clientes as $cliente) {
             <td>" . htmlspecialchars($cliente['telefono']) . "</td>
             <td>" . htmlspecialchars($cliente['direccion']) . "</td>
             <td>" . date("d/m/Y H:i", strtotime($cliente['creado_en'])) . "</td>
-            <td class='text-center'>
-                <a href='index.php?vista=editar_clientes&id={$cliente['id']}' class='btn btn-sm btn-outline-warning'>
-                    <i class='bi bi-pencil-square'></i>
-                </a>
-                $linkEliminar
-            </td>
+            $linkAdmin
         </tr>
     ";
 }

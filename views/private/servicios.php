@@ -3,6 +3,7 @@ $stmt = $pdo->prepare("SELECT * FROM servicios");
 $stmt->execute();
 $servicios = $stmt->fetchAll();
 
+$rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']['rol'])) : '';
 ?>
 
 
@@ -19,9 +20,11 @@ $servicios = $stmt->fetchAll();
                 <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
                 <input type="text" class="form-control" placeholder="Buscar servicio..." id="buscador">
             </div>
+             <?php if (in_array($rol, ['administrador'])):   ?>
             <a href="index.php?vista=registrar_servicios" class="btn btn-secondary shadow-sm">
                 <i class="bi bi-plus-circle me-1"></i> Nuevo servicio
             </a>
+              <?php endif; ?>
         </div>
 
         <div class="card-body">
@@ -33,8 +36,10 @@ $servicios = $stmt->fetchAll();
                             <th><i class="bi bi-box-seam me-1"></i>Nombre</th>
                             <th><i class="bi bi-grid-1x2 me-1"></i>Unidad</th>
                             <th><i class="bi bi-currency-dollar me-1"></i>Precio</th>
+                            <?php if (in_array($rol, ['administrador'])):   ?>
                             <th class="text-center"><i class="bi bi-check-circle me-1"></i>Activo</th>
                             <th class="text-center"><i class="bi bi-gear-fill me-1"></i>Acciones</th>
+                               <?php endif; ?>
                         </tr>
 
                     </thead>

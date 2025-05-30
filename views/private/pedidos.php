@@ -12,6 +12,7 @@ $stmt->execute();
 $pedidos = $stmt->fetch(PDO::FETCH_ASSOC);
 
  
+$rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']['rol'])) : '';
 ?>
 
 
@@ -26,9 +27,11 @@ $pedidos = $stmt->fetch(PDO::FETCH_ASSOC);
                 <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
                 <input type="text" class="form-control" placeholder="Buscar pedido..." id="buscador">
             </div>
+             <?php if (in_array($rol, ['administrador', 'diseñador'])):   ?>
             <a href="index.php?vista=registrar_pedidos" class="btn btn-secondary">
 
                 <i class="bi bi-plus"> </i>Nuevo pedido</a>
+                <?php endif; ?>  
         </div>
 
         <div class="card-body">
@@ -59,6 +62,7 @@ $pedidos = $stmt->fetch(PDO::FETCH_ASSOC);
                                     <td><?= ucfirst($p['estado']) ?></td>
                                     <td>XAF <?= number_format($p['estimacion_total'], 1) ?></td>
                                     <td class="text-center">
+                                        <?php if (in_array($rol, ['administrador', 'diseñador'])):   ?>
                                         <a href="index.php?vista=destalles_pedidos&id=<?= $p['id'] ?>"
                                             class="btn btn-sm btn-outline-info" title="Ver detalles">
                                             <i class="bi bi-eye"></i>
@@ -67,7 +71,8 @@ $pedidos = $stmt->fetch(PDO::FETCH_ASSOC);
                                             class="btn btn-sm btn-outline-warning">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-
+                                            <?php endif; ?> 
+                                        
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

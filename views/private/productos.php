@@ -11,7 +11,7 @@ ORDER BY p.nombre DESC;
 $stmt_total->execute();
 $productos = $stmt_total->fetchAll();
 
-
+$rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']['rol'])) : '';
 
 ?>
 
@@ -27,9 +27,14 @@ $productos = $stmt_total->fetchAll();
                 <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
                 <input type="text" class="form-control" placeholder="Buscar productos..." id="buscador">
             </div>
-            <a href="index.php?vista=registrar_productos" class="btn btn-secondary">
-                <i class="bi bi-plus"></i> Nuevo Producto
-            </a>
+
+
+            <?php if (in_array($rol, ['administrador', 'diseñador'])):   ?>
+                <a href="index.php?vista=registrar_productos" class="btn btn-secondary">
+                    <i class="bi bi-plus"></i> Nuevo Producto
+                </a>
+            <?php endif; ?>
+
         </div>
 
         <div class="card-body">
@@ -43,7 +48,11 @@ $productos = $stmt_total->fetchAll();
                             <th><i class="bi bi-card-text me-1"></i>Descripción</th>
                             <th><i class="bi bi-boxes me-1"></i>Stock</th>
                             <th><i class="bi bi-currency-dollar me-1"></i>Precio</th>
-                            <th class="text-center"><i class="bi bi-gear-fill me-1"></i>Acciones</th>
+
+  <?php if (in_array($rol, ['administrador', 'diseñador'])):     ?>
+                       
+                                <th class="text-center"><i class="bi bi-gear-fill me-1"></i>Acciones</th>
+                            <?php endif; ?>
                         </tr>
 
                     </thead>
@@ -67,19 +76,18 @@ $productos = $stmt_total->fetchAll();
                                     <td><?= htmlspecialchars($producto['descripcion']) ?></td>
                                     <td><?= htmlspecialchars($producto['stock']) ?></td>
                                     <td>€<?= number_format($producto['precio_unitario'], 2) ?></td>
-                                    <td class="text-center">
-                                        <a href="index.php?vista=editar_productos&id=<?= $producto['id'] ?>"
-                                            class="btn btn-sm btn-outline-warning" title="Editar">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </a>
-                                        <!--
-                                        <a href="eliminar_producto.php?id=<?= $producto['id'] ?>" 
-                                            class="btn btn-sm btn-danger" title="Eliminar"
-                                            onclick="return confirm('¿Está seguro de eliminar este producto?');">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
-                                        -->
-                                    </td>
+
+
+                                   
+                                        <td class="text-center"> 
+                                                 <?php if (in_array($rol, ['administrador', 'diseñador'])):     ?>
+                                            <a href="index.php?vista=editar_productos&id=<?= $producto['id'] ?>"
+                                                class="btn btn-sm btn-outline-warning" title="Editar">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                             <?php endif; ?>
+                                        </td>
+                                    
                                 </tr>
                             <?php endforeach; ?>
                         <?php else: ?>

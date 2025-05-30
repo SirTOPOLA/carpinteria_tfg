@@ -64,25 +64,27 @@ $menu = [
         'Operaciones'   => 'operaciones',
     ],
     'operario' => [
-        'Dashboard'     => 'dashboard',
-        'Producción'    => 'produccion',
-        'Tareas'        => 'tareas',
+      'Dashboard'     => 'dashboard',
+      'Producción'    => 'produccion',
+      'Tareas'        => 'tareas',
         'Proyectos'     => 'proyectos', // si aplica
         'Movimientos'   => 'movimientos', // si lleva control de materiales
-    ],
-    'vendedor' => [
+      ],
+      'vendedor' => [
         'Dashboard'     => 'dashboard',
         'Ventas'        => 'ventas',
         'Clientes'      => 'clientes',
         'Pedidos'       => 'pedidos',
         'Productos'     => 'productos',
         'Servicios'     => 'servicios',
-    ],
-    'diseñador' => [
+      ],
+      'diseñador' => [
         'Dashboard'     => 'dashboard',
+        'Clientes'      => 'clientes',
+        'Pedidos'       => 'pedidos',
+        'Producciones'  => 'producciones', 
         'Proyectos'     => 'proyectos',
-        'Diseños'       => 'diseños',
-        'Materiales'    => 'materiales', // si participa en la elección de materiales
+       /*  'Diseños'       => 'diseños'  */
     ],
     'cliente' => [
         'Dashboard'     => 'dashboard',

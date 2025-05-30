@@ -1,0 +1,86 @@
+2. Vendedor
+Gestiona clientes, ventas y seguimiento.
+
+Tablas / vistas:
+
+clientes
+
+ventas, detalles_venta, facturas, pagos
+
+productos (solo para consulta y cotización)
+
+servicios (solo para consulta y cotización)
+
+solicitudes_proyecto (solo para ver el estado de solicitudes)
+
+Acciones:
+
+Registrar y editar clientes
+
+Crear y gestionar ventas (facturación, pagos)
+
+Consultar productos y servicios disponibles
+
+Consultar estado de proyectos y solicitudes
+
+Generar cotizaciones para clientes
+
+Consultar historial de clientes y ventas
+
+3. Operario
+Responsable de producción y manejo de materiales.
+
+Tablas / vistas:
+
+producciones
+
+proyectos (los asignados)
+
+materiales
+
+movimientos_material
+
+solicitudes_proyecto (para conocer pedidos de materiales)
+
+detalles_solicitud_material
+
+Acciones:
+
+Actualizar estado de producciones (pendiente, en proceso, terminado)
+
+Registrar entradas y salidas de materiales (movimientos)
+
+Consultar stock actual y stock mínimo
+
+Solicitar materiales para producción
+
+Consultar detalles de proyectos en producción
+
+Reportar problemas o faltantes en materiales o producción
+
+4. Diseñador
+Encargado del diseño y la gestión de proyectos.
+
+Tablas / vistas:
+
+proyectos
+
+solicitudes_proyecto
+
+clientes (para coordinar con clientes)
+
+producciones (para seguimiento de producción relacionada con diseño)
+
+Acciones:
+
+Crear y actualizar proyectos (nombre, descripción, fechas, estado)
+
+Crear y gestionar solicitudes de proyectos (cotizaciones, estado)
+
+Coordinar con clientes para detalles de diseño
+
+Revisar y aprobar solicitudes de materiales para proyectos
+
+Colaborar con operarios para la producción (informar cambios o especificaciones)
+
+Consultar estado de producción y ventas asociadas a proyectos

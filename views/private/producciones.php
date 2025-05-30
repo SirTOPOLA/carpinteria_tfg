@@ -15,6 +15,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $producciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+$rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']['rol'])) : '';
 ?>
 
  
@@ -30,9 +31,11 @@ $producciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
                 <input type="text" class="form-control" placeholder="Buscar producción..." id="buscador">
             </div>
+              <?php if (!in_array($rol, ['diseñador'])):   ?>
             <a href="index.php?vista=registrar_producciones" class="btn btn-secondary">
                 <i class="bi bi-plus-circle"></i> Nueva Producción
             </a>
+             <?php endif; ?>
     </div>
 
     <div class="card-body">
@@ -48,7 +51,9 @@ $producciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <th><i class="bi bi-cpu me-1"></i>Etapa</th>
                         <th><i class="bi bi-person-fill-gear me-1"></i>Responsable</th>
                         <th><i class="bi bi-clock me-1"></i>Creado</th>
+                          <?php if (!in_array($rol, ['diseñador'])):   ?>
                         <th><i class="bi bi-gear-fill me-1"></i>Acciones</th>
+                        <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody id="tbody" >
@@ -71,6 +76,7 @@ $producciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 </td>
                                 <td><?= htmlspecialchars($p['empleado_nombre']) ?></td>
                                 <td><?= htmlspecialchars($p['created_at']) ?></td>
+                                  <?php if (!in_array($rol, ['diseñador'])):   ?>
                                 <td>
                                     <a href="index.php?vista=editar_producciones&id=<?= $p['id'] ?>" class="btn btn-sm btn-outline-warning" title="Editar">
                                         <i class="bi bi-pencil-square"></i>
@@ -80,6 +86,7 @@ $producciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     </a> -->
                                     
                                 </td>
+                                <?php endif; ?>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
