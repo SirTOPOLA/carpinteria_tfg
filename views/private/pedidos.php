@@ -1,5 +1,5 @@
 <?php
- 
+
 $sql = "SELECT sp.*,
         c.nombre AS cliente,
         p.nombre AS proyecto    
@@ -11,7 +11,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $pedidos = $stmt->fetch(PDO::FETCH_ASSOC);
 
- 
+
 $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']['rol'])) : '';
 ?>
 
@@ -27,11 +27,11 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
                 <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
                 <input type="text" class="form-control" placeholder="Buscar pedido..." id="buscador">
             </div>
-             <?php if (in_array($rol, ['administrador', 'diseñador'])):   ?>
-            <a href="index.php?vista=registrar_pedidos" class="btn btn-secondary">
+            <?php if (in_array($rol, ['administrador', 'diseñador'])): ?>
+                <a href="index.php?vista=registrar_pedidos" class="btn btn-secondary">
 
-                <i class="bi bi-plus"> </i>Nuevo pedido</a>
-                <?php endif; ?>  
+                    <i class="bi bi-plus"> </i>Nuevo pedido</a>
+            <?php endif; ?>
         </div>
 
         <div class="card-body">
@@ -44,12 +44,12 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
                             <th><i class="bi bi-card-heading me-1"></i>Proyecto</th>
                             <th><i class="bi bi-flag-fill me-1"></i>Descripción</th>
                             <th><i class="bi bi-calendar-event me-1"></i>Creado</th>
-                            <th><i class="bi bi-calendar-check me-1"></i>Estado</th> 
+                            <th><i class="bi bi-calendar-check me-1"></i>Estado</th>
                             <th><i class="bi bi-clock-history me-1"></i>Coste</th>
                             <th class="text-center"><i class="bi bi-gear-fill me-1"></i>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="tbody" >
+                    <tbody id="tbody">
                         <?php if (!empty($pedidos) === 0): ?>
 
                             <?php foreach ($pedidos as $p): ?>
@@ -62,17 +62,17 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
                                     <td><?= ucfirst($p['estado']) ?></td>
                                     <td>XAF <?= number_format($p['estimacion_total'], 1) ?></td>
                                     <td class="text-center">
-                                        <?php if (in_array($rol, ['administrador', 'diseñador'])):   ?>
-                                        <a href="index.php?vista=destalles_pedidos&id=<?= $p['id'] ?>"
-                                            class="btn btn-sm btn-outline-info" title="Ver detalles">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                        <a href="index.php?vista=editar_pedidos&id=<?= $p['id'] ?>"
-                                            class="btn btn-sm btn-outline-warning">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </a>
-                                            <?php endif; ?> 
-                                        
+                                        <?php if (in_array($rol, ['administrador', 'diseñador'])): ?>
+                                            <a href="index.php?vista=destalles_pedidos&id=<?= $p['id'] ?>"
+                                                class="btn btn-sm btn-outline-info" title="Ver detalles">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="index.php?vista=editar_pedidos&id=<?= $p['id'] ?>"
+                                                class="btn btn-sm btn-outline-warning">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                        <?php endif; ?>
+
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -95,109 +95,175 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
 
 
 </div>
+<!-- Modal Cambiar Estado -->
+<div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-labelledby="modalCambiarEstadoLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="formCambiarEstado">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cambiar Estado de Pedido</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="pedidoId" name="id">
+                    <input type="hidden" id="tipoCambio" name="tipo">
 
+                    <div class="mb-3">
+                        <label for="nuevoEstado" class="form-label">Nuevo Estado</label>
+                        <select class="form-select" name="estado" id="nuevoEstado" required>
+                            <option value="">Seleccione estado</option>
+                             <option value="aprobado">Aprobado</option>
+                            
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 <script>
 
-const buscador = document.getElementById('buscador');
-let paginaActual = 1;
+    const buscador = document.getElementById('buscador');
+    let paginaActual = 1;
 
-//cargar las funciones al cargarse la pagina completamente
-document.addEventListener('DOMContentLoaded', () => {
-    cargarDatos();
-    clickPaginacion()
-    manejarEventosAjaxTbody(); // Necesario cuando cargamos html por ajax
-    // buscar()
-
-});
-
-function manejarEventosAjaxTbody() {
-    document.getElementById("tbody").addEventListener("click", function (e) {
-        //eliminar un registro de la fila por ID            
-        if (e.target.closest(".btn-eliminar")) {
-            const id = e.target.closest(".btn-eliminar").dataset.id;
-            eliminar(id);
-        }
-         
-
+    //cargar las funciones al cargarse la pagina completamente
+    document.addEventListener('DOMContentLoaded', () => {
+        cargarDatos();
+        clickPaginacion()
+        manejarEventosAjaxTbody(); // Necesario cuando cargamos html por ajax
+        // buscar()
 
     });
 
-}
-
-async function eliminar(id) {
-    if (confirm('¿Seguro que quieres eliminar este pedido?')) {
-        try {
-            const response = await fetch(`api/eliminar_pedidos.php?id=${id}`, {
-                method: 'GET',
-                headers: { 'Accept': 'application/json' }
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                alert(data.message);
-                location.reload();
-            } else {
-                alert(data.message || 'Error al eliminar el pedido.');
+    function manejarEventosAjaxTbody() {
+        document.getElementById("tbody").addEventListener("click", function (e) {
+            //eliminar un registro de la fila por ID            
+            if (e.target.closest(".btn-eliminar")) {
+                const id = e.target.closest(".btn-eliminar").dataset.id;
+                eliminar(id);
             }
-        } catch (error) {
-            alert('Error en la petición.');
+
+
+
+        });
+
+    }
+
+    async function eliminar(id) {
+        if (confirm('¿Seguro que quieres eliminar este pedido?')) {
+            try {
+                const response = await fetch(`api/eliminar_pedidos.php?id=${id}`, {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert(data.message || 'Error al eliminar el pedido.');
+                }
+            } catch (error) {
+                alert('Error en la petición.');
+            }
         }
     }
-}
 
- 
-async function cargarDatos(pagina = 1, termino = '') {
-    const formData = new FormData();
-    formData.append('pagina', pagina);
-    formData.append('termino', termino);
-    try {
-        const res = await fetch('api/listar_pedidos.php', {
+
+    async function cargarDatos(pagina = 1, termino = '') {
+        const formData = new FormData();
+        formData.append('pagina', pagina);
+        formData.append('termino', termino);
+        try {
+            const res = await fetch('api/listar_pedidos.php', {
+                method: 'POST',
+                body: formData
+            })
+
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById('tbody').innerHTML = data.html;
+                document.getElementById('paginacion').innerHTML = data.paginacion;
+                document.getElementById('resumen-paginacion').textContent = data.resumen;
+                paginaActual = pagina; // actualizar página actual
+            } else {
+                alert(data.message);
+                console.log()
+            }
+
+        } catch (error) {
+            alert('Error al cargar datos:', error);
+            console.log(error)
+        }
+
+    }
+
+    // Buscar
+    function buscar() {
+        buscador.addEventListener('input', async () => {
+            paginaActual = 1;
+            await cargarDatos(paginaActual, buscador.value.trim());
+        });
+
+    }
+    // Manejar clics en paginación
+    function clickPaginacion() {
+        document.getElementById('paginacion').addEventListener('click', async (e) => {
+            const btn = e.target.closest('.pagina-link');
+            if (btn) {
+                e.preventDefault();
+                const nuevaPagina = parseInt(btn.dataset.pagina);
+                if (!isNaN(nuevaPagina)) {
+                    paginaActual = nuevaPagina;
+                    await cargarDatos(paginaActual, buscador.value.trim());
+                }
+            }
+        });
+
+    }
+
+
+    // Abre el modal y carga los datos para cambiar estado 
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('.cambiar-estado-btn')) {
+            const btn = e.target.closest('.cambiar-estado-btn');
+
+            // Asigna datos al formulario
+            document.getElementById('pedidoId').value = btn.dataset.id;
+            document.getElementById('nuevoEstado').value = btn.dataset.estado;
+            document.getElementById('tipoCambio').value = btn.dataset.tipo; // tipo: solicitud, proyecto, produccion
+        }
+    });
+
+    // Enviar formulario de cambio de estado
+    document.getElementById('formCambiarEstado').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        fetch('api/actualizar_estado_pedido.php', {
             method: 'POST',
             body: formData
         })
-
-        const data = await res.json();
-        if (data.success) {
-            document.getElementById('tbody').innerHTML = data.html;
-            document.getElementById('paginacion').innerHTML = data.paginacion;
-            document.getElementById('resumen-paginacion').textContent = data.resumen;
-            paginaActual = pagina; // actualizar página actual
-        } else {
-            alert(data.message);
-            console.log()
-        }
-
-    } catch (error) {
-        alert('Error al cargar datos:', error);
-        console.log(error)
-    }
-
-}
-
-// Buscar
-function buscar() {
-    buscador.addEventListener('input', async () => {
-        paginaActual = 1;
-        await cargarDatos(paginaActual, buscador.value.trim());
+            .then(resp => resp.json())
+            .then(data => {
+                if (data.success) {
+                    // Cerrar modal
+                    bootstrap.Modal.getInstance(document.getElementById('modalCambiarEstado')).hide();
+                    // Recargar tabla o volver a hacer fetch
+                   // cargarTablaSolicitudes(); // O reemplaza por otra función según la vista
+                   location.reload();
+                } else {
+                    alert('Error al actualizar estado: ' + (data.message || ''));
+                }
+            })
+            .catch(err => console.error('Error en la petición:', err));
     });
-
-}
-// Manejar clics en paginación
-function clickPaginacion() {
-    document.getElementById('paginacion').addEventListener('click', async ( e )=> {
-        const btn = e.target.closest('.pagina-link');
-        if (btn) {
-            e.preventDefault();
-            const nuevaPagina = parseInt(btn.dataset.pagina);
-            if (!isNaN(nuevaPagina)) {
-                paginaActual = nuevaPagina;
-                await cargarDatos(paginaActual, buscador.value.trim());
-            }
-        }
-    });
-
-}
-
 
 </script>

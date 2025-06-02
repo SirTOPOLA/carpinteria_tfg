@@ -6,10 +6,8 @@
 $stmt = $pdo->query("SELECT id, CONCAT(nombre, ' ', apellido) AS nombre_completo  FROM empleados ORDER BY id");
 $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Obtener lista de proyectos
-$stmt = $pdo->query("SELECT * FROM proyectos ");
-$proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-// Obtener lista de proyectos
+
+// Obtener lista de servicios
 $stmt = $pdo->query("SELECT * FROM servicios ");
 $servicios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -74,22 +72,6 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <i class="bi bi-briefcase-fill me-1"></i>Proyecto
                             </label>
                             <div class="d-flex flex-wrap gap-2">
-                                <!-- Botón: Proyecto Existente -->
-                                <input type="radio" class="btn-check" name="opcion" id="optExistente" value="v"
-                                    autocomplete="off">
-                                <label class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
-                                    for="optExistente">
-                                    <i class="bi bi-folder2-open"></i> Existente
-                                </label>
-
-                                <!-- Botón: Proyecto Nuevo -->
-                                <input type="radio" class="btn-check" name="opcion" id="optNuevo" value="f"
-                                    autocomplete="off">
-                                <label class="btn btn-outline-success btn-sm d-flex align-items-center gap-1"
-                                    for="optNuevo">
-                                    <i class="bi bi-folder-plus"></i> Nuevo
-                                </label>
-
                                 <!-- Botón: Aplicar Servicio -->
                                 <input type="checkbox" class="btn-check" id="toggleServicio" autocomplete="off">
                                 <label class="btn btn-outline-success btn-sm d-flex align-items-center gap-1"
@@ -100,25 +82,6 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </div>
 
 
-
-                        <!-- Proyecto Existente -->
-                        <div id="proyectoExistente" class="col-md-6 mt-4 d-none">
-                            <div class="row g-3">
-                                <h6 class="fw-bold text-primary ">
-                                    <i class="bi bi-wrench-adjustable-circle-fill me-2"></i>Proyecto
-                                </h6>
-                                <label for="proyecto" class="form-label"><i class="bi bi-folder-check me-1"></i>Proyecto
-                                    existente <span class="text-danger">*</span></label>
-                                <select name="proyecto_id" id="proyecto" class="form-select">
-                                    <option value="">Seleccione un proyecto</option>
-                                    <?php foreach ($proyectos as $proyecto): ?>
-                                        <option value="<?= htmlspecialchars($proyecto['id']) ?>">
-                                            <?= htmlspecialchars($proyecto['nombre']) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                        </div>
 
                         <!-- Proyecto Nuevo -->
                         <div id="proyectoNuevo" class="col-md-6 g-3 my-3 d-none">
@@ -185,8 +148,8 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <select name="estado" id="estado_solicitud" class="form-select">
                                     <option value="">Seleccione un estado</option>
                                     <option value="cotizado">Cotizado</option>
-                                    <option value="aprobado">Aprobado</option>
-                                   
+                                    <!--  <option value="aprobado">Aprobado</option> -->
+
                                 </select>
                             </div>
                         </div>
@@ -219,11 +182,11 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 <?php endforeach; ?>
                                             </select>
                                         </td>
-                                        
+
                                         <td><input type="number" name="cantidad[]" class="form-control" step="0.01"
                                                 min="0" oninput="calcularSubtotal(this)"></td>
-                                                <td><input type="number" name="precio_unitario[]" class="form-control"
-           step="0.01" min="0" oninput="calcularSubtotal(this)"></td>
+                                        <td><input type="number" name="precio_unitario[]" class="form-control"
+                                                step="0.01" min="0" oninput="calcularSubtotal(this)"></td>
 
                                         <td><input type="text" class="form-control subtotal" readonly></td>
                                         <td><button type="button" class="btn btn-outline-danger btn-sm"
@@ -273,6 +236,7 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 </div>
+
 
 <script>
     document.querySelectorAll('input[name="opcion"]').forEach(radio => {
@@ -479,31 +443,30 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
     document.getElementById('form').addEventListener('submit', async function (e) {
-    e.preventDefault();
+        e.preventDefault();
 
-    const form = e.target;
-    const formData = new FormData(form);
+        const form = e.target;
+        const formData = new FormData(form);
 
-    try {
-        const response = await fetch('api/guardar_pedidos.php', {
-            method: 'POST',
-            body: formData
-        });
+        try {
+            const response = await fetch('api/guardar_pedidos.php', {
+                method: 'POST',
+                body: formData
+            });
 
-        const result = await response.json();
-        if (result.success) {
-            alert(result.message);
-             window.location.reload(); // si deseas refrescar
-             location.href = 'index.php?vista=pedidos';
-        } else {
-            alert(result.message || "Error desconocido");
+            const result = await response.json();
+            if (result.success) {
+                alert(result.message);
+                window.location.reload(); // si deseas refrescar
+                location.href = 'index.php?vista=pedidos';
+            } else {
+                alert(result.message || "Error desconocido");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error al guardar la cotización.");
         }
-    } catch (error) {
-        console.error("Error:", error);
-        alert("Error al guardar la cotización.");
-    }
-});
-
+    });
 
 
 </script>

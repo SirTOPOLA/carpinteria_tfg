@@ -1,4 +1,5 @@
 <?php
+
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
@@ -42,6 +43,14 @@ foreach ($clientes as $cliente) {
                 <a href='#' class='btn btn-sm btn-danger btn-eliminar' data-id='{$cliente['id']}'><i class='bi bi-trash-fill'></i></a>
             </td> "
         : '';
+    $linkVendedor = ($_SESSION['usuario']['rol'] === 'Vendedor') 
+        ? " <td class='text-center'>
+                <a href='index.php?vista=editar_clientes&id={$cliente['id']}' class='btn btn-sm btn-outline-warning'>
+                    <i class='bi bi-pencil-square'></i>
+                </a>
+                
+            </td> "
+        : '';
     $linkDesign = ($_SESSION['usuario']['rol'] === 'Diseñador') 
         ? " "
         : '';
@@ -57,6 +66,7 @@ foreach ($clientes as $cliente) {
             <td>" . htmlspecialchars($cliente['direccion']) . "</td>
             <td>" . date("d/m/Y H:i", strtotime($cliente['creado_en'])) . "</td>
             $linkAdmin
+            $linkVendedor
         </tr>
     ";
 }

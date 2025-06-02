@@ -1,4 +1,5 @@
 <?php
+
 require_once '../config/conexion.php'; // Ajusta la ruta
 
 header('Content-Type: application/json');

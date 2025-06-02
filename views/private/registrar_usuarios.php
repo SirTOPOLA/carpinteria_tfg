@@ -32,9 +32,9 @@ $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 class="text-danger">*</span></label>
                         <div class="input-group has-validation">
                             <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
-                            <input type="email" name="usuario" id="usuario" class="form-control"
-                                placeholder="Marvel88@example.net" required>
-                            <div class="invalid-feedback">El correo de usuario es obligatorio.</div>
+                            <input type="text" name="usuario" id="usuario" class="form-control"
+                                placeholder="admin" required>
+                            <div class="invalid-feedback">El nombre de usuario es obligatorio.</div>
                         </div>
                     </div>
 

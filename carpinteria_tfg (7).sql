@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 29, 2025 at 10:14 AM
+-- Generation Time: Jun 01, 2025 at 12:26 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -58,7 +58,14 @@ INSERT INTO `clientes` (`id`, `nombre`, `codigo`, `telefono`, `direccion`, `crea
 (14, 'Lucas Maroto', '0001213023', '222544778', 'lampert', '2025-05-26 23:49:07', 'lucas@gmail.com', 'LUMA25014'),
 (15, 'mercedes', '000175362', '222144589', 'lampert', '2025-05-27 20:48:51', 'lisa@gmail.com', 'MEME25015'),
 (20, 'Pedro Yamba', '00012141518', '551484943', 'los angeles', '2025-05-28 20:38:19', '', 'PEYA25020'),
-(21, 'Jose Luis', '000121415', '222010223', 'baney', '2025-05-29 03:58:12', '', 'JOLU25021');
+(21, 'Jose Luis', '000121415', '222010223', 'baney', '2025-05-29 03:58:12', '', 'JOLU25021'),
+(22, 'jesus', '00145478', '55120456', 'begoña 2', '2025-05-31 02:07:59', 'mar@gmail.com', 'JEJE25022'),
+(23, 'manuel ela', '000124578', '222001122', 'begoña 2', '2025-05-31 02:12:50', 'jeny@gmail.com', 'MAEL25023'),
+(24, 'lucas moreno', '0001454788', '222001122', 'lamper', '2025-05-31 02:17:10', 'lucas@gmail.com', 'LUMO25024'),
+(25, 'Candida', '000124587', '222014578', 'lampert', '2025-05-31 07:14:13', '', 'CACA25025'),
+(26, 'Ernesto Sales', '0001245860', '555147895', 'sunko', '2025-05-31 07:23:52', '', 'ERSA25026'),
+(27, 'sinforosa mguema', '00124578', '22214547885', 'los angeles', '2025-05-31 08:09:57', '', 'SIMG25027'),
+(28, 'sanches metete', '000014725', '222145478850', 'luba', '2025-05-31 08:23:41', '', 'SAME25028');
 
 -- --------------------------------------------------------
 
@@ -192,7 +199,25 @@ INSERT INTO `detalles_solicitud_material` (`id`, `solicitud_id`, `material_id`, 
 (31, 9, 21, 2, 5000.00),
 (32, 10, 22, 3, 1500.00),
 (33, 10, 18, 5, 15000.00),
-(34, 10, 19, 7, 20000.00);
+(34, 10, 19, 7, 20000.00),
+(35, 11, 16, 5, 7000.00),
+(36, 11, 20, 5, 1200.00),
+(37, 11, 23, 2, 1500.00),
+(38, 11, 21, 2, 5000.00),
+(39, 12, 19, 2, 20000.00),
+(40, 12, 16, 3, 7000.00),
+(41, 12, 22, 1, 1500.00),
+(42, 12, 23, 0, 1500.00),
+(43, 12, 18, 0, 15000.00),
+(44, 12, 21, 1, 5000.00),
+(45, 13, 16, 7, 7000.00),
+(46, 13, 22, 2, 1500.00),
+(47, 13, 18, 1, 15000.00),
+(48, 14, 18, 2, 15000.00),
+(49, 14, 20, 2, 1200.00),
+(50, 14, 19, 2, 20000.00),
+(51, 15, 22, 2, 1500.00),
+(52, 15, 20, 2, 1200.00);
 
 -- --------------------------------------------------------
 
@@ -225,7 +250,10 @@ INSERT INTO `detalles_venta` (`id`, `venta_id`, `tipo`, `producto_id`, `servicio
 (39, 22, 'producto', 7, NULL, 2, 120000.00, 0.00, 240000.00),
 (40, 22, 'servicio', NULL, 16, 3, 200.00, 0.00, 600.00),
 (41, 23, 'producto', 7, NULL, 3, 120000.00, 0.00, 360000.00),
-(42, 23, 'servicio', NULL, 10, 3, 25000.00, 0.00, 75000.00);
+(42, 23, 'servicio', NULL, 10, 3, 25000.00, 0.00, 75000.00),
+(43, 24, 'producto', 15, NULL, 1, 180000.00, 0.00, 180000.00),
+(44, 25, 'producto', 7, NULL, 2, 120000.00, 0.00, 240000.00),
+(45, 25, 'servicio', NULL, 10, 2, 25000.00, 0.00, 50000.00);
 
 -- --------------------------------------------------------
 
@@ -255,7 +283,8 @@ CREATE TABLE `empleados` (
 
 INSERT INTO `empleados` (`id`, `nombre`, `apellido`, `fecha_nacimiento`, `codigo`, `genero`, `telefono`, `direccion`, `email`, `horario_trabajo`, `fecha_ingreso`, `creado_en`, `salario`) VALUES
 (22, 'Jesus Crispín', 'TOPOLÁ BOÑAHO', '1997-06-30', '000175362', 'M', '551718822', 'Ela Nguema (Bisinga)', 'sirtopola@gmail.com', 'lunes - viernes', '2023-02-01', '2025-05-24 08:56:45', NULL),
-(23, 'Lisa', 'Marquez', '2000-06-10', '000121323', 'F', '551718822', 'lampert', 'lisa@gmail.com', 'lunes - viernes', '2023-12-02', '2025-05-24 09:11:11', NULL);
+(23, 'Lisa', 'Marquez', '2000-06-10', '000121323', 'F', '551718822', 'lampert', 'lisa@gmail.com', 'lunes - viernes', '2023-12-02', '2025-05-24 09:11:11', NULL),
+(24, 'Carlos P', 'Bolete', '1997-02-20', '000145789', 'M', '222454886', 'Cruce Dragas', NULL, 'lunes -viernes 8:00 a.m - 15:00 p.m', '2022-05-10', '2025-05-31 02:00:45', NULL);
 
 -- --------------------------------------------------------
 
@@ -288,7 +317,8 @@ CREATE TABLE `imagenes_producto` (
 --
 
 INSERT INTO `imagenes_producto` (`id`, `producto_id`, `ruta_imagen`) VALUES
-(15, 7, 'uploads/productos/img_68362db26f371.jpeg');
+(15, 7, 'uploads/productos/img_68362db26f371.jpeg'),
+(16, 15, 'uploads/productos/img_683a63963e103.jpg');
 
 -- --------------------------------------------------------
 
@@ -311,14 +341,14 @@ CREATE TABLE `materiales` (
 --
 
 INSERT INTO `materiales` (`id`, `nombre`, `descripcion`, `unidad_medida`, `stock_actual`, `stock_minimo`, `creado_en`) VALUES
-(16, 'Madera Pino', 'Tablas de pino cepillado de 2x4 pulgadas', 'unidad', 305, 10, '2025-05-24 09:30:34'),
+(16, 'Madera Pino', 'Tablas de pino cepillado de 2x4 pulgadas', 'unidad', 300, 10, '2025-05-24 09:30:34'),
 (17, 'Clavos 80', 'Clavos de 2 pulgadas para estructuras', 'kg', 5, 5, '2025-05-24 09:31:27'),
 (18, 'Tornillos para madera 1.5 pulgadas', 'Tornillos de 1.5 pulgadas con cabeza estrella', 'caja', 15, 5, '2025-05-24 09:32:09'),
 (19, 'Pegamento de carpintero', 'Adhesivo vinílico blanco de uso general', 'litros', 80, 2, '2025-05-24 09:33:02'),
-(20, 'Lija grano 120', 'Lija para madera grano fino 120', 'hoja', 20, 5, '2025-05-24 09:40:01'),
-(21, 'tapa porros', 'un material', 'mml', 25, 12, '2025-05-25 13:37:12'),
+(20, 'Lija grano 120', 'Lija para madera grano fino 120', 'hoja', 15, 5, '2025-05-24 09:40:01'),
+(21, 'tapa porros', 'un material', 'mml', 23, 12, '2025-05-25 13:37:12'),
 (22, 'clavos de 100', 'clavos útiles para grapado', 'kg', 135, 5, '2025-05-25 13:53:50'),
-(23, 'clavo 50', 'necesarios', 'kg', 20, 5, '2025-05-25 20:56:09');
+(23, 'clavo 50', 'necesarios', 'kg', 19, 5, '2025-05-25 20:56:09');
 
 -- --------------------------------------------------------
 
@@ -335,6 +365,18 @@ CREATE TABLE `movimientos_material` (
   `motivo` text DEFAULT NULL,
   `produccion_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `movimientos_material`
+--
+
+INSERT INTO `movimientos_material` (`id`, `material_id`, `tipo_movimiento`, `cantidad`, `fecha`, `motivo`, `produccion_id`) VALUES
+(5, 20, 'salida', 3, '2025-05-31 04:39:45', 'fin', 6),
+(6, 20, 'salida', 2, '2025-05-31 04:40:47', 'usados para el proceso', 6),
+(7, 21, 'salida', 2, '2025-05-31 04:40:47', 'usados para el proceso', 6),
+(8, 23, 'salida', 1, '2025-05-31 04:40:47', 'usados para el proceso', 6),
+(9, 16, 'salida', 3, '2025-05-31 04:40:47', 'usados para el proceso', 6),
+(10, 16, 'salida', 2, '2025-05-31 04:48:23', 'concluir', 6);
 
 -- --------------------------------------------------------
 
@@ -371,7 +413,12 @@ CREATE TABLE `producciones` (
 --
 
 INSERT INTO `producciones` (`id`, `proyecto_id`, `responsable_id`, `fecha_inicio`, `fecha_fin`, `estado`, `created_at`) VALUES
-(5, 4, 22, '2025-05-26', '2025-05-31', 'en proceso', '2025-05-26 23:10:27');
+(5, 4, 22, '2025-05-26', '2025-05-31', 'en proceso', '2025-05-26 23:10:27'),
+(6, 5, 24, '2025-05-31', '2025-06-08', 'en proceso', '2025-05-31 02:24:39'),
+(7, 5, NULL, NULL, NULL, 'pendiente', '2025-05-31 06:41:52'),
+(8, 6, NULL, '2025-05-31', NULL, 'pendiente', '2025-05-31 07:20:06'),
+(9, 7, NULL, '2025-05-31', NULL, 'pendiente', '2025-05-31 07:28:35'),
+(10, 3, NULL, '2025-05-31', NULL, 'pendiente', '2025-05-31 08:11:43');
 
 -- --------------------------------------------------------
 
@@ -393,7 +440,8 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`id`, `nombre`, `descripcion`, `precio_unitario`, `stock`, `solicitud_id`) VALUES
-(7, 'puertas modernas', 'En buen trabajo para un buen cliente', 120000.00, 6, NULL);
+(7, 'puertas modernas', 'En buen trabajo para un buen cliente', 120000.00, 4, NULL),
+(15, 'aparador moderno', 'es un aparador de ensueños', 180000.00, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -432,7 +480,7 @@ CREATE TABLE `proyectos` (
   `id` int(11) NOT NULL,
   `nombre` varchar(100) NOT NULL,
   `descripcion` text DEFAULT NULL,
-  `estado` enum('pendiente','en diseño','en producción','finalizado') DEFAULT 'pendiente',
+  `estado` enum('pendiente','en_diseno','en_produccion','finalizado') DEFAULT 'pendiente',
   `fecha_inicio` date DEFAULT NULL,
   `fecha_entrega` date DEFAULT NULL,
   `creado_en` timestamp NOT NULL DEFAULT current_timestamp()
@@ -443,8 +491,12 @@ CREATE TABLE `proyectos` (
 --
 
 INSERT INTO `proyectos` (`id`, `nombre`, `descripcion`, `estado`, `fecha_inicio`, `fecha_entrega`, `creado_en`) VALUES
-(3, 'lijado de mueble', 'mejsuiufhdoifjuuvfg', 'pendiente', '2025-05-26', '2025-05-31', '2025-05-26 22:03:21'),
-(4, 'marcos francés', 'marcos tipicos de tamanio grande', 'pendiente', '2025-05-26', '2025-06-03', '2025-05-26 22:05:52');
+(3, 'lijado de mueble', 'mejsuiufhdoifjuuvfg', '', '2025-05-26', '2025-05-31', '2025-05-26 22:03:21'),
+(4, 'marcos francés', 'marcos tipicos de tamanio grande', 'pendiente', '2025-05-26', '2025-06-03', '2025-05-26 22:05:52'),
+(5, 'aparador de pared', NULL, '', '2025-05-31', NULL, '2025-05-31 02:20:09'),
+(6, 'Taburete de salon', NULL, '', '2025-05-31', NULL, '2025-05-31 07:18:19'),
+(7, 'Armario de cocina', 'En artico de cocina para alojar cubiertos', '', '2025-05-31', NULL, '2025-05-31 07:28:04'),
+(8, 'livin moderno', 'un mueble elegante', 'pendiente', '2025-05-31', '2025-06-08', '2025-05-31 08:25:00');
 
 -- --------------------------------------------------------
 
@@ -508,7 +560,7 @@ CREATE TABLE `solicitudes_proyecto` (
   `proyecto_id` int(11) NOT NULL,
   `descripcion` text DEFAULT NULL,
   `fecha_solicitud` date NOT NULL,
-  `estado` enum('pendiente','cotizado','aprobado','rechazado','en_produccion','finalizado') DEFAULT 'pendiente',
+  `estado` enum('pendiente','cotizado','aprobado','en_produccion','finalizado') DEFAULT 'pendiente',
   `precio_obra` decimal(10,2) DEFAULT 0.00,
   `estimacion_total` decimal(10,2) DEFAULT NULL,
   `servicio_id` int(11) DEFAULT NULL
@@ -524,7 +576,12 @@ INSERT INTO `solicitudes_proyecto` (`id`, `cliente_id`, `proyecto_id`, `descripc
 (4, 14, 3, 'Cotización generada automáticamente', '2025-05-29', 'cotizado', 0.00, 248000.00, 10),
 (8, 21, 4, 'un buen trabajo dignifica al hombre', '2025-05-29', 'cotizado', 0.00, 333000.00, 10),
 (9, 21, 3, '', '2025-05-29', 'cotizado', 30000.00, 162400.00, 10),
-(10, 20, 4, '', '2025-05-29', 'cotizado', 35000.00, 279500.00, 10);
+(10, 20, 4, '', '2025-05-29', 'cotizado', 35000.00, 279500.00, 10),
+(11, 24, 5, 'parales ', '2025-05-31', 'aprobado', 15000.00, 72000.00, 12),
+(12, 25, 6, 'es un mueble elegante versatil de color blanco con cristal integrado', '2025-05-31', 'aprobado', 20000.00, 90875.00, NULL),
+(13, 26, 7, 'En artico de cocina para alojar cubiertos', '2025-05-31', 'aprobado', 20000.00, 87000.00, NULL),
+(14, 27, 3, 'es un estilo moderno', '2025-05-31', 'aprobado', 15000.00, 87400.00, NULL),
+(15, 28, 8, 'es un moderno livin de dimensiones considerables', '2025-05-31', 'cotizado', 15000.00, 20400.00, NULL);
 
 -- --------------------------------------------------------
 
@@ -548,7 +605,8 @@ CREATE TABLE `usuarios` (
 
 INSERT INTO `usuarios` (`id`, `usuario`, `password`, `rol_id`, `empleado_id`, `activo`, `perfil`) VALUES
 (23, 'admin@prueba.com', '$2y$10$J9p0pfRzLin.Peq1Pg3QcuROTvYkHcVodR60L4TTqDXg28ex1iMQi', 25, 22, 1, 'uploads/usuarios/usuario_1748077038.jpg'),
-(24, 'vendedor@prueba.com', '$2y$10$CZV9YtOpR3VNJzLawU1zYusFPQ5Qs2a44IDSmqCuDAXs/yv/iwsf.', 26, 23, 1, 'uploads/usuarios/usuario_1748077972.jpg');
+(24, 'vendedor@prueba.com', '$2y$10$CZV9YtOpR3VNJzLawU1zYusFPQ5Qs2a44IDSmqCuDAXs/yv/iwsf.', 26, 23, 1, 'uploads/usuarios/usuario_1748077972.jpg'),
+(25, 'venderdor@prueba.com', '$2y$10$DHhW00OTYBC6I8c5NY76U.sFeESqLXgDGT2a1a0vOHoCJ4AtDCoQ6', 26, 24, 1, 'uploads/usuarios/usuario_1748656952.jpg');
 
 -- --------------------------------------------------------
 
@@ -572,7 +630,9 @@ INSERT INTO `ventas` (`id`, `cliente_id`, `fecha`, `total`, `metodo_pago`) VALUE
 (16, 13, '2025-05-26 21:05:32', 9500.00, 'efectivo'),
 (21, 15, '2025-05-27 21:07:10', 5000.00, 'efectivo'),
 (22, 14, '2025-05-27 21:35:17', 240600.00, 'efectivo'),
-(23, 20, '2025-05-28 23:00:07', 435000.00, 'efectivo');
+(23, 20, '2025-05-28 23:00:07', 435000.00, 'efectivo'),
+(24, 22, '2025-05-31 02:08:39', 180000.00, 'efectivo'),
+(25, 23, '2025-05-31 02:13:22', 290000.00, 'efectivo');
 
 --
 -- Indexes for dumped tables
@@ -746,7 +806,7 @@ ALTER TABLE `categorias_producto`
 -- AUTO_INCREMENT for table `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `compras`
@@ -770,19 +830,19 @@ ALTER TABLE `detalles_compra`
 -- AUTO_INCREMENT for table `detalles_solicitud_material`
 --
 ALTER TABLE `detalles_solicitud_material`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT for table `detalles_venta`
 --
 ALTER TABLE `detalles_venta`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT for table `empleados`
 --
 ALTER TABLE `empleados`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `facturas`
@@ -794,7 +854,7 @@ ALTER TABLE `facturas`
 -- AUTO_INCREMENT for table `imagenes_producto`
 --
 ALTER TABLE `imagenes_producto`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `materiales`
@@ -806,7 +866,7 @@ ALTER TABLE `materiales`
 -- AUTO_INCREMENT for table `movimientos_material`
 --
 ALTER TABLE `movimientos_material`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `pagos`
@@ -818,13 +878,13 @@ ALTER TABLE `pagos`
 -- AUTO_INCREMENT for table `producciones`
 --
 ALTER TABLE `producciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `proveedores`
@@ -836,7 +896,7 @@ ALTER TABLE `proveedores`
 -- AUTO_INCREMENT for table `proyectos`
 --
 ALTER TABLE `proyectos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `roles`
@@ -854,19 +914,19 @@ ALTER TABLE `servicios`
 -- AUTO_INCREMENT for table `solicitudes_proyecto`
 --
 ALTER TABLE `solicitudes_proyecto`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `ventas`
 --
 ALTER TABLE `ventas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- Constraints for dumped tables

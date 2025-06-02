@@ -32,9 +32,7 @@ function verificarAcceso($vista)
             'materiales',
             'registrar_materiales',
             'editar_materiales',
-            'proyectos',
-            'registrar_proyectos',
-            'editar_proyectos',
+             
             'clientes',
             'registrar_clientes',
             'editar_clientes',
@@ -76,6 +74,20 @@ function verificarAcceso($vista)
             'compras',
             'operaciones'
         ],
+        'empleado' => [
+            'dashboard',
+            'ventas',
+            'clientes',
+            'pedidos',
+            'registrar_clientes',
+            'editar_clientes',
+            'registrar_pedidos',
+            'productos',
+            'servicios',
+            'ventas',
+            'registrar_ventas',
+            'editar_ventas'
+        ],
         'vendedor' => [
             'dashboard',
             'ventas',
@@ -92,14 +104,13 @@ function verificarAcceso($vista)
         ],
         'diseñador' => [
             'dashboard',
-            'proyectos',
+            
             'clientes',            
             'pedidos',
             'registrar_pedidos',
             'editar_pedidos',
             'detalles_pedidos',
-            'registrar_proyectos',
-            'editar_proyectos',
+            
             'producciones',
             'registrar_producciones',
             'editar_producciones',

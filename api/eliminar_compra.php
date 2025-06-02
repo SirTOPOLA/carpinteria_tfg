@@ -1,4 +1,5 @@
 <?php
+
 require_once '../config/conexion.php';
 header('Content-Type: application/json');
 

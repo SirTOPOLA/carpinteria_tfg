@@ -1,10 +1,9 @@
 <?php
+
 require '../config/conexion.php';
 header('Content-Type: application/json');
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
 
     //funcion para singularizar
     function singularizar($palabra)
@@ -41,8 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return implode(' ', $reducido); // cadena canónica
     }
 
-
-
     try {
         $response = ['success' => false, 'message' => ''];
 
@@ -56,11 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stock = intval($_POST['stock'] ?? 0);
 
         if ($nombre === '' || $precio_unitario <= 0) {
-            throw new Exception('Nombre, precio y categoría son obligatorios y deben ser válidos.');
-        }
-
-        if (!is_numeric($precio_unitario) || $precio_unitario <= 0) {
-            throw new Exception('El precio unitario debe ser un número válido mayor que cero.');
+            throw new Exception('Nombre y precio unitario son obligatorios y deben ser válidos.');
         }
 
         $nombre_normalizado = normalizarTexto($nombre);
@@ -72,35 +65,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         foreach ($productos as $producto) {
             if (normalizarTexto($producto['nombre']) === $nombre_normalizado) {
-                throw new Exception('Ya existe un producto con ese nombre. '.$producto_id);
+                throw new Exception('Ya existe un producto con ese nombre.');
             }
         }
 
         $pdo->beginTransaction();
 
-        if ($producto_id > 0) {
-            // -------------------------
-            // Actualizar producto
-            // -------------------------
-            $stmt = $pdo->prepare("UPDATE productos 
-                               SET nombre = ?, descripcion = ?,  precio_unitario = ?, stock = ? 
-                               WHERE id = ?");
-            $stmt->execute([$nombre, $descripcion, $precio_unitario, $stock, $producto_id]);
-
-        } else {
-            // -------------------------
-            // Registrar nuevo producto
-            // -------------------------
-            $stmt = $pdo->prepare("INSERT INTO productos (nombre, descripcion,  precio_unitario, stock)
-                               VALUES (?, ?,  ?, ?)");
-            $stmt->execute([$nombre, $descripcion, $precio_unitario, $stock]);
-            $producto_id = $pdo->lastInsertId();
-        }
+        // Inicializamos la variable para la ruta de imagen (en caso que no haya upload)
+        $rutaImagen = null;
 
         // -------------------------
-        // Procesar imágenes
+        // Procesar imagen (si existe)
         // -------------------------
-        if (!empty($_FILES['imagenes']['name'][0])) {
+        if (!empty($_FILES['imagen']['name'])) {
 
             $carpetaDestino = 'uploads/productos/';
 
@@ -116,51 +93,68 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
-            // Si es actualización, eliminar imágenes anteriores (opcional)
+            $nombreArchivo = $_FILES['imagen']['name'];
+            $tamanoArchivo = $_FILES['imagen']['size'];
+            $errorArchivo = $_FILES['imagen']['error'];
+
+            if ($errorArchivo !== UPLOAD_ERR_OK) {
+                throw new Exception("Error al subir la imagen '$nombreArchivo'.");
+            }
+
+            if ($tamanoArchivo > 2 * 1024 * 1024) {
+                throw new Exception("La imagen '$nombreArchivo' excede los 2MB.");
+            }
+
+            $extensionesValidas = ['jpg', 'jpeg', 'png', 'webp'];
+            $ext = strtolower(pathinfo($nombreArchivo, PATHINFO_EXTENSION));
+            if (!in_array($ext, $extensionesValidas)) {
+                throw new Exception("La imagen '$nombreArchivo' tiene un formato no permitido.");
+            }
+
+            $nombreSeguro = uniqid('img_') . '.' . $ext;
+            $rutaFinal = $carpetaDestino . $nombreSeguro;
+
+            if (!move_uploaded_file($_FILES['imagen']['tmp_name'], $rutaFinal)) {
+                throw new Exception("No se pudo guardar la imagen '$nombreArchivo'.");
+            }
+
+            $rutaImagen = $rutaFinal;
+
+            // Si es actualización, eliminar imagen anterior
             if ($producto_id > 0) {
-                $stmt = $pdo->prepare("SELECT ruta_imagen FROM imagenes_producto WHERE producto_id = ?");
+                $stmt = $pdo->prepare("SELECT imagen FROM productos WHERE id = ?");
                 $stmt->execute([$producto_id]);
-                $imagenesAnteriores = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                foreach ($imagenesAnteriores as $img) {
-                    if (file_exists($img['ruta_imagen'])) {
-                        unlink($img['ruta_imagen']);
-                    }
+                $imgAnterior = $stmt->fetchColumn();
+                if ($imgAnterior && file_exists($imgAnterior)) {
+                    unlink($imgAnterior);
                 }
+            }
+        }
 
-                $pdo->prepare("DELETE FROM imagenes_producto WHERE producto_id = ?")->execute([$producto_id]);
+        if ($producto_id > 0) {
+            // -------------------------
+            // Actualizar producto
+            // -------------------------
+            if ($rutaImagen) {
+                $stmt = $pdo->prepare("UPDATE productos 
+                                   SET nombre = ?, descripcion = ?, precio_unitario = ?, stock = ?, imagen = ? 
+                                   WHERE id = ?");
+                $stmt->execute([$nombre, $descripcion, $precio_unitario, $stock, $rutaImagen, $producto_id]);
+            } else {
+                $stmt = $pdo->prepare("UPDATE productos 
+                                   SET nombre = ?, descripcion = ?, precio_unitario = ?, stock = ? 
+                                   WHERE id = ?");
+                $stmt->execute([$nombre, $descripcion, $precio_unitario, $stock, $producto_id]);
             }
 
-            // Guardar nuevas imágenes
-            foreach ($_FILES['imagenes']['tmp_name'] as $i => $tmpName) {
-                $nombreArchivo = $_FILES['imagenes']['name'][$i];
-                $tamanoArchivo = $_FILES['imagenes']['size'][$i];
-                $errorArchivo = $_FILES['imagenes']['error'][$i];
-
-                if ($errorArchivo !== UPLOAD_ERR_OK) {
-                    throw new Exception("Error al subir imagen '$nombreArchivo'.");
-                }
-
-                if ($tamanoArchivo > 2 * 1024 * 1024) {
-                    throw new Exception("La imagen '$nombreArchivo' excede los 2MB.");
-                }
-
-                $extensionesValidas = ['jpg', 'jpeg', 'png', 'webp'];
-                $ext = strtolower(pathinfo($nombreArchivo, PATHINFO_EXTENSION));
-                if (!in_array($ext, $extensionesValidas)) {
-                    throw new Exception("La imagen '$nombreArchivo' tiene un formato no permitido.");
-                }
-
-                $nombreSeguro = uniqid('img_') . '.' . $ext;
-                $rutaFinal = $carpetaDestino . $nombreSeguro;
-
-                if (!move_uploaded_file($tmpName, $rutaFinal)) {
-                    throw new Exception("No se pudo guardar la imagen '$nombreArchivo'.");
-                }
-
-                $stmt = $pdo->prepare("INSERT INTO imagenes_producto (producto_id, ruta_imagen) VALUES (?, ?)");
-                $stmt->execute([$producto_id, $rutaFinal]);
-            }
+        } else {
+            // -------------------------
+            // Registrar nuevo producto
+            // -------------------------
+            $stmt = $pdo->prepare("INSERT INTO productos (nombre, descripcion, precio_unitario, stock, imagen)
+                               VALUES (?, ?, ?, ?, ?)");
+            $stmt->execute([$nombre, $descripcion, $precio_unitario, $stock, $rutaImagen]);
+            $producto_id = $pdo->lastInsertId();
         }
 
         $pdo->commit();

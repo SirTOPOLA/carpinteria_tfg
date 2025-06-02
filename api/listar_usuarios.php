@@ -15,7 +15,7 @@ $condicion = '';
 $params = [];
 
 if ($termino !== '') {
-    $condicion = "WHERE u.usuario LIKE :busqueda OR u.rol LIKE :busqueda OR e.nombre LIKE :busqueda OR e.apellido LIKE :busqueda";
+    $condicion = "WHERE u.username LIKE :busqueda OR u.rol LIKE :busqueda OR e.nombre LIKE :busqueda OR e.apellido LIKE :busqueda";
     $params[':busqueda'] = "%$termino%";
 }
 
@@ -37,7 +37,7 @@ $sql = " SELECT u.*,
             LEFT JOIN roles r ON u.rol_id = r.id
             LEFT JOIN empleados e ON u.empleado_id = e.id 
     $condicion 
-    ORDER BY u.usuario ASC 
+    ORDER BY u.username ASC 
     LIMIT $offset, $porPagina
 ";
 $stmt = $pdo->prepare($sql);
@@ -51,7 +51,7 @@ foreach ($usuarios as $usuario) {
     ? "<a href='#' class='btn btn-sm btn-danger btn-eliminar' data-id='{$usuario['id']}'><i class='bi bi-trash-fill'></i></a>"
     : '';
 
-    $imgPerfil = 'api/' . htmlspecialchars($usuario['perfil']);
+    $imgPerfil = 'api/' . htmlspecialchars($usuario['imagen']);
     $estadoActivo = $usuario['activo'] ? '1' : '0';
     $estadoClase = $usuario['activo'] ? 'btn-success' : 'btn-danger';
     $icono = $usuario['activo'] ? 'bi-toggle-on' : 'bi-toggle-off';
@@ -63,7 +63,7 @@ foreach ($usuarios as $usuario) {
         <tr>
             <td>{$usuario['id']}</td>
             <td><img src='$imgPerfil' alt='Perfil' width='60' class='img-thumbnail'></td>
-            <td>" . htmlspecialchars($usuario['usuario']) . "</td>
+            <td>" . htmlspecialchars($usuario['username']) . "</td>
             <td>$nombreEmpleado</td>
             <td>" . htmlspecialchars($usuario['rol']) . "</td>
             <td class='text-center'>

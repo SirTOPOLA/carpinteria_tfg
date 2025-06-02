@@ -44,26 +44,26 @@ $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </label>
                     <input type="date" name="fecha_fin" id="fecha_fin" class="form-control" required>
                 </div>
-
+                
                 <div class="col-md-6 mb-2 ">
                     <label for="proyecto_id" class="form-label">
                         <i class="bi bi-diagram-3 me-1 text-warning"></i> Proyecto asociado <span
                             class="text-danger">*</span>
-                    </label>
-                    <select name="proyecto_id" id="proyecto" class="form-select" required>
-                        <option value="">Seleccione un proyecto</option>
-                        <?php foreach ($proyectos as $proyecto): ?>
-                            <option value="<?= htmlspecialchars($proyecto['id']) ?>">
-                                <?= htmlspecialchars($proyecto['nombre']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="col-md-6 mb-2 ">
+                        </label>
+                        <select name="proyecto_id" id="proyecto" class="form-select" required>
+                            <option value="">Seleccione un proyecto</option>
+                            <?php foreach ($proyectos as $proyecto): ?>
+                                <option value="<?= htmlspecialchars($proyecto['id']) ?>">
+                                    <?= htmlspecialchars($proyecto['nombre']) ?>
+                                </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6 mb-2 ">
                     <label for="empleado" class="form-label">
                         <i class="bi bi-person-badge me-1 text-info"></i> Responsable de producción <span
-                            class="text-danger">*</span>
+                        class="text-danger">*</span>
                     </label>
                     <select name="responsable_id" id="empleado" class="form-select" required>
                         <option value="">Seleccione un empleado</option>
@@ -71,21 +71,12 @@ $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <option value="<?= htmlspecialchars($empleado['id']) ?>">
                                 <?= htmlspecialchars($empleado['nombre_completo']) ?>
                             </option>
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>
                     </select>
                 </div>
-
-                <div class="col-md-6 mb-2 ">
-                    <label for="estado_produccion" class="form-label">
-                        <i class="bi bi-hourglass-split me-1 text-secondary"></i> Estado de la producción
-                    </label>
-                    <select name="estado" id="estado_produccion" class="form-select">
-                        <option value="">Sin estado definido</option>
-                        <option value="pendiente">Pendiente</option>
-                        <option value="en proceso">En proceso</option>
-                        <option value="completado">Completado</option>
-                    </select>
-                </div>
+                
+                
+                <input type="hidden" name="estado" id="estado" value="pendiente" class="form-control" required>
 
                 <div class="col-12 d-flex justify-content-between mt-4">
                     <a href="index.php?vista=producciones" class="btn btn-outline-secondary">

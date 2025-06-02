@@ -1,7 +1,7 @@
 <?php
 try {
-  $sql = "SELECT ruta_imagen 
-          FROM imagenes_producto 
+  $sql = "SELECT imagen 
+          FROM avances_produccion
           ORDER BY RAND() 
           LIMIT 6";
   $stmt = $pdo->prepare($sql);

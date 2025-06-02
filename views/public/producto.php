@@ -1,11 +1,8 @@
 <?php
 try {
     // Obtener productos
-    $stmt_productos = $pdo->prepare("
-        SELECT p.*, i.ruta_imagen AS imagen
-        FROM productos p
-        LEFT JOIN imagenes_producto i ON p.id = i.producto_id
-        ORDER BY p.nombre ASC
+    $stmt_productos = $pdo->prepare("SELECT * FROM productos  
+        ORDER BY nombre ASC
     ");
     $stmt_productos->execute();
     $productos = $stmt_productos->fetchAll();

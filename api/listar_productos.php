@@ -15,7 +15,7 @@ $condicion = '';
 $params = [];
 
 if ($termino !== '') {
-    $condicion = "WHERE p.nombre LIKE :busqueda OR p.unidad LIKE :busqueda";
+    $condicion = "WHERE nombre LIKE :busqueda OR unidad LIKE :busqueda";
     $params[':busqueda'] = "%$termino%";
 }
 
@@ -27,11 +27,10 @@ $totalPaginas = ceil($totalRegistros / $porPagina);
 
 // Obtener registros
 
-$sql = "SELECT p.*, i.ruta_imagen AS imagen
-        FROM productos p
-        LEFT JOIN imagenes_producto i ON p.id = i.producto_id
+$sql = "SELECT  * 
+        FROM productos 
         $condicion
-        ORDER BY p.id DESC
+        ORDER BY id DESC
         LIMIT $offset, $porPagina";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);

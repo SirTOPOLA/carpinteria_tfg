@@ -1,14 +1,15 @@
 <?php
+
 require 'conexion.php';
 
 try {
     $pdo->beginTransaction();
 
-    $cliente_id = $_POST['cliente_id']; 
+    $cliente_id = $_POST['cliente_id'];
     $fecha = date('Y-m-d H:i:s');
 
     $stmt = $pdo->prepare("INSERT INTO ventas (cliente_id,  fecha) VALUES ( ?, ?)");
-    $stmt->execute([$cliente_id,   $fecha]);
+    $stmt->execute([$cliente_id, $fecha]);
     $venta_id = $pdo->lastInsertId();
 
     $tipos = $_POST['tipo'];
@@ -21,11 +22,11 @@ try {
 
     for ($i = 0; $i < count($tipos); $i++) {
         $tipo = $tipos[$i];
-        $cantidad = (int)$cantidades[$i];
-        $precio = (float)$precios[$i];
+        $cantidad = (int) $cantidades[$i];
+        $precio = (float) $precios[$i];
 
-        $producto_id = ($tipo === 'producto') ? (int)$producto_ids[$i] : null;
-        $servicio_id = ($tipo === 'servicio') ? (int)$servicio_ids[$i] : null;
+        $producto_id = ($tipo === 'producto') ? (int) $producto_ids[$i] : null;
+        $servicio_id = ($tipo === 'servicio') ? (int) $servicio_ids[$i] : null;
 
         $stmt = $pdo->prepare("INSERT INTO detalles_venta (venta_id, tipo, producto_id, servicio_id, cantidad, precio_unitario)
                                VALUES (?, ?, ?, ?, ?, ?)");

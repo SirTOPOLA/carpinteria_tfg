@@ -28,9 +28,13 @@ try {
     $stmtVenta->execute([':venta_id' => $venta_id]);
     $venta = $stmtVenta->fetch(PDO::FETCH_ASSOC);
 
+
     if (!$venta) {
-        echo json_encode(['success' => false, 'mensaje' => 'Venta no encontrada']);
-        exit;
+        $stmtVenta = $pdo->prepare("  SELECT * FROM ventas    WHERE  id = :venta_id  ");
+        $stmtVenta->execute([':venta_id' => $venta_id]);
+        $venta = $stmtVenta->fetch(PDO::FETCH_ASSOC);
+       /*  echo json_encode(['success' => false, 'message' => 'Venta no encontrada']);
+        exit; */
     }
 
     // Obtener detalles de los productos vendidos
@@ -38,6 +42,8 @@ try {
         SELECT 
         dv.cantidad,
         dv.precio_unitario,
+        dv.subtotal,
+        dv.descuento,
         COALESCE(p.nombre, s.nombre) AS nombre,
         dv.tipo
     FROM detalles_venta dv

@@ -1,12 +1,8 @@
 <?php
 
 
-$stmt_total = $pdo->prepare("SELECT 
-    p.*,  
-    i.ruta_imagen AS imagen
-FROM productos p 
-LEFT JOIN imagenes_producto i ON p.id = i.producto_id
-ORDER BY p.nombre DESC;
+$stmt_total = $pdo->prepare("SELECT  * FROM productos  
+ORDER BY nombre DESC;
 ");
 $stmt_total->execute();
 $productos = $stmt_total->fetchAll();

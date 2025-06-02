@@ -15,15 +15,15 @@ $condicion = '';
 $params = [];
 
 if ($termino !== '') {
-    $condicion = "WHERE pr.nombre LIKE :busqueda OR e.nombre LIKE :busqueda";
+    $condicion = "WHERE pr.nombre LIKE :busqueda OR emp.nombre LIKE :busqueda";
     $params[':busqueda'] = "%$termino%";
 }
 
 // Total de registros
 $sqlTotal = "SELECT COUNT(*) 
-            FROM producciones p
-            INNER JOIN proyectos pr ON p.proyecto_id = pr.id
-            INNER JOIN empleados e ON p.responsable_id = e.id
+            FROM producciones prod
+            INNER JOIN proyectos pr ON prod.proyecto_id = pr.id
+            INNER JOIN empleados emp ON prod.responsable_id = emp.id
             $condicion";
 $stmtTotal = $pdo->prepare($sqlTotal);
 $stmtTotal->execute($params);
@@ -33,12 +33,12 @@ $totalPaginas = ceil($totalRegistros / $porPagina);
 // Consulta de producciones
 $sql = "SELECT 
             prod.*,
-                pr.estado AS estado_proyecto, 
-                pr.nombre AS proyecto_nombre, 
-                emp.nombre AS empleado_nombre
-                FROM producciones prod
-                LEFT JOIN proyectos pr ON prod.proyecto_id = pr.id                 
-                LEFT JOIN empleados emp ON prod.responsable_id = emp.id
+            pr.estado AS estado_proyecto, 
+            pr.nombre AS proyecto_nombre, 
+            emp.nombre AS empleado_nombre
+        FROM producciones prod
+        LEFT JOIN proyectos pr ON prod.proyecto_id = pr.id                 
+        LEFT JOIN empleados emp ON prod.responsable_id = emp.id
         $condicion
         ORDER BY pr.nombre ASC
         LIMIT $offset, $porPagina";
@@ -50,37 +50,54 @@ $producciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // HTML
 $html = '';
 foreach ($producciones as $prod) {
-    $linkAdmin = ($_SESSION['usuario']['rol'] === 'Administrador') 
+    $btnEstado = '';
+    if ($prod['estado'] === 'en proceso') {
+        $btnEstado = "
+        <button class='btn btn-sm btn-outline-success cambiar-estado-btn' 
+                data-id='{$prod['id']}' 
+                data-estado='{$prod['estado']}' 
+                 data-tipo='produccion'
+                data-bs-toggle='modal' 
+                data-bs-target='#modalCambiarEstado'>
+            <i class='bi bi-arrow-repeat'></i> Cambiar Estado
+        </button>
+        ";
+    }
+    
+
+    $linkAdmin = (!empty($_SESSION['usuario']['rol']) && $_SESSION['usuario']['rol'] === 'Administrador') 
     ? " <td class='text-center'>
             <a href='index.php?vista=editar_producciones&id={$prod['id']}' class='btn btn-sm btn-outline-warning' title='Editar'>
                 <i class='bi bi-pencil-square'></i>
             </a>
-             <a href='#' class='btn btn-sm btn-danger btn-eliminar' data-id='{$prod['id']}' title='Eliminar'>
-            <i class='bi bi-trash-fill'></i>
-       </a>
+            <a href='#' class='btn btn-sm btn-danger btn-eliminar' data-id='{$prod['id']}' title='Eliminar'>
+                <i class='bi bi-trash-fill'></i>
+            </a>
             <!--
-            <a href='registrar_proceso_produccionesid={$prod['id']}' class='btn btn-sm btn-outline-primary' title='Procesar'>
+            <a href='registrar_proceso_producciones?id={$prod['id']}' class='btn btn-sm btn-outline-primary' title='Procesar'>
                 <i class='bi bi-play-circle'></i>
             </a>
             -->
+            $btnEstado
         </td>"
     : '';
-    $html .= "
-    <tr>
-        <td>{$prod['id']}</td>
-        <td>" . htmlspecialchars($prod['proyecto_nombre']) . "</td>
-        <td>" . htmlspecialchars($prod['fecha_inicio']) . "</td>
-        <td>" . htmlspecialchars($prod['fecha_fin']) . "</td>
-        <td>" . htmlspecialchars($prod['estado_proyecto']) . "</td>
-        <td>" . htmlspecialchars($prod['estado']) . "</td>
-        <td>" . htmlspecialchars($prod['empleado_nombre']) . "</td>
-        <td>" . htmlspecialchars($prod['created_at']) . "</td>
-        $linkAdmin 
-    </tr>
+
+    $html .= " 
+        <tr>
+            <td>{$prod['id']}</td>
+            <td>" . htmlspecialchars($prod['proyecto_nombre']) . "</td>
+            <td>" . htmlspecialchars($prod['fecha_inicio']) . "</td>
+            <td>" . htmlspecialchars($prod['fecha_fin']) . "</td>
+            <td>" . htmlspecialchars($prod['estado_proyecto']) . "</td>
+            <td>" . htmlspecialchars($prod['estado']) . "</td>
+            <td>" . htmlspecialchars($prod['empleado_nombre']) . "</td>
+            <td>" . htmlspecialchars($prod['created_at']) . "</td>
+            $linkAdmin
+        </tr>
     ";
 }
 
-$html = $html ?: "<tr><td colspan='4' class='text-center text-muted'>No se encontraron producciones.</td></tr>";
+$html = $html ?: "<tr><td colspan='8' class='text-center text-muted'>No se encontraron producciones.</td></tr>";
 
 // Paginación
 $paginacion = '';

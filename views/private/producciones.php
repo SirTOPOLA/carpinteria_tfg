@@ -101,7 +101,36 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
         </div>
 </div>
  
-
+<!-- Modal Cambiar Estado -->
+<div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-labelledby="modalCambiarEstadoLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="formCambiarEstado">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cambiar Estado de produccion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                <input type="hidden" id="tipoCambio" name="tipo">
+    
+                <input type="hidden" id="produccionId" name="id">
+                    <div class="mb-3">
+                        <label for="nuevoEstado" class="form-label">Nuevo Estado</label>
+                        <select class="form-select" name="estado" id="nuevoEstado" required>
+                            <option value="">Seleccione estado</option>
+                            <option value="cotizado">Terminado</option> 
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 <script>
 
@@ -207,6 +236,40 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
 
     }
 
+ // Abre el modal y carga los datos para cambiar estado 
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('.cambiar-estado-btn')) {
+            const btn = e.target.closest('.cambiar-estado-btn');
+
+            // Asigna datos al formulario
+            document.getElementById('produccionId').value = btn.dataset.id;
+            document.getElementById('nuevoEstado').value = btn.dataset.estado;
+            document.getElementById('tipoCambio').value = btn.dataset.tipo; // tipo: solicitud, proyecto, produccion
+        }
+    });
+
+    // Enviar formulario de cambio de estado
+    document.getElementById('formCambiarEstado').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        fetch('api/actualizar_estado_pedido.php', {
+            method: 'POST',
+            body: formData
+        })
+            .then(resp => resp.json())
+            .then(data => {
+                if (data.success) {
+                    // Cerrar modal
+                    bootstrap.Modal.getInstance(document.getElementById('modalCambiarEstado')).hide();
+                    // Recargar tabla o volver a hacer fetch
+                    location.reload();
+                } else {
+                    alert('Error al actualizar estado: ' + (data.message || ''));
+                }
+            })
+            .catch(err => console.error('Error en la petición:', err));
+    });
 
 </script>
  

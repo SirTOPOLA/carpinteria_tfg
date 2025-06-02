@@ -1,4 +1,5 @@
 <?php
+ 
 require_once '../config/conexion.php';
 
 $venta_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
@@ -144,7 +145,7 @@ $detalles = $stmtDetalle->fetchAll(PDO::FETCH_ASSOC);
                 <th>Nombre</th>
                 <th>Cantidad</th>
                 <th>Precio Unitario</th>
-                <th>Descuento</th>
+                <th>Descuento %</th>
                 <th>Subtotal</th>
             </tr>
         </thead>
@@ -155,7 +156,8 @@ $detalles = $stmtDetalle->fetchAll(PDO::FETCH_ASSOC);
                     <td><?= $item['tipo'] === 'producto' ? $item['producto_nombre'] : $item['servicio_nombre'] ?></td>
                     <td><?= $item['cantidad'] ?></td>
                     <td><?= number_format($item['precio_unitario'], 2) ?></td>
-                    <td><?= number_format($item['descuento'], 2) ?></td>
+                   <!--  <td><?=  number_format($item['descuento'], 2) ?></td> -->
+                    <td><?=  rtrim(rtrim(number_format($item['descuento'], 1, '.', ''), '0'), '.')?> %</td>
                     <td><?= number_format($item['subtotal'], 2) ?></td>
                 </tr>
             <?php endforeach; ?>
@@ -177,7 +179,7 @@ $detalles = $stmtDetalle->fetchAll(PDO::FETCH_ASSOC);
 <!-- Botón de impresión -->
 <div class="btn-imprimir">
     <button onclick="window.print()" class="btn btn-primary shadow">🖨 Imprimir</button>
-    <a href="index.php?vista=ventas" class="btn btn-secondary btn-volver mt-2">← Volver</a>
+   <!--  <a href="index.php?vista=ventas" class="btn btn-secondary btn-volver mt-2">← Volver</a> -->
 </div>
 
 </body>

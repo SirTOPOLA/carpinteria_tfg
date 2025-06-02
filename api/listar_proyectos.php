@@ -37,14 +37,32 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// HTML
+// Render HTML
 $html = '';
 foreach ($proyectos as $p) {
+
+    // Botón eliminar (solo administrador)
     $linkEliminar = ($_SESSION['usuario']['rol'] === 'Administrador') 
-    ? "<a href='#' class='btn btn-sm btn-danger btn-eliminar' data-id='{$p['id']}' title='Eliminar'>
-            <i class='bi bi-trash-fill'></i>
-       </a>"
-    : '';
+        ? "<a href='#' class='btn btn-sm btn-danger btn-eliminar' data-id='{$p['id']}' title='Eliminar'>
+                <i class='bi bi-trash-fill'></i>
+           </a>"
+        : '';
+
+    // Botón cambiar estado (solo si está en estado 'diseño')
+    $btnEstado = '';
+    if (strtolower($p['estado']) === 'en diseño') {
+        $btnEstado = "
+        <button class='btn btn-sm btn-outline-success cambiar-estado-btn' 
+                data-id='{$p['id']}' 
+                data-estado='" . htmlspecialchars($p['estado']) . "' 
+                 data-tipo='proyecto'
+                data-bs-toggle='modal' 
+                data-bs-target='#modalCambiarEstado'>
+            <i class='bi bi-arrow-repeat'></i> Cambiar Estado
+        </button>";
+    }
+
+    // Fila
     $html .= "
     <tr>
         <td>{$p['id']}</td>
@@ -58,10 +76,12 @@ foreach ($proyectos as $p) {
             <a href='index.php?vista=editar_proyectos&id={$p['id']}' class='btn btn-sm btn-outline-warning' title='Editar'>
                 <i class='bi bi-pencil-square'></i>
             </a>
-             $linkEliminar
+            $linkEliminar
+            $btnEstado
         </td>
     </tr>";
 }
+
 $html = $html ?: "<tr><td colspan='8' class='text-center text-muted'>No se encontraron proyectos.</td></tr>";
 
 // Paginación
@@ -82,7 +102,7 @@ $desde = ($pagina - 1) * $porPagina + 1;
 $hasta = min($pagina * $porPagina, $totalRegistros);
 $resumen = "Mostrando $desde-$hasta de $totalRegistros resultados";
 
-// Respuesta
+// Respuesta JSON
 echo json_encode([
     'success' => true,
     'html' => $html,

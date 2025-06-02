@@ -19,34 +19,67 @@ $servicios = $pdo->query("SELECT id, nombre, precio_base FROM servicios")->fetch
 
                 <!-- Método de pago y Total -->
                 <div class="row g-3 mb-3">
-                    <!-- Cliente -->
-                    <div class="col-md-6 mb-3">
-                        <label for="cliente_id" class="form-label fw-semibold">Cliente <span
-                                class="text-danger">*</span></label>
-                        <div class="input-group mb-3">
-                            <select name="cliente_id" id="cliente_id" class="form-select" required>
-                                <option value="">Seleccione</option>
-                                <?php
-                                $clientes = $pdo->query("SELECT id, nombre FROM clientes")->fetchAll(PDO::FETCH_ASSOC);
-                                foreach ($clientes as $cliente):
-                                    ?>
-                                    <option value="<?= (int) $cliente['id'] ?>"><?= htmlspecialchars($cliente['nombre']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
-                                data-bs-target="#modalCliente">
-                                <i class="bi bi-plus-circle"></i>
-                            </button>
-                        </div>
-                        <div class="invalid-feedback">Por favor selecciona un cliente.</div>
-                    </div>
+                    <!-- Sección Cliente Elegante -->
+<div class="col-md-4">
+    <label class="form-label fw-bold mb-2"><i class="bi bi-people-fill me-2 text-primary"></i>Tipo de cliente</label>
+    <div class="btn-group w-100" role="group" aria-label="Tipo de cliente">
+        <input type="radio" class="btn-check" name="tipo_cliente" id="radio_registrado" value="registrado" checked>
+        <label class="btn btn-outline-primary" for="radio_registrado">
+            <i class="bi bi-person-check me-1"></i> VIP
+        </label>
+
+        <input type="radio" class="btn-check" name="tipo_cliente" id="radio_nuevo" value="nuevo">
+        <label class="btn btn-outline-success" for="radio_nuevo">
+            <i class="bi bi-person-plus-fill me-1"></i> Mostrador
+        </label>
+    </div>
+</div>
 
                     <div class="col-md-6">
                         <label for="total_venta" class="form-label fw-semibold">Total (XAF):</label>
                         <input type="text" id="total_venta" name="total" class="form-control text-end fw-bold" readonly
                             value="0.00">
                     </div>
+                </div>
+                <div class="row g-3 mb-3">
+                   
+<!-- Sección Cliente Registrado -->
+<div class="row g-3 mb-3 align-items-end" id="cliente_registrado_section">
+    <div class="col-md-6">
+        <label for="cliente_id" class="form-label fw-semibold">Cliente registrado <span class="text-danger">*</span></label>
+        <div class="input-group shadow-sm">
+            <select name="cliente_id" id="cliente_id" class="form-select border-end-0">
+                <option value="">Seleccione</option>
+                <?php
+                $clientes = $pdo->query("SELECT id, nombre FROM clientes")->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($clientes as $cliente):
+                ?>
+                <option value="<?= (int)$cliente['id'] ?>"><?= htmlspecialchars($cliente['nombre']) ?></option>
+                <?php endforeach; ?>
+            </select>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalCliente" title="Agregar nuevo cliente">
+                <i class="bi bi-plus-circle fs-5"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Sección Cliente Nuevo -->
+<div class="row g-3 mb-3 d-none" id="cliente_nuevo_section">
+    <div class="col-md-4">
+        <label for="nombre_cliente" class="form-label fw-semibold">Nombre completo <span class="text-danger">*</span></label>
+        <input type="text" name="nombre_cliente" id="nombre_cliente" class="form-control shadow-sm" placeholder="Ej: Juan Pérez">
+    </div>
+    <div class="col-md-4">
+        <label for="dni_cliente" class="form-label fw-semibold">DNI / Cédula <span class="text-danger">*</span></label>
+        <input type="text" name="dni_cliente" id="dni_cliente" class="form-control shadow-sm" placeholder="Ej: 12345678">
+    </div>
+    <div class="col-md-4">
+        <label for="direccion_cliente" class="form-label fw-semibold">Dirección <span class="text-danger">*</span></label>
+        <input type="text" name="direccion_cliente" id="direccion_cliente" class="form-control shadow-sm" placeholder="Ej: Av. Siempre Viva 742">
+    </div>
+</div>
+
                 </div>
 
                 <hr>
@@ -70,7 +103,7 @@ $servicios = $pdo->query("SELECT id, nombre, precio_base FROM servicios")->fetch
                                 <th>Item</th>
                                 <th style="width: 100px;">Cantidad</th>
                                 <th style="width: 120px;">Precio</th>
-                                <th style="width: 120px;">Descuento</th>
+                                <th style="width: 120px;">Descuento %</th>
                                 <th style="width: 80px;">Eliminar</th>
                             </tr>
                         </thead>
@@ -445,7 +478,7 @@ $servicios = $pdo->query("SELECT id, nombre, precio_base FROM servicios")->fetch
     document.addEventListener('change', function (e) {
         if (e.target.classList.contains('item-select')) {
             const fila = e.target.closest('tr');
-           // const tipo = fila.querySelector('input[name="tipo[]"]').value;
+            // const tipo = fila.querySelector('input[name="tipo[]"]').value;
             const tipo = e.target.getAttribute('data-tipo');
 
             const id = parseInt(e.target.value);
@@ -464,21 +497,21 @@ $servicios = $pdo->query("SELECT id, nombre, precio_base FROM servicios")->fetch
 
     document.getElementById('formVenta').addEventListener('submit', async function (e) {
         e.preventDefault(); // Evita el envío tradicional
-        
+
         const form = e.target;
         const formData = new FormData(form);
-       // console.log(form)
+        // console.log(form)
         //console.log(form)
-        
+
         try {
             const response = await fetch('api/guardar_venta.php', {
                 method: 'POST',
                 body: formData
             });
-            
+
             const resultado = await response.json();
             console.log(resultado)
-            
+
             if (resultado.success) {
                 alert('Venta registrada correctamente');
                 window.location.href = 'index.php?vista=ventas';
@@ -492,21 +525,21 @@ $servicios = $pdo->query("SELECT id, nombre, precio_base FROM servicios")->fetch
     // Si agregas una fila dinámicamente, vuelve a calcular
     document.getElementById('formRegistarCliente').addEventListener('submit', async function (e) {
         e.preventDefault(); // Evita el envío tradicional
-        
+
         const form = e.target;
         const formData = new FormData(form);
-       // console.log(form)
+        // console.log(form)
         //console.log(form)
-        
+
         try {
             const response = await fetch('api/guardar_clientes.php', {
                 method: 'POST',
                 body: formData
             });
-            
+
             const resultado = await response.json();
             console.log(resultado)
-            
+
             if (resultado.success) {
                 alert('cliente registrada correctamente');
                 window.location.href = 'index.php?vista=ventas';
@@ -520,21 +553,21 @@ $servicios = $pdo->query("SELECT id, nombre, precio_base FROM servicios")->fetch
     // Si agregas una fila dinámicamente, vuelve a calcular
     document.getElementById('formProducto').addEventListener('submit', async function (e) {
         e.preventDefault(); // Evita el envío tradicional
-        
+
         const form = e.target;
         const formData = new FormData(form);
-       // console.log(form)
+        // console.log(form)
         //console.log(form)
-        
+
         try {
             const response = await fetch('api/guardar_productos.php', {
                 method: 'POST',
                 body: formData
             });
-            
+
             const resultado = await response.json();
             console.log(resultado)
-            
+
             if (resultado.success) {
                 alert('productos registrada correctamente');
                 window.location.href = 'index.php?vista=ventas';
@@ -547,21 +580,21 @@ $servicios = $pdo->query("SELECT id, nombre, precio_base FROM servicios")->fetch
     });
     document.getElementById('formServicio').addEventListener('submit', async function (e) {
         e.preventDefault(); // Evita el envío tradicional
-        
+
         const form = e.target;
         const formData = new FormData(form);
-       // console.log(form)
+        // console.log(form)
         //console.log(form)
-        
+
         try {
             const response = await fetch('api/guardar_servicios.php', {
                 method: 'POST',
                 body: formData
             });
-            
+
             const resultado = await response.json();
             console.log(resultado)
-            
+
             if (resultado.success) {
                 alert('servicio registrada correctamente');
                 window.location.href = 'index.php?vista=ventas';
@@ -572,6 +605,31 @@ $servicios = $pdo->query("SELECT id, nombre, precio_base FROM servicios")->fetch
             alert('Error en la solicitud: ' + error.message);
         }
     });
+
+  /* -----------ASIGNAR CLIENTE ---------- */
+        const radioRegistrado = document.getElementById("radio_registrado");
+        const radioNuevo = document.getElementById("radio_nuevo");
+        const seccionRegistrado = document.getElementById("cliente_registrado_section");
+        const seccionNuevo = document.getElementById("cliente_nuevo_section");
+
+        function toggleCliente() {
+            if (radioRegistrado.checked) {
+                seccionRegistrado.classList.remove("d-none");
+                seccionNuevo.classList.add("d-none");
+                document.getElementById("cliente_id").required = true;
+            } else {
+                seccionRegistrado.classList.add("d-none");
+                seccionNuevo.classList.remove("d-none");
+                document.getElementById("cliente_id").required = false;
+            }
+        }
+
+        radioRegistrado.addEventListener("change", toggleCliente);
+        radioNuevo.addEventListener("change", toggleCliente);
+        toggleCliente(); // Llamar al cargar
+  
+
+
     // Si agregas una fila dinámicamente, vuelve a calcular
     document.addEventListener('DOMContentLoaded', calcularTotalVenta);
 </script>

@@ -93,7 +93,7 @@ try {
                     <select name="material_id[]" id="material_id" class="form-select" required>
                       <option value="">Seleccione</option>
                       <?php foreach ($materiales as $mat): ?>
-                        <option value="<?= $mat['id'] ?>"><?= htmlspecialchars($mat['nombre']) ?></option>
+                        <option value="<?= $mat['id'] ?>"><?= htmlspecialchars($mat['nombre']) ?> (<?= htmlspecialchars($mat['unidad_medida']) ?>) </option>
                       <?php endforeach; ?>
                     </select>
                     <button type="button" class="btn btn-outline-primary" onclick="abrirModalMaterial()"

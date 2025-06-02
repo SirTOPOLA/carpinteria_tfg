@@ -1,4 +1,9 @@
 <?php
+session_start(); // ¡Siempre al principio!
+
+header('Content-Type: application/json');
+
+ 
 require_once('../config/conexion.php');
 header('Content-Type: application/json');
 

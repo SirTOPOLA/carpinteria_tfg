@@ -1,4 +1,5 @@
 <?php
+ 
 require_once '../config/conexion.php';
 header('Content-Type: application/json');
 
@@ -27,6 +28,7 @@ try {
         ('Administrador'),
         ('Vendedor'),
         ('Diseñador'),
+        ('empleado'),
         ('Operario')";
     $pdo->exec($sql);
 

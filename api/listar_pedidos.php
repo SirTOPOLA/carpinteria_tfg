@@ -53,22 +53,41 @@ foreach ($solicitudes as $solicitud) {
             <i class='bi bi-file-earmark-text'></i> Detalles
         </a>
     ": '';
+  
+    
      
+    $btnEstado = '';
+    if (strtolower($solicitud['estado']) === 'cotizado') {
+        $btnEstado = "
+        <button class='btn btn-sm btn-outline-success cambiar-estado-btn' 
+                data-id='{$solicitud['id']}' 
+                data-estado='{$solicitud['estado']}' 
+                 data-tipo='pedido'
+                data-bs-toggle='modal' 
+                data-bs-target='#modalCambiarEstado'>
+            <i class='bi bi-arrow-repeat'></i> Cambiar Estado
+        </button>
+        ";
+    }
+    
 
-    $html .= "
-        <tr>
-            <td>{$solicitud['id']}</td>
-            <td>" . htmlspecialchars($solicitud['cliente_nombre']) . "</td>
-            <td>" . htmlspecialchars($solicitud['proyecto_nombre']) . "</td>
-            <td>" . htmlspecialchars($solicitud['descripcion']) . "</td>
-            <td>" . date("d/m/Y", strtotime($solicitud['fecha_solicitud'])) . "</td>
-            <td><span class='badge bg-secondary'>{$solicitud['estado']}</span></td>
-            <td>S/ " . number_format($solicitud['estimacion_total'], 2) . "</td>
-            <td class='text-center'>
-                $btnDetalle 
-            </td>
-        </tr>
-    ";
+$html .= "
+    <tr>
+        <td>{$solicitud['id']}</td>
+        <td>" . htmlspecialchars($solicitud['cliente_nombre']) . "</td>
+        <td>" . htmlspecialchars($solicitud['proyecto_nombre']) . "</td>
+        <td>" . htmlspecialchars($solicitud['descripcion']) . "</td>
+        <td>" . date("d/m/Y", strtotime($solicitud['fecha_solicitud'])) . "</td>
+       <td><span class='badge bg-secondary'>" . htmlspecialchars($solicitud['estado']) . "</span></td>
+
+        <td>S/ " . number_format($solicitud['estimacion_total'], 2) . "</td>
+        <td class='text-center'>
+            $btnDetalle 
+            $btnEstado
+        </td>
+    </tr>
+";
+
 }
 
 // Paginación

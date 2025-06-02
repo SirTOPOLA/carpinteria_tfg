@@ -61,11 +61,11 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <tr>
                                     <td><?= $usuario['id'] ?></td>
                                     <td>
-                                        <img src="api/<?= htmlspecialchars($usuario['perfil']) ?>" alt="Perfil" width="60"
+                                        <img src="api/<?= htmlspecialchars($usuario['imagen']) ?>" alt="Perfil" width="60"
                                             class="img-thumbnail">
                                     </td>
 
-                                    <td><?= htmlspecialchars($usuario['usuario']) ?></td>
+                                    <td><?= htmlspecialchars($usuario['username']) ?></td>
                                     <td><?= htmlspecialchars($usuario['empleado_nombre'] . ' ' . $usuario['empleado_apellido']) ?>
                                     </td>
                                     <td><?= htmlspecialchars($usuario['rol']) ?></td>

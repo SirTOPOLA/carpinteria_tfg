@@ -12,9 +12,12 @@ $venta_id = (int) $_GET['id'];
 
 try {
     // Info de la venta
-    $sqlVenta = "SELECT v.*, c.nombre AS cliente, c.direccion, c.telefono, c.correo
+    $sqlVenta = "SELECT v.*, c.nombre AS cliente, 
+                c.direccion, c.telefono, c.correo,
+                dv.subtotal, dv.descuento
                  FROM ventas v
-                 JOIN clientes c ON v.cliente_id = c.id
+                 LEFT JOIN detalles_venta dv ON v.id = dv.venta_id
+                 LEFT JOIN clientes c ON v.cliente_id = c.id
                  WHERE v.id = :id";
     $stmtVenta = $pdo->prepare($sqlVenta);
     $stmtVenta->execute([':id' => $venta_id]);

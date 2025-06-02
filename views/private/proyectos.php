@@ -7,7 +7,7 @@ $stmt->execute();
 $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-  $sql = "SELECT 
+$sql = "SELECT 
                 p.id,
                 pr.nombre AS nombre_proyecto,
                 e.nombre AS responsable
@@ -15,13 +15,13 @@ $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
             INNER JOIN proyectos pr ON p.proyecto_id = pr.id
             INNER JOIN empleados e ON p.responsable_id = e.id
             ORDER BY pr.nombre ASC";
-  $stmt = $pdo->query($sql);
-  $producciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt = $pdo->query($sql);
+$producciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
- $stmt = $pdo->query("SELECT id, nombre, stock_actual, stock_minimo FROM materiales ORDER BY nombre ASC");
-  $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt = $pdo->query("SELECT id, nombre, stock_actual, stock_minimo FROM materiales ORDER BY nombre ASC");
+$materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-  
+
 ?>
 
 
@@ -57,7 +57,7 @@ $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <th class="text-center"><i class="bi bi-gear-fill me-1"></i>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="tbody" >
+                    <tbody id="tbody">
                         <?php if (count($proyectos) === 0): ?>
                             <tr>
                                 <td colspan="8" class="text-center text-muted py-3">No se encontraron proyectos.</td>
@@ -166,17 +166,46 @@ $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
     <!-- Solo asegúrate que el botón tenga id="btnGuardarMovimiento" -->
 </div>
-
+<!-- Modal Cambiar Estado -->
+<div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-labelledby="modalCambiarEstadoLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="formCambiarEstado">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cambiar Estado de proyecto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                <input type="hidden" id="tipoCambio" name="tipo">
+    
+                <input type="hidden" id="proyectoId" name="id">
+                    <div class="mb-3">
+                        <label for="nuevoEstado" class="form-label">Nuevo Estado</label>
+                        <select class="form-select" name="estado" id="nuevoEstado" required>
+                            <option value="">Seleccione estado</option> 
+                            <option value="en_produccion">En Producción</option> 
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 <script>
-     const buscador = document.getElementById('buscador');
+    const buscador = document.getElementById('buscador');
     let paginaActual = 1;
     document.addEventListener("DOMContentLoaded", () => {
         cargarDatos();
         clickPaginacion()
         manejarEventosAjaxTbody(); // Necesario cuando cargamos html por ajax
-       // buscar()
-       const stockMateriales = <?php echo json_encode($materiales, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+        // buscar()
+        const stockMateriales = <?php echo json_encode($materiales, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 
         const materialesContainer = document.getElementById("materialesContainer");
         const btnAgregarMaterial = document.getElementById("btnAgregarMaterial");
@@ -374,8 +403,8 @@ $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 const id = e.target.closest(".btn-eliminar").dataset.id;
                 eliminar(id);
             }
-         
-           
+
+
 
 
         });
@@ -404,7 +433,7 @@ $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     }
 
- 
+
     async function cargarDatos(pagina = 1, termino = '') {
         const formData = new FormData();
         formData.append('pagina', pagina);
@@ -457,6 +486,40 @@ $proyectos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     }
 
+    // Abre el modal y carga los datos para cambiar estado 
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('.cambiar-estado-btn')) {
+            const btn = e.target.closest('.cambiar-estado-btn');
+
+            // Asigna datos al formulario
+            document.getElementById('proyectoId').value = btn.dataset.id;
+            document.getElementById('nuevoEstado').value = btn.dataset.estado;
+            document.getElementById('tipoCambio').value = btn.dataset.tipo; // tipo: solicitud, proyecto, produccion
+        }
+    });
+
+    // Enviar formulario de cambio de estado
+    document.getElementById('formCambiarEstado').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+
+        fetch('api/actualizar_estado_pedido.php', {
+            method: 'POST',
+            body: formData
+        })
+            .then(resp => resp.json())
+            .then(data => {
+                if (data.success) {
+                    // Cerrar modal
+                    bootstrap.Modal.getInstance(document.getElementById('modalCambiarEstado')).hide();
+                    // Recargar tabla o volver a hacer fetch
+                    location.reload();
+                } else {
+                    alert('Error al actualizar estado: ' + (data.message || ''));
+                }
+            })
+            .catch(err => console.error('Error en la petición:', err));
+    });
 
 
 

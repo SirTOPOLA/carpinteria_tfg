@@ -1,3 +1,4 @@
+ 
 <!DOCTYPE html>
 <html lang="es">
 
@@ -218,7 +219,7 @@
             <div class="col-md-12">
               <label class="form-label"><i class="bi bi-person-vcard"></i> Empleado vinculado</label>
               <select name="empleado_id" id="empleado_id" class="form-select" required>
-                <option value="">Cargando...</option>
+                <option value="1">Cargando...</option>
               </select>
             </div>
             <div class="col-12 text-center">
@@ -339,6 +340,7 @@
               alertas.appendChild(alerta);
             });
             alert("Error al registrar empleado: " + data.message);
+            mostrarPaso(3);
           }
         } catch (err) {
           alert("Error de red al registrar empleado.");

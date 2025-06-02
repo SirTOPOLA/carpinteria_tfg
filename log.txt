@@ -1,86 +1,47 @@
-2. Vendedor
-Gestiona clientes, ventas y seguimiento.
+ INSERT INTO servicios (nombre, descripcion, precio_base, unidad) VALUES
+('Diseño de planos personalizados', 'Elaboración de planos para muebles a medida según especificaciones del cliente.', 50.00, 'por diseño'),
+('Corte de madera', 'Corte de madera con maquinaria especializada según medidas requeridas.', 1.50, 'por corte'),
+('Cepillado de madera', 'Alisado y nivelado de tablas o piezas de madera.', 2.00, 'por metro'),
+('Ensamblaje de piezas', 'Unión de piezas de madera mediante clavos, tornillos o adhesivos.', 5.00, 'por unidad'),
+('Barnizado', 'Aplicación de barniz protector y decorativo sobre superficies de madera.', 10.00, 'por metro cuadrado'),
+('Lacado', 'Aplicación de laca para acabado brillante o mate.', 12.00, 'por metro cuadrado'),
+('Instalación de muebles', 'Instalación de muebles fabricados en el lugar requerido por el cliente.', 30.00, 'por unidad'),
+('Reparación de muebles', 'Reparación estructural o estética de muebles dañados.', 20.00, 'por hora'),
+('Cambio de bisagras o herrajes', 'Sustitución de bisagras, manijas u otros herrajes.', 8.00, 'por unidad'),
+('Pulido de superficies', 'Lijado y pulido para dejar superficies suaves y limpias.', 7.00, 'por metro cuadrado'),
+('Tratamiento antihumedad', 'Aplicación de productos para proteger la madera contra la humedad.', 9.00, 'por metro cuadrado'),
+('Aplicación de sellador', 'Sellado de madera previo a pintura o barniz.', 5.00, 'por metro cuadrado'),
+('Revestimiento en madera', 'Colocación de paneles o láminas decorativas de madera.', 25.00, 'por metro cuadrado'),
+('Colocación de zócalos', 'Instalación de zócalos de madera en interiores.', 3.50, 'por metro lineal'),
+('Servicio de pintura para madera', 'Pintado de superficies de madera con acabado profesional.', 10.00, 'por metro cuadrado');
 
-Tablas / vistas:
 
-clientes
+INSERT INTO materiales (nombre, descripcion, unidad_medida, stock_actual, stock_minimo) VALUES
+-- Maderas
+('Madera Pino', 'Madera blanda y económica para estructuras y muebles básicos.', 'metro cúbico', 10, 2),
+('Madera Cedro', 'Madera resistente y aromática, ideal para muebles finos.', 'metro cúbico', 6, 1),
+('Madera MDF', 'Tablero de fibra de densidad media, ideal para interiores.', 'hoja', 15, 5),
+('Madera Triplay', 'Tablero contrachapado usado para fondos, paredes y refuerzos.', 'hoja', 12, 4),
+('Madera Melamina', 'Tablero recubierto, ideal para muebles modulares.', 'hoja', 20, 5),
 
-ventas, detalles_venta, facturas, pagos
+-- Adhesivos
+('Cola de carpintero', 'Adhesivo blanco para unión de madera.', 'litro', 25, 10),
+('Pegamento epóxico', 'Adhesivo de alta resistencia para fijaciones fuertes.', 'tubo', 10, 3),
 
-productos (solo para consulta y cotización)
+-- Tornillería y clavos
+('Tornillos para madera 1"', 'Tornillos galvanizados para fijaciones pequeñas.', 'paquete', 50, 10),
+('Tornillos para madera 2"', 'Tornillos medianos para estructuras de muebles.', 'paquete', 40, 10),
+('Clavos de 2"', 'Clavos para estructura y armado general.', 'kilo', 30, 5),
 
-servicios (solo para consulta y cotización)
+-- Acabados
+('Barniz transparente', 'Barniz protector con acabado brillante o mate.', 'litro', 10, 2),
+('Laca para madera', 'Acabado lacado profesional.', 'litro', 8, 2),
+('Sellador para madera', 'Capa previa para sellar la superficie antes de pintar.', 'litro', 12, 3),
+('Tinta para madera', 'Colorante para dar tonalidades específicas.', 'litro', 7, 2),
 
-solicitudes_proyecto (solo para ver el estado de solicitudes)
-
-Acciones:
-
-Registrar y editar clientes
-
-Crear y gestionar ventas (facturación, pagos)
-
-Consultar productos y servicios disponibles
-
-Consultar estado de proyectos y solicitudes
-
-Generar cotizaciones para clientes
-
-Consultar historial de clientes y ventas
-
-3. Operario
-Responsable de producción y manejo de materiales.
-
-Tablas / vistas:
-
-producciones
-
-proyectos (los asignados)
-
-materiales
-
-movimientos_material
-
-solicitudes_proyecto (para conocer pedidos de materiales)
-
-detalles_solicitud_material
-
-Acciones:
-
-Actualizar estado de producciones (pendiente, en proceso, terminado)
-
-Registrar entradas y salidas de materiales (movimientos)
-
-Consultar stock actual y stock mínimo
-
-Solicitar materiales para producción
-
-Consultar detalles de proyectos en producción
-
-Reportar problemas o faltantes en materiales o producción
-
-4. Diseñador
-Encargado del diseño y la gestión de proyectos.
-
-Tablas / vistas:
-
-proyectos
-
-solicitudes_proyecto
-
-clientes (para coordinar con clientes)
-
-producciones (para seguimiento de producción relacionada con diseño)
-
-Acciones:
-
-Crear y actualizar proyectos (nombre, descripción, fechas, estado)
-
-Crear y gestionar solicitudes de proyectos (cotizaciones, estado)
-
-Coordinar con clientes para detalles de diseño
-
-Revisar y aprobar solicitudes de materiales para proyectos
-
-Colaborar con operarios para la producción (informar cambios o especificaciones)
-
-Consultar estado de producción y ventas asociadas a proyectos
+-- Otros
+('Bisagras metálicas', 'Bisagras para puertas y cajones de muebles.', 'unidad', 100, 20),
+('Correderas telescópicas', 'Guías para cajones deslizables.', 'par', 40, 10),
+('Manijas para muebles', 'Tiradores metálicos o plásticos decorativos.', 'unidad', 80, 20),
+('Lija grano fino', 'Lija para acabados suaves.', 'unidad', 60, 15),
+('Lija grano grueso', 'Lija para desbaste inicial.', 'unidad', 50, 15);

@@ -54,19 +54,17 @@
                             placeholder="Descripción del producto..."></textarea>
                     </div>
 
-                    <!-- Imágenes dinámicas -->
-                    <div class="col-md-12">
-                        <label class="form-label">Imágenes del Producto</label>
-                        <div class="row" id="imagenesContainer"></div>
+                  <!-- Imagen única del producto -->
+<div class="col-md-12">
+    <label for="imagen" class="form-label">Imagen del Producto <span class="text-danger">*</span></label>
+    <div class="input-group has-validation">
+        <span class="input-group-text"><i class="bi bi-image-fill"></i></span>
+        <input type="file" name="imagen" id="imagen" accept="image/*" class="form-control" onchange="mostrarPreviewUnica(this)" required>
+    </div>
+    <img id="previewUnica" src="" alt="Previsualización" class="mt-3 rounded shadow-sm d-none" style="max-height: 150px;">
+    <div class="form-text">Solo se permite una imagen (máx. 2MB, formato JPG/PNG).</div>
+</div>
 
-                        <button type="button" class="btn btn-outline-primary mt-2 rounded-pill"
-                            onclick="agregarCampoImagen()">
-                            <i class="bi bi-image-fill me-1"></i> Agregar Imagen
-                        </button>
-
-                        <div class="form-text">Puedes agregar una o varias imágenes (máx. 2MB cada una, formatos JPG,
-                            PNG, etc.).</div>
-                    </div>
 
 
                     <!-- Botones -->
@@ -88,50 +86,23 @@
 </div>
 
 <script>
-    function agregarCampoImagen() {
-        const container = document.getElementById('imagenesContainer');
+    
+    function mostrarPreviewUnica(input) {
+    const file = input.files[0];
+    const preview = document.getElementById('previewUnica');
 
-        const div = document.createElement('div');
-        div.classList.add('mb-3');
-
-        const uniqueId = `imgPreview${Date.now()}`;
-
-        div.innerHTML = `
-        <div class="input-group col-md-6">
-            <span class="input-group-text"><i class="bi bi-file-earmark-image"></i></span>
-            <input type="file" name="imagenes[]" accept="image/*" class="form-control" onchange="mostrarPreview(this, '${uniqueId}')" required>
-            <button type="button" class="btn btn-outline-danger" onclick="eliminarCampoImagen(this)">
-                <i class="bi bi-x-circle-fill"></i>
-            </button>
-        </div>
-        <div class="input-group col-md-6">
-        <img id="${uniqueId}" src="" alt="Previsualización" class="mt-2 rounded shadow-sm d-none" style="max-height: 150px;">
-        </div>
-    `;
-
-        container.appendChild(div);
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+            preview.classList.remove('d-none');
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.src = "";
+        preview.classList.add('d-none');
     }
-
-    function eliminarCampoImagen(btn) {
-        btn.closest('.mb-3').remove();
-    }
-
-    function mostrarPreview(input, previewId) {
-        const file = input.files[0];
-        const preview = document.getElementById(previewId);
-
-        if (file && file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                preview.src = e.target.result;
-                preview.classList.remove('d-none');
-            };
-            reader.readAsDataURL(file);
-        } else {
-            preview.src = "";
-            preview.classList.add('d-none');
-        }
-    }
+}
 
     document.getElementById('formProducto').addEventListener('submit', async function (e) {
         e.preventDefault(); // Prevenir envío tradicional

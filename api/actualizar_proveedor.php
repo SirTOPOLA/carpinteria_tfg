@@ -1,4 +1,9 @@
 <?php
+ // Si no hay sesión → redirige a login
+ if (!isset($_SESSION['usuario']) || isset($_SESSION['usuario'])) {
+    header("Location: ../index.php?vista=inicio");
+    exit;
+  }
 session_start();
 header('Content-Type: application/json');
 

@@ -1,4 +1,9 @@
 <?php
+ // Si no hay sesión → redirige a login
+ if (!isset($_SESSION['usuario']) || isset($_SESSION['usuario'])) {
+    header("Location: ../index.php?vista=inicio");
+    exit;
+  }
 header('Content-Type: application/json');
 require '../config/conexion.php'; // Asegúrate que existe y retorna un objeto PDO
 

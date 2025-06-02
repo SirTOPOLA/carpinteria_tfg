@@ -1,4 +1,6 @@
 <?php
+  session_start(); // ¡Siempre al principio!
+
 require_once("../config/conexion.php");
 header("Content-Type: application/json");
 
@@ -10,9 +12,17 @@ $password = $_POST['password'] ?? '';
 $rol = isset($_POST['rol']) ? (int)$_POST['rol'] : null;
 $empleado_id = !empty($_POST['empleado_id']) ? (int)$_POST['empleado_id'] : null;
 
-if ($usuario === '' || !filter_var($usuario, FILTER_VALIDATE_EMAIL)) {
+/* if ($usuario === '' || !filter_var($usuario, FILTER_VALIDATE_EMAIL)) {
     $errores[] = 'El usuario debe ser un correo electrónico válido.';
+} */
+ 
+if (empty($usuario)) {
+    $errores[] = 'El usuario no puede estar vacío.';
 }
+if (strlen($usuario) < 4) {
+    $errores[] = 'El usuario debe tener al menos 4 caracteres.';
+}
+
 
 if (strlen($password) < 6) {
     $errores[] = 'La contraseña debe tener al menos 5 caracteres.';
@@ -36,7 +46,7 @@ if (!$rol) {
 }
 
 // Validación de duplicado por email (usuario)
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE LOWER(usuario) = LOWER(?)");
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE LOWER(username) = LOWER(?)");
 $stmt->execute([$usuario]);
 if ($stmt->fetchColumn() > 0) {
     $errores[] = 'Ya existe un usuario con ese correo electrónico.';
@@ -70,7 +80,7 @@ if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
 
 // Inserción segura
 try {
-    $stmt = $pdo->prepare("INSERT INTO usuarios (usuario, password, rol_id, empleado_id, perfil) VALUES (?, ?, ?, ?, ?)");
+    $stmt = $pdo->prepare("INSERT INTO usuarios (username, password, rol_id, empleado_id, imagen) VALUES (?, ?, ?, ?, ?)");
     $stmt->execute([
         $usuario,
         password_hash($password, PASSWORD_DEFAULT),

@@ -1,4 +1,5 @@
 <?php
+
 header('Content-Type: application/json');
 require_once '../config/conexion.php';
 
@@ -21,8 +22,8 @@ try {
     // PROYECTO: crear nuevo si aplica
     if ($_POST['opcion'] === 'f') {
         $nombre_proyecto = $_POST['nombre'];
-        $stmt = $pdo->prepare("INSERT INTO proyectos (nombre, estado, fecha_inicio) VALUES (?, 'en diseño', ?)");
-        $stmt->execute([$nombre_proyecto, $fecha_inicio]);
+        $stmt = $pdo->prepare("INSERT INTO proyectos (nombre, descripcion, estado, fecha_inicio) VALUES (?, ?, 'pendiente', ?)");
+        $stmt->execute([$nombre_proyecto, $descripcion, $fecha_inicio]);
         $proyecto_id = $pdo->lastInsertId();
     } else {
         $proyecto_id = $_POST['proyecto_id'];

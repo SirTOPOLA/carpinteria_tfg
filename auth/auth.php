@@ -23,10 +23,11 @@ if (session_status() == PHP_SESSION_NONE) {
              u.*, 
              r.nombre AS rol, 
              e.nombre AS nombre_empleado
+
          FROM usuarios u
          INNER JOIN empleados e ON u.empleado_id = e.id
          INNER JOIN roles r ON u.rol_id = r.id
-         WHERE u.usuario = ?
+         WHERE u.username = ?
      ");
    
      $stmt->execute([$email]);
@@ -40,7 +41,7 @@ if (session_status() == PHP_SESSION_NONE) {
                  $_SESSION['usuario'] = [
                      'id'      => $user['id'],
                      'nombre'  => $user['nombre_empleado'],
-                     'usuario' => $user['usuario'], 
+                     'usuario' => $user['username'], 
                      'rol'     => $user['rol']
                  ];
                  $_SESSION['alerta'] = "Inicio de sesión exitoso.";

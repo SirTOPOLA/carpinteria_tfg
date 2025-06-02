@@ -11,7 +11,7 @@ try {
   $stmt = $pdo->query("SELECT id, nombre, stock_actual, stock_minimo FROM materiales ORDER BY nombre ASC");
   $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-  
+
 
   $sql = "SELECT 
                 p.id,
@@ -55,7 +55,7 @@ try {
           <h5 class="mb-0">Registrar Movimiento</h5>
         </div>
 
-        <div class="card-body"> 
+        <div class="card-body">
 
           <form method="POST" id="form" class="needs-validation" novalidate>
 
@@ -107,361 +107,207 @@ try {
 </div>
 
 
-<!-- Script para actualizar dinámicamente el stock -->
-
-
 <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const produccionSelect = document.getElementById('produccion_id');
+    const btnAgregarMaterial = document.getElementById('btnAgregarMaterial');
+    const materialesContainer = document.getElementById('materialesContainer');
+    let materialesDisponibles = [];
 
-  
-  
-  document.addEventListener("DOMContentLoaded", () => {
-  const stockMateriales = <?= json_encode($materiales) ?>;
-  const materialesContainer = document.getElementById("materialesContainer");
-  const btnAgregarMaterial = document.getElementById("btnAgregarMaterial");
-  let grupoIndex = 0;
+    produccionSelect.addEventListener('change', async () => {
+      materialesContainer.innerHTML = '';
+      materialesDisponibles = [];
 
-  const obtenerMaterialesDisponibles = (modoActual, indexActual) => {
-    const seleccionados = new Set();
-
-    document.querySelectorAll('.grupo-material').forEach((grupo, index) => {
-      if (index !== indexActual) {
-        const tipo = grupo.querySelector('[name="tipo[]"]').value;
-        const material = grupo.querySelector('[name="material_id[]"]').value;
-        if (tipo === 'entrada') seleccionados.add(material);
-      }
-    });
-
-    return stockMateriales.filter(mat =>
-      modoActual !== 'entrada' || !seleccionados.has(String(mat.id))
-    );
-  };
-
-  const actualizarOpcionesMaterial = (select, tipoMovimiento, index) => {
-    const materiales = obtenerMaterialesDisponibles(tipoMovimiento, index);
-    select.innerHTML = `<option value="">Seleccione material</option>`;
-    materiales.forEach(mat => {
-      select.innerHTML += `<option value="${mat.id}">${mat.nombre}</option>`;
-    });
-  };
-
-  const crearGrupoMaterial = () => {
-    const index = grupoIndex++;
-    const div = document.createElement("div");
-    div.className = "row g-3 mb-3 border p-3 rounded bg-light grupo-material";
-
-    div.innerHTML = `
-      <div class="col-md-4">
-        <label class="form-label">Tipo de Movimiento <span class="text-danger">*</span></label>
-        <select name="tipo[]" class="form-select tipo" required>
-          <option value="">Seleccione tipo</option>
-          <option value="entrada">Entrada</option>
-          <option value="salida">Salida</option>
-        </select>
-      </div>
-
-      <div class="col-md-4">
-        <label class="form-label">Material <span class="text-danger">*</span></label>
-        <select name="material_id[]" class="form-select material" required disabled>
-          <option value="">Seleccione tipo primero</option>
-        </select>
-      </div>
-
-      <div class="col-md-3">
-        <label class="form-label">Cantidad <span class="text-danger">*</span></label>
-        <input type="number" name="cantidad[]" class="form-control cantidad" min="1" required disabled>
-        <div class="form-text text-danger info-stock"></div>
-      </div>
-
-      <div class="col-md-1 d-flex align-items-end">
-        <button type="button" class="btn btn-danger btn-sm btnEliminarGrupo">
-          <i class="bi bi-x-lg"></i>
-        </button>
-      </div>
-    `;
-
-    materialesContainer.appendChild(div);
-
-    const tipoSel = div.querySelector(".tipo");
-    const matSel = div.querySelector(".material");
-    const cantidadInput = div.querySelector(".cantidad");
-    const infoStock = div.querySelector(".info-stock");
-
-    tipoSel.addEventListener("change", () => {
-      matSel.disabled = false;
-      actualizarOpcionesMaterial(matSel, tipoSel.value, index);
-      cantidadInput.value = "";
-      cantidadInput.disabled = true;
-      infoStock.textContent = "";
-    });
-
-    matSel.addEventListener("change", () => {
-      cantidadInput.disabled = false;
-      const material = stockMateriales.find(m => m.id == matSel.value);
-      const tipo = tipoSel.value;
-
-      if (!material) return;
-
-      if (tipo === "salida") {
-        cantidadInput.max = material.stock_actual - material.stock_minimo;
-        infoStock.textContent = `Stock disponible: ${material.stock_actual}, mínimo: ${material.stock_minimo}`;
-      } else {
-        cantidadInput.removeAttribute("max");
-        infoStock.textContent = "";
-      }
-    });
-
-    cantidadInput.addEventListener("input", () => {
-      const tipo = tipoSel.value;
-      const material = stockMateriales.find(m => m.id == matSel.value);
-      if (!material) return;
-
-      const val = parseInt(cantidadInput.value);
-      if (tipo === "salida" && val > material.stock_actual - material.stock_minimo) {
-        infoStock.textContent = "Cantidad excede el stock permitido.";
-        cantidadInput.setCustomValidity("Cantidad excede límite");
-      } else {
-        infoStock.textContent = "";
-        cantidadInput.setCustomValidity("");
-      }
-    });
-
-    div.querySelector(".btnEliminarGrupo").addEventListener("click", () => {
-      div.remove();
-      actualizarTodosLosSelects();
-    });
-  };
-
-  const actualizarTodosLosSelects = () => {
-    document.querySelectorAll('.grupo-material').forEach((grupo, index) => {
-      const tipo = grupo.querySelector('[name="tipo[]"]').value;
-      const select = grupo.querySelector('[name="material_id[]"]');
-      actualizarOpcionesMaterial(select, tipo, index);
-    });
-  };
-
-  btnAgregarMaterial.addEventListener("click", () => {
-    crearGrupoMaterial();
-  });
-
-  // Uno por defecto
-  crearGrupoMaterial();
-
-  // Manejo de envío
-  const form = document.getElementById("formMovimiento");
-  form.addEventListener("submit", async function (e) {
-    e.preventDefault();
-
-    if (!form.checkValidity()) {
-      form.classList.add("was-validated");
-      return;
-    }
-
-    const formData = new FormData(form);
-
-    try {
-      const response = await fetch("guardar_movimiento_multiple.php", {
-        method: "POST",
-        body: formData
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        alert("Movimiento registrado correctamente.");
-        window.location.href = "index.php?vista=movimientos";
-      } else {
-        alert("Error: " + data.message);
-      }
-
-    } catch (err) {
-      console.error(err);
-      alert("Error en el servidor.");
-    }
-  });
-});
-</script>
-
-
-<!-- 
-<script>
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const tipoSelect = document.getElementById("tipo");
-    const materialSelect = document.getElementById("material_id");
-    const cantidadContainer = document.getElementById("cantidadContainer");
-    const cantidadSelect = document.getElementById("cantidad");
-    const stockInfo = document.getElementById("stockInfo");
-    const stockSpan = document.getElementById("stockActual");
-    const mensajeError = document.getElementById("mensajeErrorAjax");
-    const errorAjaxTexto = document.getElementById("errorAjaxTexto");
-
-    let currentStock = 0;
-
-    function evaluarMostrarCantidad() {
-      const tipo = tipoSelect.value;
-      const material = materialSelect.value;
-
-      if (tipo && material) {
-        cantidadContainer.style.display = "block";
-        fetchStock(material);
-      } else {
-        cantidadContainer.style.display = "none";
-        stockInfo.style.display = "none";
-        mensajeError.style.display = "none";
-      }
-    }
-
-    async function fetchStock(materialId) {
+      const produccionId = produccionSelect.value;
+      if (!produccionId) return;
 
       try {
-        const res = await fetch(`api/obtener_materiales.php?id=${materialId}`)
-        const data = await res.json()
+        const formData = new FormData();
+        formData.append('produccion_id', produccionId);
 
-        if (data.success) {
-          mensajeError.style.display = "none";
-          currentStock = parseInt(data.stock) || 0;
-          stockInfo.style.display = "block";
-          stockSpan.textContent = currentStock;
+        const response = await fetch('api/obtener_material_movimeinto.php', {
+          method: 'POST',
+          body: formData
+        });
 
-          generarOpcionesCantidad(tipo);
-        } else {
-          cantidadContainer.style.display = "none";
-          stockInfo.style.display = "none";
-          errorAjaxTexto.textContent = data.message || "Error al obtener el stock.";
-          mensajeError.style.display = "block";
+        if (!response.ok) throw new Error('Error al cargar materiales');
+
+        materialesDisponibles = await response.json();
+
+        if (materialesDisponibles.length === 0) {
+          materialesContainer.innerHTML = '<div class="alert alert-warning">No hay materiales disponibles para esta producción.</div>';
+          btnAgregarMaterial.disabled = true;
           return;
         }
+
+        btnAgregarMaterial.disabled = false;
+
       } catch (err) {
-        cantidadContainer.style.display = "none";
-        stockInfo.style.display = "none";
-        errorAjaxTexto.textContent = "Error al conectar con el servidor.";
-        mensajeError.style.display = "block";
-        // console.log(err)
-      };
-    }
-
-
-    function generarOpcionesCantidad(tipo) {
-      cantidadSelect.innerHTML = '<option value="">Seleccione una cantidad</option>';
-      const limite = tipo === ('entrada' || 'salida') ? 100 : currentStock;
-
-      for (let i = 1; i <= limite; i++) {
-        const option = document.createElement("option");
-        option.value = i;
-        option.textContent = i;
-        cantidadSelect.appendChild(option);
-      }
-
-      if (tipo === 'salida' && currentStock <= 0) {
-        const option = document.createElement("option");
-        option.textContent = "Sin stock disponible";
-        option.disabled = true;
-        cantidadSelect.appendChild(option);
-        cantidadSelect.disabled = true;
-      } else {
-        cantidadSelect.disabled = false;
-      }
-    }
-
-    tipoSelect.addEventListener("change", evaluarMostrarCantidad);
-    materialSelect.addEventListener("change", evaluarMostrarCantidad);
-    /* --------------------------- */
-
-    function cargarMaterialesPorTipo(tipo) {
-      fetch(`api/obtener_materiales.php?tipo=${tipo}`)
-        .then(response => response.json())
-        .then(data => {
-          if (!data.success) {
-            errorAjaxTexto.textContent = data.message || "Error al obtener materiales.";
-            mensajeError.style.display = "block";
-            return;
-          }
-
-          materialSelect.innerHTML = '<option value="">Seleccione un material</option>';
-          data.materiales.forEach(mat => {
-            const option = document.createElement("option");
-            option.value = mat.id;
-            option.textContent = mat.nombre;
-            materialSelect.appendChild(option);
-          });
-
-          materialSelect.disabled = false;
-        })
-        .catch(() => {
-          errorAjaxTexto.textContent = "Error al conectar con el servidor remoto.";
-          mensajeError.style.display = "block";
-        });
-    }
-
-    tipoSelect.addEventListener("change", () => {
-      const tipo = tipoSelect.value;
-      if (tipo) {
-        cargarMaterialesPorTipo(tipo);
-        cantidadContainer.style.display = "none";
-        stockInfo.style.display = "none";
-        materialSelect.innerHTML = '<option value="">Cargando...</option>';
-        materialSelect.disabled = true;
-      } else {
-        materialSelect.innerHTML = '<option value="">Seleccione tipo de movimiento primero</option>';
-        materialSelect.disabled = true;
-        cantidadContainer.style.display = "none";
-        stockInfo.style.display = "none";
+        console.error(err);
+        materialesContainer.innerHTML = '<div class="alert alert-danger">Error al cargar materiales.</div>';
       }
     });
 
-  });
+    btnAgregarMaterial.addEventListener('click', () => {
+      const usados = obtenerMaterialesUsados();
 
+      // Verificar si ya se agregaron todos los materiales
+      if (usados.length >= materialesDisponibles.length) {
+        alert('Ya se han agregado todos los materiales disponibles.');
+        btnAgregarMaterial.disabled = true;
+        return;
+      }
 
-  /* -------------------- */
+      const index = document.querySelectorAll('.material-item').length;
 
+      const div = document.createElement('div');
+      div.className = 'material-item border rounded p-3 mb-3 position-relative';
+      div.innerHTML = `
+       <button type="button" class="btn-close position-absolute top-0 end-0 me-2 mt-2 btn-eliminar-material" aria-label="Eliminar"></button>
+      <div class="mb-2">
+        <label class="form-label">Material</label>
+        <select name="materiales[${index}][material_id]" class="form-select material-select" required>
+          <option value="">Seleccione material</option>
+          ${materialesDisponibles.map(m => `
+            <option value="${m.material_id}" 
+                    data-precio="${m.precio_unitario}" 
+                    data-max="${m.max_salida}" 
+                    data-stock="${m.stock_disponible}">
+              ${m.nombre}
+            </option>`).join('')}
+        </select>
+      </div>
 
+      <div class="row">
+        <div class="col-md-4 mb-2 d-none">
+          <label class="form-label">Precio Unitario</label>
+          <input type="text" class="form-control" name="materiales[${index}][precio]" readonly>
+        </div>
+        <div class="col-md-6 mb-2">
+          <label class="form-label">Cantidad</label>
+          <input type="number" class="form-control cantidad-input" name="materiales[${index}][cantidad]" min="1" required>
+        </div>
+        <div class="col-md-6 mb-2">
+          <label class="form-label">Máx Permitido</label>
+          <input type="text" class="form-control max-input" readonly>
+        </div>
+      </div>
 
-  document.getElementById('form').addEventListener('submit', async function (e) {
-    e.preventDefault(); // Prevenir envío tradicional
-    let mensaje = document.getElementById('mensaje');
-    // Validación nativa de Bootstrap
-    if (!this.checkValidity()) {
-      this.classList.add('was-validated');
-      return;
+      <div class="feedback mt-1 text-muted small"></div>
+      <div class="text-danger small mensaje-validacion mt-1"></div>
+    `;
+
+      materialesContainer.appendChild(div);
+
+      const btnEliminar = div.querySelector('.btn-eliminar-material');
+      btnEliminar.addEventListener('click', () => {
+        div.remove();
+        actualizarOpcionesMateriales();
+        verificarLimiteCampos();
+      });
+
+      const select = div.querySelector('.material-select');
+      const cantidadInput = div.querySelector('.cantidad-input');
+      const precioInput = div.querySelector(`[name="materiales[${index}][precio]"]`);
+      const maxInput = div.querySelector('.max-input');
+      const feedback = div.querySelector('.feedback');
+      const msg = div.querySelector('.mensaje-validacion');
+
+      select.addEventListener('change', () => {
+        const option = select.options[select.selectedIndex];
+        if (!option.value) return;
+
+        const precio = parseFloat(option.dataset.precio);
+        const max = parseInt(option.dataset.max);
+        const stock = parseInt(option.dataset.stock);
+        const tope = Math.min(max, stock);
+
+        precioInput.value = precio.toFixed(2);
+        maxInput.value = tope;
+        cantidadInput.max = tope;
+        cantidadInput.value = '';
+
+        feedback.textContent = `Stock disponible: ${stock}, Máx salida: ${max}`;
+        msg.textContent = '';
+
+        actualizarOpcionesMateriales();
+        verificarLimiteCampos();
+      });
+
+      cantidadInput.addEventListener('input', () => {
+        const maxPermitido = parseInt(cantidadInput.max);
+        const cantidadIngresada = parseInt(cantidadInput.value);
+
+        if (cantidadIngresada > maxPermitido) {
+          msg.textContent = `La cantidad excede el máximo permitido (${maxPermitido}).`;
+          cantidadInput.classList.add('is-invalid');
+        } else {
+          msg.textContent = '';
+          cantidadInput.classList.remove('is-invalid');
+        }
+      });
+
+      actualizarOpcionesMateriales();
+      verificarLimiteCampos();
+    });
+
+    function obtenerMaterialesUsados() {
+      return Array.from(document.querySelectorAll('.material-select'))
+        .map(s => s.value)
+        .filter(v => v !== '');
     }
 
-    const form = e.target;
-    const formData = new FormData(form);
-    try {
-      const res = await fetch('api/guardar_movimientos.php', {
-        method: 'POST', body: formData
-      })
-      const data = await res.json(); // Esperamos JSON del backend
-      if (data.success) {
-        mensaje.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
-        setTimeout(() => {
-          mensaje.style.opacity = 0;
-          setTimeout(() => {
-            mensaje.textContent = '';
-            mensaje.style.opacity = 1;
-            window.location.href = 'index.php?vista=movimientos'; // redirige si es exitoso
+    function actualizarOpcionesMateriales() {
+      const usados = obtenerMaterialesUsados();
 
-          }, 300); // espera a que se desvanezca
-        }, 2000);
+      document.querySelectorAll('.material-select').forEach(select => {
+        const actual = select.value;
+        Array.from(select.options).forEach(opt => {
+          if (!opt.value) return;
+          opt.disabled = (opt.value !== actual && usados.includes(opt.value));
+        });
+      });
+    }
 
+    function verificarLimiteCampos() {
+      const usados = obtenerMaterialesUsados();
+      if (usados.length >= materialesDisponibles.length) {
+        btnAgregarMaterial.disabled = true;
       } else {
-        mensaje.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
-        setTimeout(() => {
-          mensaje.textContent = '';
-        }, 2000)
-
+        btnAgregarMaterial.disabled = false;
       }
-    } catch (error) {
-      mensaje.innerHTML = `<div class="alert alert-danger">${error}</div>`;
-      setTimeout(() => {
-        mensaje.textContent = '';
-      }, 2000)
-    };
+    }
 
-  })
+    /* envio al backend */
+    document.getElementById('form').addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const form = e.target;
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch('api/guardar_movimientos.php', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.status) {
+          alert('Movimiento guardado correctamente');
+          form.reset();
+          location.href = 'index.php?vista=movimientos'
+          // Opcional: limpiar materiales, etc.
+        } else {
+          alert('Error: ' + result.message);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error al guardar el movimiento');
+      }
+    });
 
 
-
+  });
 
 </script>
-
- -->

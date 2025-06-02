@@ -1,94 +1,94 @@
 <?php
-require_once '../config/conexion.php';
 
+require_once '../config/conexion.php'; // tu archivo de conexion
+
+// Respuesta JSON
 header('Content-Type: application/json');
+$response = ['status' => false, 'message' => 'Error inesperado'];
 
-// Validar método
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    echo json_encode(['success' => false, 'message' => 'Método no permitido']);
+    echo json_encode(['status' => false, 'message' => 'Método no permitido']);
     exit;
 }
 
-// Recoger datos
-$tipo = $_POST['tipo'] ?? [];
-$materiales = $_POST['material_id'] ?? [];
-$cantidades = $_POST['cantidad'] ?? [];
-$motivos = $_POST['motivo'] ?? [];
-$produccion_id = $_POST['produccion_id'] ?? null;
+// Validaciones básicas iniciales
+$produccion_id = isset($_POST['produccion_id']) ? (int) $_POST['produccion_id'] : 0;
+$observaciones = trim($_POST['observaciones'] ?? '');
+$materiales = $_POST['materiales'] ?? [];
 
-// Validación básica
-if (!in_array($tipo, ['entrada', 'salida'])) {
-    echo json_encode(['success' => false, 'message' => 'Tipo de movimiento inválido.']);
-    exit;
-}
-
-if (!is_array($materiales) || count($materiales) === 0 || count($materiales) !== count($cantidades)) {
-    echo json_encode(['success' => false, 'message' => 'Datos de materiales o cantidades inválidos.']);
+if (!$produccion_id || empty($materiales)) {
+    echo json_encode(['status' => false, 'message' => 'Producción o materiales no válidos.']);
     exit;
 }
 
 try {
     $pdo->beginTransaction();
 
-    // Preparar sentencias
-    $stmtMaterial = $pdo->prepare("SELECT stock_actual, stock_minimo FROM materiales WHERE id = ?");
-    $stmtInsertMov = $pdo->prepare("INSERT INTO movimientos_material 
-        (material_id, tipo_movimiento, cantidad, motivo, produccion_id) 
-        VALUES (?, ?, ?, ?, ?)");
-    $stmtUpdateStock = $pdo->prepare("UPDATE materiales SET stock_actual = ? WHERE id = ?");
+    foreach ($materiales as $mat) {
+        $material_id = (int) ($mat['material_id'] ?? 0);
+        $cantidad = (int) ($mat['cantidad'] ?? 0);
 
-    foreach ($materiales as $i => $material_id) {
-        $material_id = (int) $material_id;
-        $cantidad = (int) $cantidades[$i];
-        $motivo = trim($motivos[$i] ?? '');
-
-        if ($cantidad <= 0) {
-            throw new Exception("La cantidad debe ser mayor a 0 para el material ID $material_id.");
+        if ($material_id <= 0 || $cantidad <= 0) {
+            throw new Exception('Material o cantidad inválida. '.$material_id);
         }
 
-        // Obtener stock actual
-        $stmtMaterial->execute([$material_id]);
-        $material = $stmtMaterial->fetch(PDO::FETCH_ASSOC);
+        // Obtener la cantidad solicitada en detalles_solicitud_material
+        $stmt = $pdo->prepare("SELECT dsm.cantidad AS cantidad_solicitada
+                               FROM detalles_solicitud_material dsm
+                               INNER JOIN solicitudes_proyecto sp ON dsm.solicitud_id = sp.id
+                               INNER JOIN producciones p ON p.proyecto_id = sp.proyecto_id
+                               WHERE p.id = ? AND dsm.material_id = ?");
+        $stmt->execute([$produccion_id, $material_id]);
+        $detalle = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if (!$material) {
-            throw new Exception("Material con ID $material_id no encontrado.");
+        if (!$detalle) {
+            throw new Exception("El material no está asociado a la producción.");
         }
 
-        $stock_actual = (int) $material['stock_actual'];
-        $stock_minimo = (int) $material['stock_minimo'];
+        $cantidad_solicitada = (int) $detalle['cantidad_solicitada'];
 
-        if ($tipo === 'salida') {
-            $nuevo_stock = $stock_actual - $cantidad;
+        // Obtener total ya movido para esta producción y material
+        $stmt = $pdo->prepare("SELECT COALESCE(SUM(cantidad), 0) AS cantidad_movida
+                               FROM movimientos_material
+                               WHERE material_id = ? AND produccion_id = ? AND tipo_movimiento = 'salida'");
+        $stmt->execute([$material_id, $produccion_id]);
+        $movido = $stmt->fetch(PDO::FETCH_ASSOC);
+        $cantidad_movida = (int) $movido['cantidad_movida'];
 
-            if ($nuevo_stock < 0) {
-                throw new Exception("El material ID $material_id tiene stock insuficiente. Stock actual: $stock_actual.");
-            }
+        $cantidad_disponible_produccion = $cantidad_solicitada - $cantidad_movida;
 
-            if ($nuevo_stock < $stock_minimo) {
-                throw new Exception("La salida del material ID $material_id dejaría el stock por debajo del mínimo permitido ($stock_minimo).");
-            }
-        } else {
-            $nuevo_stock = $stock_actual + $cantidad;
+        if ($cantidad > $cantidad_disponible_produccion) {
+            throw new Exception("Cantidad excede lo solicitado para el material ID $material_id. Quedan $cantidad_disponible_produccion.");
+        }
+
+        // Verificar stock disponible actual en materiales
+        $stmt = $pdo->prepare("SELECT stock_actual FROM materiales WHERE id = ?");
+        $stmt->execute([$material_id]);
+        $mat_data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$mat_data) {
+            throw new Exception("Material no encontrado en inventario.");
+        }
+
+        if ((int)$mat_data['stock_actual'] < $cantidad) {
+            throw new Exception("Stock insuficiente para material ID $material_id. Disponible: {$mat_data['stock_actual']}.");
         }
 
         // Insertar movimiento
-        $stmtInsertMov->execute([
-            $material_id,
-            $tipo,
-            $cantidad,
-            $motivo,
-            $produccion_id ?: null
-        ]);
+        $stmt = $pdo->prepare("INSERT INTO movimientos_material (material_id, tipo_movimiento, cantidad, motivo, produccion_id)
+                               VALUES (?, 'salida', ?, ?, ?)");
+        $stmt->execute([$material_id, $cantidad, $observaciones, $produccion_id]);
 
-        // Actualizar stock
-        $stmtUpdateStock->execute([$nuevo_stock, $material_id]);
+        // Descontar del stock actual
+        $stmt = $pdo->prepare("UPDATE materiales SET stock_actual = stock_actual - ? WHERE id = ?");
+        $stmt->execute([$cantidad, $material_id]);
     }
 
     $pdo->commit();
-
-    echo json_encode(['success' => true, 'message' => 'Movimiento registrado correctamente.']);
+    $response = ['status' => true, 'message' => 'Movimiento registrado con éxito.'];
 } catch (Exception $e) {
     $pdo->rollBack();
-    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    $response = ['status' => false, 'message' => $e->getMessage()];
 }
-?>
+
+echo json_encode($response);

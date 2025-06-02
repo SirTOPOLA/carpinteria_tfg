@@ -1,4 +1,9 @@
 <?php
+ // Si no hay sesión → redirige a login
+ if (!isset($_SESSION['usuario']) || isset($_SESSION['usuario'])) {
+    header("Location: index.php?vista=inicio");
+    exit;
+  }
 // Iniciar sesión si no está iniciada
 if (session_status() === PHP_SESSION_NONE) {
     session_start();

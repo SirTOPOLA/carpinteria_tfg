@@ -33,7 +33,7 @@ try {
   $stmt->execute();
   $usuario = $stmt->fetchAll();
 
-  $stmt = $pdo->prepare("SELECT ruta_imagen FROM imagenes_producto ORDER BY RAND() LIMIT 1");
+  $stmt = $pdo->prepare("SELECT imagen FROM avances_produccion  ORDER BY RAND() LIMIT 1");
   $stmt->execute();
   $heroImg = $stmt->fetchColumn();
   $heroRuta = $heroImg ? "api/" . $heroImg : "img/hero-default.jpg";

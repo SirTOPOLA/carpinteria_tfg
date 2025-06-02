@@ -18,7 +18,7 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </h5>
     <div class="input-group w-100 w-md-auto" style="max-width: 300px;">
       <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-      <input type="text" class="form-control" id="buscador-materiales" placeholder="Buscar material...">
+      <input type="text" class="form-control" id="buscador" placeholder="Buscar material...">
     </div>
     <a href="index.php?vista=registrar_materiales" class="btn btn-secondary shadow-sm" title="Nuevo Material">
       <i class="bi bi-plus-circle me-1"></i>Nuevo Material
@@ -109,9 +109,9 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     async function eliminar(id) {
-        if (confirm('¿Seguro que quieres eliminar este cliente?')) {
+        if (confirm('¿Seguro que quieres eliminar este material?')) {
             try {
-                const response = await fetch(`api/eliminar_clientes.php?id=${id}`, {
+                const response = await fetch(`api/eliminar_materiales.php?id=${id}`, {
                     method: 'GET',
                     headers: { 'Accept': 'application/json' }
                 });
@@ -122,7 +122,7 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     alert(data.message);
                     location.reload();
                 } else {
-                    alert(data.message || 'Error al eliminar el cliente.');
+                    alert(data.message || 'Error al eliminar el material.');
                 }
             } catch (error) {
                 alert('Error en la petición.');
@@ -136,7 +136,7 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
         formData.append('pagina', pagina);
         formData.append('termino', termino);
         try {
-            const res = await fetch('api/listar_clientes.php', {
+            const res = await fetch('api/listar_materiales.php', {
                 method: 'POST',
                 body: formData
             })

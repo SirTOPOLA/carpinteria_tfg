@@ -28,7 +28,7 @@ $iconos = [
   'producciones'  => 'bi-hammer',           // ícono relacionado a fabricación
   'tareas'        => 'bi-list-check',
   'clientes'      => 'bi-person-badge',
-  'proyectos'     => 'bi-kanban',
+  
   'diseños'       => 'bi-brush',
   'perfil'        => 'bi-person-circle',
   'mis_pedidos'   => 'bi-bag-check',
@@ -54,7 +54,7 @@ $menu = [
         'Movimientos'   => 'movimientos',
         'Pedidos'       => 'pedidos',
         'Producciones'  => 'producciones',
-        'Proyectos'     => 'proyectos',
+        
         'Roles'         => 'roles',
         'Reportes'      => 'reportes',
         'Productos'     => 'productos',
@@ -67,7 +67,7 @@ $menu = [
       'Dashboard'     => 'dashboard',
       'Producción'    => 'produccion',
       'Tareas'        => 'tareas',
-        'Proyectos'     => 'proyectos', // si aplica
+        
         'Movimientos'   => 'movimientos', // si lleva control de materiales
       ],
       'vendedor' => [
@@ -83,7 +83,7 @@ $menu = [
         'Clientes'      => 'clientes',
         'Pedidos'       => 'pedidos',
         'Producciones'  => 'producciones', 
-        'Proyectos'     => 'proyectos',
+        
        /*  'Diseños'       => 'diseños'  */
     ],
     'cliente' => [
