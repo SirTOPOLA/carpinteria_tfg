@@ -20,7 +20,8 @@ $stmt = $pdo->query("SELECT dc.material_id,
                             dc.precio_unitario,
                             m.nombre AS nombre_material,
                             m.stock_actual, 
-                            m.stock_minimo
+                            m.stock_minimo,
+                            m.unidad_medida 
                         FROM detalles_compra dc
                         INNER JOIN (
                             SELECT material_id, MAX(precio_unitario) AS max_precio
@@ -46,30 +47,48 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <form id="form" method="POST" class="row g-4 needs-validation" novalidate>
 
                 <!-- SECCIÓN: Información General -->
-                <div class="border-bottom pb-3 mb-4">
+                <div class="border-bottom pb-3 mb-2">
                     <h6 class="fw-bold text-primary mb-3"><i class="bi bi-person-vcard-fill me-2"></i>Información del
                         Cliente y Proyecto</h6>
 
-                    <div class="row g-3">
-                        <!-- Cliente -->
-                        <div class="col-md-6">
-                            <label for="clientes" class="form-label fw-semibold"><i
-                                    class="bi bi-person-fill me-1"></i>Cliente <span
-                                    class="text-danger">*</span></label>
-                            <select name="responsable_id" id="clientes" class="form-select" required>
-                                <option value="">Seleccione un cliente</option>
-                                <?php foreach ($clientes as $cliente): ?>
-                                    <option value="<?= htmlspecialchars($cliente['id']) ?>">
-                                        <?= htmlspecialchars($cliente['nombre']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
+                    <div class="row pb-2 g-3">
+                        <div class="col-md-4">
+                            <label for="clientes" class="form-label fw-semibold">
+                                <i class="bi bi-person-fill me-1"></i>Cliente <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <select name="responsable_id" id="clientes" class="form-select" required>
+                                    <option value="">Seleccione un cliente</option>
+                                    <?php foreach ($clientes as $cliente): ?>
+                                        <option value="<?= htmlspecialchars($cliente['id']) ?>">
+                                            <?= htmlspecialchars($cliente['nombre']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                                    data-bs-target="#modalNuevoCliente">
+                                    <i class="bi bi-person-plus-fill"></i>
+                                </button>
+                            </div>
                         </div>
-
+                        <!-- Proyecto -->
+                        <div id="" class="col-md-3">
+                            <label for="nombre" class="form-label"> <i
+                                    class="bi bi-wrench-adjustable-circle-fill me-2"></i> Nombre del Proyecto</label>
+                            <input type="text" name="proyecto" id="proyecto" class="form-control">
+                            <input type="hidden" name="estado_id" id="estadoPedido" value="cotizado"
+                                class="form-control">
+                        </div>
+                        <!-- fecha_entrega -->
+                        <div id="" class="col-md-2">
+                            <label for="fecha_entrega" class="form-label"> <i class="bi bi-number me-2"></i>  
+                                (días)</label>
+                            <input type="text" name="fecha_entrega" id="fecha_entrega" class="form-control">
+                        </div>
                         <!-- Tipo de Proyecto -->
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <label class="form-label fw-semibold">
-                                <i class="bi bi-briefcase-fill me-1"></i>Proyecto
+                                <i class="bi bi-briefcase-fill me-1"></i>Servicio
                             </label>
                             <div class="d-flex flex-wrap gap-2">
                                 <!-- Botón: Aplicar Servicio -->
@@ -79,38 +98,15 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <i class="bi bi-ui-checks-grid"></i> ¿Aplicar servicio?
                                 </label>
                             </div>
-                        </div>
-
-
-
-                        <!-- Proyecto Nuevo -->
-                        <div id="proyectoNuevo" class="col-md-6 g-3 my-3 d-none">
-                            <div class="row g-3 ">
-                                <h6 class="fw-bold text-primary ">
-                                    <i class="bi bi-wrench-adjustable-circle-fill me-2"></i>Proyecto
-                                </h6>
-                                <div class="col-md-6">
-                                    <label for="nombre" class="form-label">Nombre del Proyecto</label>
-                                    <input type="text" name="nombre" id="nombre" class="form-control">
-                                    <input type="hidden" name="estado" id="nombre" value="pendiente"
-                                        class="form-control">
-                                </div>
-
-                            </div>
-
-                        </div>
+                        </div> 
                     </div>
-
                     <!-- SECCIÓN: Servicios -->
-                    <div id="contenedorServicio" class="border-bottom py-3  d-none">
+                    <div id="contenedorServicio" class="border-top mt-2 py-3  d-none">
                         <div class="row g-3">
-                            <h6 class="fw-bold text-primary ">
-                                <i class="bi bi-wrench-adjustable-circle-fill me-2"></i>Servicios
-                            </h6>
-
                             <!-- Servicio -->
-                            <div class="col-md-4">
-                                <label for="servicio" class="form-label">Servicio <span
+                            <div class="col-md-5">
+                                <label for="servicio" class="form-label"> <i
+                                        class="bi bi-wrench-adjustable-circle-fill me-2"></i> Servicio <span
                                         class="text-danger">*</span></label>
                                 <select name="servicio_id" id="servicio" class="form-select">
                                     <option value="">Seleccione un servicio</option>
@@ -123,129 +119,187 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 </select>
                             </div>
                             <!-- Mano de Obra -->
-                            <div class="col-md-3">
+                            <div class="col-md-5">
                                 <label for="coste_servicio" class="form-label">Costo del Servicio</label>
                                 <input type="text" id="coste_servicio" name="coste_servicio" class="form-control"
                                     readonly>
                             </div>
-
                         </div>
                     </div>
+                </div>
 
-                    <!-- SECCIÓN: Fechas y Estado -->
-                    <div class="border-bottom pb-3 mt-4 mb-4">
-                        <h6 class="fw-bold text-primary mb-3"><i class="bi bi-calendar2-week-fill me-2"></i>Fechas y
-                            Estado
-                        </h6>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="fecha_inicio" class="form-label">Fecha de Inicio <span
-                                        class="text-danger">*</span></label>
-                                <input type="date" name="fecha_inicio" id="fecha_inicio" class="form-control" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="estado_solicitud" class="form-label">Estado de la Solicitud</label>
-                                <select name="estado" id="estado_solicitud" class="form-select">
-                                    <option value="">Seleccione un estado</option>
-                                    <option value="cotizado">Cotizado</option>
-                                    <!--  <option value="aprobado">Aprobado</option> -->
+                <!-- SECCIÓN: Materiales -->
+                <div class="border-bottom pb-3 mb-2">
+                    <h6 class="fw-bold text-primary mb-3"><i class="bi bi-box2-fill me-2"></i>Materiales</h6>
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle text-center" id="tabla-materiales">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Material</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Subtotal</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <select name="material_id[]" class="form-select" required>
+                                            <option value="">Seleccione</option>
+                                            <?php foreach ($materiales as $mat): ?>
+                                                <option value="<?= $mat['material_id'] ?>"
+                                                    data-precio="<?= $mat['precio_unitario'] ?>">
+                                                    <?= htmlspecialchars($mat['nombre_material']) ?> (
+                                                    <?= htmlspecialchars($mat['unidad_medida']) ?>)
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </td>
 
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+                                    <td><input type="number" name="cantidad[]" class="form-control" step="0.01" min="0"
+                                            oninput="calcularSubtotal(this)"></td>
+                                    <td><input type="number" name="precio_unitario[]" class="form-control" step="0.01"
+                                            min="0" oninput="calcularSubtotal(this)"></td>
 
-                    <!-- SECCIÓN: Materiales -->
-                    <div class="border-bottom pb-3 mb-4">
-                        <h6 class="fw-bold text-primary mb-3"><i class="bi bi-box2-fill me-2"></i>Materiales</h6>
-                        <div class="table-responsive">
-                            <table class="table table-bordered align-middle text-center" id="tabla-materiales">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Material</th>
-                                        <th>Cantidad</th>
-                                        <th>Precio Unitario</th>
-                                        <th>Subtotal</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <select name="material_id[]" class="form-select" required>
-                                                <option value="">Seleccione</option>
-                                                <?php foreach ($materiales as $mat): ?>
-                                                    <option value="<?= $mat['material_id'] ?>"
-                                                        data-precio="<?= $mat['precio_unitario'] ?>">
-                                                        <?= htmlspecialchars($mat['nombre_material']) ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                        </td>
-
-                                        <td><input type="number" name="cantidad[]" class="form-control" step="0.01"
-                                                min="0" oninput="calcularSubtotal(this)"></td>
-                                        <td><input type="number" name="precio_unitario[]" class="form-control"
-                                                step="0.01" min="0" oninput="calcularSubtotal(this)"></td>
-
-                                        <td><input type="text" class="form-control subtotal" readonly></td>
-                                        <td><button type="button" class="btn btn-outline-danger btn-sm"
-                                                onclick="eliminarFila(this)">
-                                                <i class="bi bi-trash3-fill"></i></button></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <button type="button" class="btn btn-outline-primary" onclick="agregarFila()">
-                                <i class="bi bi-plus-circle me-1"></i>Agregar Material
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- SECCIÓN: Detalles -->
-                    <div class="border-bottom pb-3 mb-4">
-                        <h6 class="fw-bold text-primary mb-3"><i class="bi bi-journal-text me-2"></i>Detalles
-                            adicionales
-                        </h6>
-                        <div class="col-12">
-                            <textarea name="descripcion" class="form-control" rows="3"
-                                placeholder="Observaciones, requerimientos especiales, etc."></textarea>
-                        </div>
-                    </div>
-
-                    <!-- Total -->
-                    <div class="col-md-6">
-                        <label for="mano_obra" class="form-label">Costo de la mano de obra</label>
-                        <input type="number" name="mano_obra" id="mano_obra" class="form-control" value="0" min="0"
-                            oninput="calcularTotal()">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="total" class="form-label fw-bold">Total del Pedido (XAF)</label>
-                        <input type="text" id="total" name="total" class="form-control" readonly>
-                    </div>
-
-                    <!-- Botones -->
-                    <div class="col-12 d-flex justify-content-between mt-4">
-                        <a href="index.php?vista=pedidos" class="btn btn-secondary">
-                            <i class="bi bi-arrow-left-circle me-1"></i>Cancelar
-                        </a>
-                        <button type="submit" class="btn btn-success">
-                            <i class="bi bi-save2-fill me-1"></i>Guardar Pedido
+                                    <td><input type="text" class="form-control subtotal" readonly></td>
+                                    <td><button type="button" class="btn btn-outline-danger btn-sm"
+                                            onclick="eliminarFila(this)">
+                                            <i class="bi bi-trash3-fill"></i></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button type="button" class="btn btn-outline-primary" onclick="agregarFila()">
+                            <i class="bi bi-plus-circle me-1"></i>Agregar Material
                         </button>
                     </div>
+                </div>
+
+                <!-- SECCIÓN: Detalles -->
+                <div class="border-bottom pb-3 mb-4">
+                    <h6 class="fw-bold text-primary mb-3"><i class="bi bi-journal-text me-2"></i>Detalles
+                        adicionales
+                    </h6>
+                    <div class="col-12">
+                        <textarea name="descripcion" class="form-control" rows="3"
+                            placeholder="Observaciones, requerimientos especiales, etc."></textarea>
+                    </div>
+                </div>
+
+                <!-- Total -->
+                <div class="col-md-6">
+                    <label for="mano_obra" class="form-label">Costo de la mano de obra</label>
+                    <input type="number" name="mano_obra" id="mano_obra" class="form-control" value="0" min="0"
+                        oninput="calcularTotal()">
+                </div>
+                <div class="col-md-6">
+                    <label for="total" class="form-label fw-bold">Total del Pedido (XAF)</label>
+                    <input type="text" id="total" name="total" class="form-control" readonly>
+                </div>
+
+                <!-- Botones -->
+                <div class="col-12 d-flex justify-content-between mt-4">
+                    <a href="index.php?vista=pedidos" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left-circle me-1"></i>Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-save2-fill me-1"></i>Guardar Pedido
+                    </button>
+                </div>
             </form>
         </div>
     </div>
 </div>
 
 
+<!-- Modal para registrar nuevo cliente -->
+<div class="modal fade" id="modalNuevoCliente" tabindex="-1" aria-labelledby="modalNuevoClienteLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-4 shadow">
+            <div class="modal-header bg-dark text-white rounded-top-4 py-3">
+                <h5 class="modal-title text-white" id="modalNuevoClienteLabel">
+                    <i class="bi bi-person-badge fs-4 me-2"></i>Registrar Cliente
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+
+            </div>
+
+            <div class="modal-body">
+                <form id="formRegistarCliente" method="POST" action="guardar_cliente_desde_pedido.php"
+                    class="row g-3 needs-validation" novalidate>
+
+                    <!-- Nombre completo -->
+                    <div class="col-md-6">
+                        <label for="nombre" class="form-label">Nombre completo <span
+                                class="text-danger">*</span></label>
+                        <div class="input-group has-validation">
+                            <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                            <input type="text" name="nombre" id="nombre" class="form-control" required>
+                            <div class="invalid-feedback">El nombre es obligatorio.</div>
+                        </div>
+                    </div>
+
+                    <!-- Correo -->
+                    <div class="col-md-6">
+                        <label for="correo" class="form-label">Correo electrónico</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+                            <input type="email" name="correo" id="correo" class="form-control">
+                        </div>
+                    </div>
+
+                    <!-- Teléfono -->
+                    <div class="col-md-6">
+                        <label for="telefono" class="form-label">Teléfono</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-telephone-fill"></i></span>
+                            <input type="text" name="telefono" id="telefono" class="form-control">
+                        </div>
+                    </div>
+
+                    <!-- DIP -->
+                    <div class="col-md-6">
+                        <label for="codigo" class="form-label">DIP*</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                            <input type="text" name="codigo" id="codigo" class="form-control">
+                        </div>
+                    </div>
+
+                    <!-- Dirección -->
+                    <div class="col-md-6">
+                        <label for="direccion" class="form-label">Dirección</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-geo-alt-fill"></i></span>
+                            <textarea name="direccion" id="direccion" class="form-control" rows="1"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Botones del modal -->
+                    <div class="col-12 d-flex justify-content-end mt-3">
+                        <button type="button" class="btn btn-secondary rounded-pill px-4 me-2" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-1"></i>Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-success rounded-pill px-4">
+                            <i class="bi bi-save2-fill me-1"></i>Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
-    document.querySelectorAll('input[name="opcion"]').forEach(radio => {
-        radio.addEventListener('change', () => {
-            const value = radio.value;
-            document.getElementById('proyectoExistente').classList.toggle('d-none', value !== 'v');
-            document.getElementById('proyectoNuevo').classList.toggle('d-none', value !== 'f');
-        });
-    });
+    /*  document.querySelectorAll('input[name="opcion"]').forEach(radio => {
+         radio.addEventListener('change', () => {
+             const value = radio.value;
+             document.getElementById('proyectoExistente').classList.toggle('d-none', value !== 'v');
+             document.getElementById('proyectoNuevo').classList.toggle('d-none', value !== 'f');
+         });
+     }); */
 
     function calcularSubtotal(el) {
         const row = el.closest('tr');
@@ -455,18 +509,74 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
             });
 
             const result = await response.json();
-            if (result.success) {
+            if (result.status) {
                 alert(result.message);
                 window.location.reload(); // si deseas refrescar
                 location.href = 'index.php?vista=pedidos';
             } else {
                 alert(result.message || "Error desconocido");
+                console.log(reult.message)
             }
         } catch (error) {
             console.error("Error:", error);
             alert("Error al guardar la cotización.");
         }
     });
+
+
+
+    /* ------- registro rapido de cliente -------------- */
+
+
+    const formCliente = document.getElementById('formRegistarCliente');
+    const modalCliente = new bootstrap.Modal(document.getElementById('modalNuevoCliente'));
+    const selectClientes = document.getElementById('clientes');
+
+    formCliente.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        if (!formCliente.checkValidity()) {
+            formCliente.classList.add('was-validated');
+            return;
+        }
+
+        const formData = new FormData(formCliente);
+
+        try {
+            const response = await fetch('guardar_cliente_desde_pedido.php', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Cerrar modal
+                modalCliente.hide();
+
+                // Limpiar formulario
+                formCliente.reset();
+                formCliente.classList.remove('was-validated');
+
+                // Agregar nuevo cliente al select
+                const option = document.createElement('option');
+                option.value = result.id;
+                option.textContent = result.nombre;
+                option.selected = true;
+                selectClientes.appendChild(option);
+
+                // Mostrar notificación opcional
+                alert('Cliente registrado correctamente');
+            } else {
+                alert('Error: ' + result.message);
+            }
+
+        } catch (error) {
+            console.error('Error al registrar cliente:', error);
+            alert('Hubo un error al registrar el cliente.');
+        }
+    });
+
 
 
 </script>

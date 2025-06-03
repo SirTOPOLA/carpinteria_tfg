@@ -2,83 +2,80 @@
 
 header('Content-Type: application/json');
 require_once '../config/conexion.php';
+ 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Sanitizar y validar inputs básicos
+    $cliente_id = filter_input(INPUT_POST, 'responsable_id', FILTER_VALIDATE_INT);
+    $proyecto = trim($_POST['proyecto'] ?? '');
+    $servicio_id = filter_input(INPUT_POST, 'servicio_id', FILTER_VALIDATE_INT);
+    $descripcion = trim($_POST['descripcion'] ?? '');
+    $mano_obra = filter_input(INPUT_POST, 'mano_obra', FILTER_VALIDATE_FLOAT);
+    $total = filter_input(INPUT_POST, 'total', FILTER_VALIDATE_FLOAT);
+    $estado_texto = trim($_POST['estado'] ?? 'cotizado'); // viene 'cotizado' o similar
 
-try { 
-    $pdo->beginTransaction();
+    $material_ids = $_POST['material_id'] ?? [];
+    $cantidades = $_POST['cantidad'] ?? [];
 
-    // CLIENTE 
-    $cliente_id = $_POST['responsable_id'];
+    // Validaciones mínimas
+    if (!$cliente_id) {
+        die("Cliente no válido");
+    }
+    if ($mano_obra === false) $mano_obra = 0;
+    if ($total === false) $total = 0;
+
+    // Buscar el ID del estado en tabla estados
+    $stmtEstado = $pdo->prepare("SELECT id FROM estados WHERE nombre = ? AND entidad = 'cotizado' LIMIT 1");
+    $stmtEstado->execute(['nombre' => $estado_texto]);
+    $estado = $stmtEstado->fetchColumn();
+    if (!$estado) {
+        die("Estado no encontrado");
+    }
+
+    // Fechas: hoy y +7 días
     $fecha_solicitud = date('Y-m-d');
-    $estado = $_POST['estado'] ?? 'cotizado';
-    $fecha_inicio = $_POST['fecha_inicio'];
+    $fecha_entrega = (int) ($_POST['fecha_entrega']);
 
-    // Este es el campo nuevo: precio_obra (mano de obra)
-    $precio_obra = isset($_POST['mano_obra']) ? $_POST['mano_obra'] : 0;
+    try {
+        $pdo->beginTransaction();
 
-    $total = isset($_POST['total']) ? $_POST['total'] : 0;
+        // Insertar pedido
+        $stmtPedido = $pdo->prepare("INSERT INTO pedidos (cliente_id, proyecto, servicio_id, descripcion, fecha_solicitud, fecha_entrega, precio_obra, estimacion_total, estado_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmtPedido->execute([
+            $cliente_id,
+            $proyecto,
+            $servicio_id ?: null,
+            $descripcion,
+            $fecha_solicitud,
+            $fecha_entrega,
+            $mano_obra,
+            $total,
+            $estado
+        ]);
 
-    $descripcion = $_POST['descripcion'] ?? 'Cotización generada automáticamente';
+        $pedido_id = $pdo->lastInsertId();
 
-    // PROYECTO: crear nuevo si aplica
-    if ($_POST['opcion'] === 'f') {
-        $nombre_proyecto = $_POST['nombre'];
-        $stmt = $pdo->prepare("INSERT INTO proyectos (nombre, descripcion, estado, fecha_inicio) VALUES (?, ?, 'pendiente', ?)");
-        $stmt->execute([$nombre_proyecto, $descripcion, $fecha_inicio]);
-        $proyecto_id = $pdo->lastInsertId();
-    } else {
-        $proyecto_id = $_POST['proyecto_id'];
-    }
+        // Insertar detalles materiales
+        $stmtDetalle = $pdo->prepare("INSERT INTO detalles_pedido_material (pedido_id, material_id, cantidad) VALUES (?, ?, ?)");
 
-    // SERVICIO (opcional)
-    $servicio_id = !empty($_POST['servicio_id']) ? trim($_POST['servicio_id'] ) : null;
-    $coste_servicio = !empty($_POST['coste_servicio']) ? $_POST['coste_servicio'] : 0;
-
-    // Registrar solicitud (cotización)
-    $stmt = $pdo->prepare("INSERT INTO solicitudes_proyecto 
-        (cliente_id, proyecto_id, descripcion, fecha_solicitud, estado, estimacion_total, servicio_id, precio_obra) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([
-        $cliente_id,
-        $proyecto_id,
-        $descripcion,
-        $fecha_solicitud,
-        $estado,
-        0, // temporal, se actualizará luego
-        $servicio_id,
-        $precio_obra
-    ]);
-    $solicitud_id = $pdo->lastInsertId();
-
-    // Registrar materiales
-    $materiales = $_POST['material_id'];
-    $cantidades = $_POST['cantidad'];
-    $precios = $_POST['precio_unitario'];
-    $subtotal_total = 0;
-
-    $stmtMaterial = $pdo->prepare("INSERT INTO detalles_solicitud_material 
-        (solicitud_id, material_id, cantidad, precio_unitario) VALUES (?, ?, ?, ?)");
-
-    for ($i = 0; $i < count($materiales); $i++) {
-        if (!empty($materiales[$i]) && $cantidades[$i] > 0) {
-            $stmtMaterial->execute([
-                $solicitud_id,
-                $materiales[$i],
-                $cantidades[$i],
-                $precios[$i]
-            ]);
-           // $subtotal_total += $cantidades[$i] * $precios[$i];
+        for ($i = 0; $i < count($material_ids); $i++) {
+            $mat_id = filter_var($material_ids[$i], FILTER_VALIDATE_INT);
+            $cant = filter_var($cantidades[$i], FILTER_VALIDATE_FLOAT);
+            if ($mat_id && $cant && $cant > 0) {
+                $stmtDetalle->execute([$pedido_id, $mat_id, $cant]);
+            }
         }
+
+        $pdo->commit();
+
+        echo json_encode(['status' => true, 'message' => 'Pedido registrado correctamente.']);
+
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        http_response_code(500);
+        echo json_encode(['status' => false, 'message' => 'Error al guardar el pedido: ' . $e->getMessage()]);
     }
-
-    // Actualizar estimación total
-    $stmt = $pdo->prepare("UPDATE solicitudes_proyecto SET estimacion_total = ? WHERE id = ?");
-    $stmt->execute([$total, $solicitud_id]);
-
-    $pdo->commit();
-    echo json_encode(['success' => true, 'message' => 'Cotización registrada correctamente.']);
-
-} catch (Exception $e) {
-    $pdo->rollBack();
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Error al registrar cotización.', 'error' => $e->getMessage()]);
+} else {
+    http_response_code(405);
+    echo json_encode(['status' => false, 'message' => 'Método no permitido']);
 }
+

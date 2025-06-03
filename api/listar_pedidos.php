@@ -21,9 +21,8 @@ if ($termino !== '') {
 
 // Contar total de registros
 $totalQuery = $pdo->prepare("
-    SELECT COUNT(*) FROM solicitudes_proyecto sp
-    INNER JOIN clientes c ON sp.cliente_id = c.id
-    INNER JOIN proyectos p ON sp.proyecto_id = p.id
+    SELECT COUNT(*) FROM pedidos p
+    INNER JOIN clientes c ON p.cliente_id = c.id
     $condicion
 ");
 $totalQuery->execute($params);
@@ -32,12 +31,11 @@ $totalPaginas = ceil($totalRegistros / $porPagina);
 
 // Obtener registros con paginación
 $sql = "
-    SELECT sp.*, c.nombre AS cliente_nombre, p.nombre AS proyecto_nombre 
-    FROM solicitudes_proyecto sp
-    INNER JOIN clientes c ON sp.cliente_id = c.id
-    INNER JOIN proyectos p ON sp.proyecto_id = p.id
+    SELECT p.*, c.nombre AS cliente_nombre
+    FROM pedidos p
+    INNER JOIN clientes c ON p.cliente_id = c.id
     $condicion
-    ORDER BY sp.fecha_solicitud DESC
+    ORDER BY p.fecha_solicitud DESC
     LIMIT $offset, $porPagina
 ";
 $stmt = $pdo->prepare($sql);
@@ -75,7 +73,7 @@ $html .= "
     <tr>
         <td>{$solicitud['id']}</td>
         <td>" . htmlspecialchars($solicitud['cliente_nombre']) . "</td>
-        <td>" . htmlspecialchars($solicitud['proyecto_nombre']) . "</td>
+        <td>" . htmlspecialchars($solicitud['proyecto']) . "</td>
         <td>" . htmlspecialchars($solicitud['descripcion']) . "</td>
         <td>" . date("d/m/Y", strtotime($solicitud['fecha_solicitud'])) . "</td>
        <td><span class='badge bg-secondary'>" . htmlspecialchars($solicitud['estado']) . "</span></td>

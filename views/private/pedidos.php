@@ -1,11 +1,8 @@
 <?php
-
-$sql = "SELECT sp.*,
-        c.nombre AS cliente,
-        p.nombre AS proyecto    
-        FROM solicitudes_proyecto sp
-        INNER JOIN clientes c ON sp.cliente_id = c.id
-        INNER JOIN proyectos p ON sp.proyecto_id = p.id
+$sql = "SELECT p.*,
+        c.nombre AS cliente    
+        FROM pedidos p
+        INNER JOIN clientes c ON p.cliente_id = c.id 
          ";
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
