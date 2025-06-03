@@ -2,7 +2,7 @@
 
 header('Content-Type: application/json');
 require_once '../config/conexion.php';
- 
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitizar y validar inputs básicos
     $cliente_id = filter_input(INPUT_POST, 'responsable_id', FILTER_VALIDATE_INT);
@@ -18,22 +18,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validaciones mínimas
     if (!$cliente_id) {
-        die("Cliente no válido");
+        echo json_encode(['status' => false, 'message' => 'Cliente no válido']);
+        exit;
     }
     if ($mano_obra === false) $mano_obra = 0;
     if ($total === false) $total = 0;
 
     // Buscar el ID del estado en tabla estados
-    $stmtEstado = $pdo->prepare("SELECT id FROM estados WHERE nombre = ? AND entidad = 'cotizado' LIMIT 1");
-    $stmtEstado->execute(['nombre' => $estado_texto]);
+    $stmtEstado = $pdo->prepare("SELECT id FROM estados WHERE nombre = ? LIMIT 1");
+    $stmtEstado->execute([$estado_texto]);
     $estado = $stmtEstado->fetchColumn();
     if (!$estado) {
-        die("Estado no encontrado");
+        echo json_encode(['status' => false, 'message' => 'Estado no encontrado']);
+        exit;
     }
 
-    // Fechas: hoy y +7 días
+    // Validar fecha_entrega (debes enviarla en el formulario o poner fecha default)
     $fecha_solicitud = date('Y-m-d');
-    $fecha_entrega = (int) ($_POST['fecha_entrega']);
+    $fecha_entrega = date('Y-m-d', strtotime('+7 days')); // ejemplo si no viene del form
+    if (!empty($_POST['fecha_entrega'])) {
+        $fecha_entrega_raw = $_POST['fecha_entrega'];
+        $fecha_entrega = date('Y-m-d', strtotime($fecha_entrega_raw));
+    }
 
     try {
         $pdo->beginTransaction();
@@ -68,14 +74,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->commit();
 
         echo json_encode(['status' => true, 'message' => 'Pedido registrado correctamente.']);
+        exit;
 
     } catch (Exception $e) {
         $pdo->rollBack();
         http_response_code(500);
         echo json_encode(['status' => false, 'message' => 'Error al guardar el pedido: ' . $e->getMessage()]);
+        exit;
     }
 } else {
     http_response_code(405);
     echo json_encode(['status' => false, 'message' => 'Método no permitido']);
+    exit;
 }
-
