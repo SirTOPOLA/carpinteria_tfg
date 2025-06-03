@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $servicio_id = filter_input(INPUT_POST, 'servicio_id', FILTER_VALIDATE_INT);
     $descripcion = trim($_POST['descripcion'] ?? '');
     $mano_obra = filter_input(INPUT_POST, 'mano_obra', FILTER_VALIDATE_FLOAT);
-    $total = filter_input(INPUT_POST, 'total', FILTER_VALIDATE_FLOAT);
+    $total = trim( $_POST['total']);
     $estado_texto = trim($_POST['estado'] ?? 'cotizado'); // viene 'cotizado' o similar
 
     $material_ids = $_POST['material_id'] ?? [];
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($total === false) $total = 0;
 
     // Buscar el ID del estado en tabla estados
-    $stmtEstado = $pdo->prepare("SELECT id FROM estados WHERE nombre = ? LIMIT 1");
+    $stmtEstado = $pdo->prepare("SELECT id FROM estados WHERE nombre = ? AND entidad = 'pedido' LIMIT 1");
     $stmtEstado->execute([$estado_texto]);
     $estado = $stmtEstado->fetchColumn();
     if (!$estado) {
@@ -35,11 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validar fecha_entrega (debes enviarla en el formulario o poner fecha default)
     $fecha_solicitud = date('Y-m-d');
-    $fecha_entrega = date('Y-m-d', strtotime('+7 days')); // ejemplo si no viene del form
-    if (!empty($_POST['fecha_entrega'])) {
-        $fecha_entrega_raw = $_POST['fecha_entrega'];
-        $fecha_entrega = date('Y-m-d', strtotime($fecha_entrega_raw));
-    }
+    $fecha_entrega = $_POST['fecha_entrega'];  
+     
 
     try {
         $pdo->beginTransaction();

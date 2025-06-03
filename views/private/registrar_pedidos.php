@@ -226,7 +226,7 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
             <div class="modal-body">
-                <form id="formRegistarCliente" method="POST" action="guardar_cliente_desde_pedido.php"
+                <form id="formRegistarCliente" method="POST"  
                     class="row g-3 needs-validation" novalidate>
 
                     <!-- Nombre completo -->

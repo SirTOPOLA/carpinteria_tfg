@@ -104,14 +104,12 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="pedidoId" name="id">
-                    <input type="hidden" id="tipoCambio" name="tipo">
-
                     <div class="mb-3">
                         <label for="nuevoEstado" class="form-label">Nuevo Estado</label>
                         <select class="form-select" name="estado" id="nuevoEstado" required>
                             <option value="">Seleccione estado</option>
-                             <option value="aprobado">Aprobado</option>
-                            
+                            <option value="aprobado">Aprobado</option>
+
                         </select>
                     </div>
                 </div>
@@ -235,7 +233,7 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
             // Asigna datos al formulario
             document.getElementById('pedidoId').value = btn.dataset.id;
             document.getElementById('nuevoEstado').value = btn.dataset.estado;
-            document.getElementById('tipoCambio').value = btn.dataset.tipo; // tipo: solicitud, proyecto, produccion
+
         }
     });
 
@@ -248,19 +246,30 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
             method: 'POST',
             body: formData
         })
-            .then(resp => resp.json())
+            .then(async resp => {
+                const contentType = resp.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return resp.json();
+                } else {
+                    const text = await resp.text();
+                    throw new Error('Respuesta no JSON: ' + text);
+                }
+            })
             .then(data => {
                 if (data.success) {
-                    // Cerrar modal
                     bootstrap.Modal.getInstance(document.getElementById('modalCambiarEstado')).hide();
-                    // Recargar tabla o volver a hacer fetch
-                   // cargarTablaSolicitudes(); // O reemplaza por otra función según la vista
-                   location.reload();
+                    location.reload();
                 } else {
                     alert('Error al actualizar estado: ' + (data.message || ''));
                 }
             })
             .catch(err => console.error('Error en la petición:', err));
+
     });
+
+
+
+
+
 
 </script>

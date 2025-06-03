@@ -43,10 +43,22 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $solicitudes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+/* ------- modernizar el stado -- */
+function getEstadoBadgeClass($estado) {
+    $estado = strtolower($estado);
+    return match($estado) {
+        'cotizado' => 'bg-warning text-dark',   // Amarillo suave
+        'aprobado' => 'bg-success',             // Verde
+        'entregado' => 'bg-primary',            // Azul
+        'cancelado' => 'bg-danger',             // Rojo
+        default => 'bg-secondary',              // Gris por defecto
+    };
+}
+
 $html = '';
 foreach ($solicitudes as $solicitud) {
 
-    $btnDetalle = (($_SESSION['usuario']['rol'] === 'Administrador') || ($_SESSION['usuario']['rol'] === 'Diseñador')) 
+    $btnDetalle = (($_SESSION['usuario']['rol'] === 'Administrador') || ($_SESSION['usuario']['rol'] === 'Diseñador'))
         ? "<a href='views/private/cotizacion.php?id={$solicitud['id']}' target='_blank' class='btn btn-sm btn-outline-primary'>
                 <i class='bi bi-file-earmark-text'></i> Detalles
            </a>"
@@ -77,8 +89,13 @@ foreach ($solicitudes as $solicitud) {
             <td>" . htmlspecialchars($solicitud['proyecto']) . "</td>
             <td>" . htmlspecialchars($solicitud['descripcion']) . "</td>
             <td>" . date("d/m/Y", strtotime($solicitud['fecha_solicitud'])) . "</td>
-            <td><span class='badge bg-secondary'>" . htmlspecialchars($solicitud['estado_nombre']) . "</span></td>
-            <td>S/ " . number_format($solicitud['estimacion_total'], 2) . "</td>
+           <td>
+                <span class='badge " . getEstadoBadgeClass($solicitud['estado_nombre']) . "'>
+                    " . ucfirst(htmlspecialchars($solicitud['estado_nombre'])) . "
+                </span>
+            </td>
+
+            <td>XAF/ " . number_format($solicitud['estimacion_total'], 2) . "</td>
             <td class='text-center'>
                 $btnDetalle 
                 $btnEstado
