@@ -15,11 +15,11 @@ $condicion = '';
 $params = [];
 
 if ($termino !== '') {
-    $condicion = "WHERE c.nombre LIKE :busqueda OR c.email LIKE :busqueda OR p.nombre LIKE :busqueda";
+    $condicion = "WHERE c.nombre LIKE :busqueda OR c.email LIKE :busqueda OR p.proyecto LIKE :busqueda";
     $params[':busqueda'] = "%$termino%";
 }
 
-// Contar total de registros
+// Contar total registros
 $totalQuery = $pdo->prepare("
     SELECT COUNT(*) FROM pedidos p
     INNER JOIN clientes c ON p.cliente_id = c.id
@@ -29,11 +29,12 @@ $totalQuery->execute($params);
 $totalRegistros = $totalQuery->fetchColumn();
 $totalPaginas = ceil($totalRegistros / $porPagina);
 
-// Obtener registros con paginación
+// Obtener registros con paginación, esta vez con estado nombre
 $sql = "
-    SELECT p.*, c.nombre AS cliente_nombre
+    SELECT p.*, c.nombre AS cliente_nombre, e.nombre AS estado_nombre, e.id AS estado_id
     FROM pedidos p
     INNER JOIN clientes c ON p.cliente_id = c.id
+    INNER JOIN estados e ON p.estado_id = e.id
     $condicion
     ORDER BY p.fecha_solicitud DESC
     LIMIT $offset, $porPagina
@@ -42,50 +43,48 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $solicitudes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Renderizar tabla
 $html = '';
 foreach ($solicitudes as $solicitud) {
-    $btnDetalle =(($_SESSION['usuario']['rol'] === 'Administrador') || ($_SESSION['usuario']['rol'] === 'Diseñador')) 
-    ? "
-        <a href='views/private/cotizacion.php?id={$solicitud['id']}' target='_blank' class='btn btn-sm btn-outline-primary'>
-            <i class='bi bi-file-earmark-text'></i> Detalles
-        </a>
-    ": '';
-  
-    
-     
-    $btnEstado = '';
-    if (strtolower($solicitud['estado']) === 'cotizado') {
+
+    $btnDetalle = (($_SESSION['usuario']['rol'] === 'Administrador') || ($_SESSION['usuario']['rol'] === 'Diseñador')) 
+        ? "<a href='views/private/cotizacion.php?id={$solicitud['id']}' target='_blank' class='btn btn-sm btn-outline-primary'>
+                <i class='bi bi-file-earmark-text'></i> Detalles
+           </a>"
+        : '';
+
+    // Botón cambiar estado, activo para estados que no sean "entregado" o "cancelado"
+    $estadosSinCambio = ['entregado', 'cancelado'];
+
+    if (!in_array(strtolower($solicitud['estado_nombre']), $estadosSinCambio)) {
         $btnEstado = "
-        <button class='btn btn-sm btn-outline-success cambiar-estado-btn' 
+            <button class='btn btn-sm btn-outline-success cambiar-estado-btn' 
                 data-id='{$solicitud['id']}' 
-                data-estado='{$solicitud['estado']}' 
-                 data-tipo='pedido'
+                data-estado-id='{$solicitud['estado_id']}'
+                data-estado-nombre='{$solicitud['estado_nombre']}'
                 data-bs-toggle='modal' 
                 data-bs-target='#modalCambiarEstado'>
-            <i class='bi bi-arrow-repeat'></i> Cambiar Estado
-        </button>
+                <i class='bi bi-arrow-repeat'></i> Cambiar Estado
+            </button>
         ";
+    } else {
+        $btnEstado = '';
     }
-    
 
-$html .= "
-    <tr>
-        <td>{$solicitud['id']}</td>
-        <td>" . htmlspecialchars($solicitud['cliente_nombre']) . "</td>
-        <td>" . htmlspecialchars($solicitud['proyecto']) . "</td>
-        <td>" . htmlspecialchars($solicitud['descripcion']) . "</td>
-        <td>" . date("d/m/Y", strtotime($solicitud['fecha_solicitud'])) . "</td>
-       <td><span class='badge bg-secondary'>" . htmlspecialchars($solicitud['estado']) . "</span></td>
-
-        <td>S/ " . number_format($solicitud['estimacion_total'], 2) . "</td>
-        <td class='text-center'>
-            $btnDetalle 
-            $btnEstado
-        </td>
-    </tr>
-";
-
+    $html .= "
+        <tr>
+            <td>{$solicitud['id']}</td>
+            <td>" . htmlspecialchars($solicitud['cliente_nombre']) . "</td>
+            <td>" . htmlspecialchars($solicitud['proyecto']) . "</td>
+            <td>" . htmlspecialchars($solicitud['descripcion']) . "</td>
+            <td>" . date("d/m/Y", strtotime($solicitud['fecha_solicitud'])) . "</td>
+            <td><span class='badge bg-secondary'>" . htmlspecialchars($solicitud['estado_nombre']) . "</span></td>
+            <td>S/ " . number_format($solicitud['estimacion_total'], 2) . "</td>
+            <td class='text-center'>
+                $btnDetalle 
+                $btnEstado
+            </td>
+        </tr>
+    ";
 }
 
 // Paginación
