@@ -47,9 +47,10 @@ $solicitudes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 function getEstadoBadgeClass($estado) {
     $estado = strtolower($estado);
     return match($estado) {
-        'cotizado' => 'bg-warning text-dark',   // Amarillo suave
+        'cotizado' => 'bg-secondary',   // Amarillo suave
         'aprobado' => 'bg-success',             // Verde
         'entregado' => 'bg-primary',            // Azul
+        'en_produccion' => 'bg-warning',             // Rojo
         'cancelado' => 'bg-danger',             // Rojo
         default => 'bg-secondary',              // Gris por defecto
     };
@@ -67,7 +68,7 @@ foreach ($solicitudes as $solicitud) {
     // Botón cambiar estado, activo para estados que no sean "entregado" o "cancelado"
     $estadosSinCambio = ['entregado', 'cancelado'];
 
-    if (!in_array(strtolower($solicitud['estado_nombre']), $estadosSinCambio)) {
+    if (strtolower($solicitud['estado_nombre']) === 'cotizado') {
         $btnEstado = "
             <button class='btn btn-sm btn-outline-success cambiar-estado-btn' 
                 data-id='{$solicitud['id']}' 
@@ -81,6 +82,7 @@ foreach ($solicitudes as $solicitud) {
     } else {
         $btnEstado = '';
     }
+    
 
     $html .= "
         <tr>
