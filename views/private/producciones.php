@@ -1,27 +1,34 @@
 <?php
- 
 
-// Obtener producciones disponibles
-$sql = "SELECT 
-                prod.*,
-                proy.estado AS estado_proyecto, 
-                proy.nombre AS proyecto_nombre, 
-                emp.nombre AS empleado_nombre
-                FROM producciones prod
-                LEFT JOIN proyectos proy ON prod.proyecto_id = proy.id                 
-                LEFT JOIN empleados emp ON prod.responsable_id = emp.id
-                ";
-$stmt = $pdo->prepare($sql);
-$stmt->execute();
-$producciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$producciones = [];
 
-$rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']['rol'])) : '';
+try {
+    $sql = "SELECT 
+                p.id,
+                pe.proyecto AS proyecto_nombre,
+                p.fecha_inicio,
+                p.fecha_fin,
+                ep.nombre AS estado,
+                e.nombre AS empleado_nombre,
+                p.created_at,
+                ep2.nombre AS estado_proyecto
+            FROM producciones p
+            LEFT JOIN pedidos pe ON p.solicitud_id = pe.id
+            LEFT JOIN estados ep ON p.estado_id = ep.id
+            LEFT JOIN empleados e ON p.responsable_id = e.id
+            LEFT JOIN estados ep2 ON pe.estado_id = ep2.id
+            ORDER BY p.created_at DESC";
+
+    $stmt = $pdo->query($sql);
+    $producciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+} catch (PDOException $e) {
+    echo "Error al cargar producciones: " . $e->getMessage();
+}
 ?>
 
- 
 <div id="content" class="container-fluid py-4">
-    
-    
+
     <div class="card mb-4">
         <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
             <h4 class="fw-bold mb-0 text-white">
@@ -31,76 +38,84 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
                 <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
                 <input type="text" class="form-control" placeholder="Buscar producción..." id="buscador">
             </div>
-              <?php if (!in_array($rol, ['diseñador'])):   ?>
             <a href="index.php?vista=registrar_producciones" class="btn btn-secondary">
                 <i class="bi bi-plus-circle"></i> Nueva Producción
             </a>
-             <?php endif; ?>
-    </div>
-
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover table-custom align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th><i class="bi bi-hash me-1"></i>ID</th>
-                        <th><i class="bi bi-folder2-open me-1"></i>Proyecto</th>
-                        <th><i class="bi bi-calendar-event me-1"></i>Inicio</th>
-                        <th><i class="bi bi-calendar-check me-1"></i>Fin</th>
-                        <th><i class="bi bi-flag-fill me-1"></i>Estado</th>
-                        <th><i class="bi bi-cpu me-1"></i>Etapa</th>
-                        <th><i class="bi bi-person-fill-gear me-1"></i>Responsable</th>
-                        <th><i class="bi bi-clock me-1"></i>Creado</th>
-                          <?php if (!in_array($rol, ['diseñador'])):   ?>
-                        <th><i class="bi bi-gear-fill me-1"></i>Acciones</th>
-                        <?php endif; ?>
-                    </tr>
-                </thead>
-                <tbody id="tbody" >
-                    <?php if (count($producciones) === 0): ?>
-                        <tr>
-                            <td colspan="9" class="text-center text-muted py-3">No se encontraron resultados.</td>
-                        </tr>
-                    <?php else: ?>
-                        <?php foreach ($producciones as $p): ?>
-                            <tr>
-                                <td><?= $p['id'] ?></td>
-                                <td><?= htmlspecialchars($p['proyecto_nombre']) ?></td>
-                                <td><?= htmlspecialchars($p['fecha_inicio']) ?></td>
-                                <td><?= htmlspecialchars($p['fecha_fin']) ?></td>
-                                <td><?= htmlspecialchars($p['estado_proyecto']) ?></td>
-                                <td>
-                               
-                                    <?= htmlspecialchars($p['estado']) ?>
-
-                                </td>
-                                <td><?= htmlspecialchars($p['empleado_nombre']) ?></td>
-                                <td><?= htmlspecialchars($p['created_at']) ?></td>
-                                  <?php if (!in_array($rol, ['diseñador'])):   ?>
-                                <td>
-                                    <a href="index.php?vista=editar_producciones&id=<?= $p['id'] ?>" class="btn btn-sm btn-outline-warning" title="Editar">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </a>
-                                   <!--  <a href="registrar_proceso_produccionesid=<?= $p['id'] ?>" class="btn btn-sm btn-outline-primary" title="Procesar">
-                                        <i class="bi bi-play-circle"></i>
-                                    </a> -->
-                                    
-                                </td>
-                                <?php endif; ?>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
         </div>
-    </div>
-    <div class="card-footer row py-2 d-flex justify-content-between">
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-custom align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th><i class="bi bi-hash me-1"></i>ID</th>
+                            <th><i class="bi bi-folder2-open me-1"></i>Proyecto</th>
+                            <th><i class="bi bi-calendar-event me-1"></i>Inicio</th>
+                            <th><i class="bi bi-calendar-check me-1"></i>Fin</th>
+                            <th><i class="bi bi-flag-fill me-1"></i>Estado</th>
+                            <th><i class="bi bi-person-fill-gear me-1"></i>Responsable</th>
+                            <th><i class="bi bi-clock me-1"></i>Creado</th>
+                            <!-- <th><i class="bi bi-cpu me-1"></i>Etapa</th> -->
+                            <th><i class="bi bi-gear-fill me-1"></i>Acciones</th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                        <?php if (count($producciones) === 0): ?>
+                            <tr>
+                                <td colspan="9" class="text-center text-muted py-3">No se encontraron resultados.</td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($producciones as $p): ?>
+                                <tr>
+                                    <td><?= $p['id'] ?></td>
+                                    <td><?= htmlspecialchars($p['proyecto_nombre']) ?></td>
+                                    <td><?= htmlspecialchars($p['fecha_inicio']) ?></td>
+                                    <td><?= htmlspecialchars($p['fecha_fin']) ?></td>
+                                    <td><?= htmlspecialchars($p['estado_proyecto']) ?></td>
+                                    <td><?= htmlspecialchars($p['estado']) ?></td>
+                                    <td><?= htmlspecialchars($p['empleado_nombre']) ?></td>
+                                    <td><?= htmlspecialchars($p['created_at']) ?></td>
+                                    <?php if (!in_array($rol, ['diseñador'])): ?>
+                                        <td>
+                                            <a href="index.php?vista=editar_producciones&id=<?= $p['id'] ?>"
+                                                class="btn btn-sm btn-outline-warning" title="Editar">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                        </td>
+                                    <?php endif; ?>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card-footer row py-2 d-flex justify-content-between">
             <div id="resumen-paginacion" class="col-12 col-md-4 text-muted small  text-center "></div>
-            <!-- Controles de paginación -->
             <div id="paginacion" class="col-12 col-md-7  d-flex justify-content-center "></div>
         </div>
+    </div>
 </div>
- 
+
+
+<!--  materiales asignados al proyecto -->
+<div class="modal fade" id="modalVerMateriales" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title"><i class="bi bi-box-seam"></i> Materiales Asignados</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="contenedorMateriales"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <!-- Modal Cambiar Estado -->
 <div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-labelledby="modalCambiarEstadoLabel"
     aria-hidden="true">
@@ -112,14 +127,14 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
-                <input type="hidden" id="tipoCambio" name="tipo">
-    
-                <input type="hidden" id="produccionId" name="id">
+                    <input type="hidden" id="tipoCambio" name="tipo">
+
+                    <input type="hidden" id="produccionId" name="id">
                     <div class="mb-3">
                         <label for="nuevoEstado" class="form-label">Nuevo Estado</label>
                         <select class="form-select" name="estado" id="nuevoEstado" required>
                             <option value="">Seleccione estado</option>
-                            <option value="cotizado">Terminado</option> 
+                            <option value="cotizado">Terminado</option>
                         </select>
                     </div>
                 </div>
@@ -142,7 +157,7 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
         cargarDatos();
         clickPaginacion()
         manejarEventosAjaxTbody(); // Necesario cuando cargamos html por ajax
-       // buscar()
+        // buscar()
 
     });
 
@@ -153,13 +168,96 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
                 const id = e.target.closest(".btn-eliminar").dataset.id;
                 eliminar(id);
             }
-         
-           
+
+            /* ----- modal de listado de materialesasociados al pedido --------- */
+            if (e.target.closest('.ver-materiales-btn')) {
+                const btn = e.target.closest('.ver-materiales-btn');
+                const produccionId = btn.dataset.id;
+                const proyecto = btn.dataset.proyecto;
+                document.querySelector('#modalVerMateriales .modal-title').innerHTML = `<i class="bi bi-box-seam"></i> Materiales: ${proyecto}`;
+
+                const contenedor = document.getElementById('contenedorMateriales');
+                contenedor.innerHTML = '<div class="text-center my-3"><div class="spinner-border text-info"></div></div>';
+
+                fetch('api/obtener_materiales_pedido.php', {
+                    method: 'POST',
+                    body: new URLSearchParams({ id: produccionId })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            contenedor.innerHTML = data.html;
+                        } else {
+                            contenedor.innerHTML = `<div class="alert alert-warning">${data.message}</div>`;
+                        }
+                    })
+                    .catch(err => {
+                        contenedor.innerHTML = `<div class="alert alert-danger">Error al cargar materiales</div>`;
+                    });
+            }
+
+
+
 
 
         });
 
     }
+moverMaterial()
+    function moverMaterial() {
+        document.addEventListener('click', function (e) {
+            if (e.target.closest('.mover-material-btn')) {
+                const btn = e.target.closest('.mover-material-btn');
+                const materialId = btn.dataset.materialId;
+                const produccionId = btn.dataset.produccionId;
+
+                const cantidadInput = document.querySelector(`.cantidad-mover[data-material-id="${materialId}"]`);
+                const motivoInput = document.querySelector(`.motivo-mover[data-material-id="${materialId}"]`);
+
+                const cantidad = parseInt(cantidadInput.value);
+                const motivo = motivoInput.value.trim();
+
+                if (isNaN(cantidad) || cantidad <= 0) {
+                    return alert('Cantidad inválida');
+                }
+
+                if (motivo === '') {
+                    return alert('Ingrese un motivo válido');
+                }
+
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+                const formData = new FormData();
+                formData.append('material_id', materialId);
+                formData.append('produccion_id', produccionId);
+                formData.append('cantidad', cantidad);
+                formData.append('motivo', motivo);
+
+                fetch('registrar_movimiento.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Movimiento registrado con éxito');
+                            btn.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i>';
+                        } else {
+                            alert(data.message || 'Error al registrar movimiento');
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="bi bi-arrow-right-circle"></i> Mover';
+                        }
+                    })
+                    .catch(err => {
+                        alert('Error de red');
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="bi bi-arrow-right-circle"></i> Mover';
+                    });
+            }
+        });
+    }
+
 
     async function eliminar(id) {
         if (confirm('¿Seguro que quieres eliminar esta produccion?')) {
@@ -183,7 +281,7 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
         }
     }
 
- 
+
     async function cargarDatos(pagina = 1, termino = '') {
         const formData = new FormData();
         formData.append('pagina', pagina);
@@ -236,7 +334,7 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
 
     }
 
- // Abre el modal y carga los datos para cambiar estado 
+    // Abre el modal y carga los datos para cambiar estado 
     document.addEventListener('click', function (e) {
         if (e.target.closest('.cambiar-estado-btn')) {
             const btn = e.target.closest('.cambiar-estado-btn');
@@ -272,4 +370,3 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
     });
 
 </script>
- 

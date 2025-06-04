@@ -1,50 +1,87 @@
-<?php
+<?php 
 require_once '../config/conexion.php';
 header("Content-Type: application/json");
 
 $response = ['success' => false, 'message' => ''];
 
 try {
-    $factura_id = $_POST['factura_id'];
-    $monto_pagado = floatval($_POST['monto_pagado']);
-    $metodo = $_POST['metodo_pago'];
+    $factura_id = $_POST['factura_id'] ?? null;
+    $monto_pagado = floatval($_POST['monto_pagado'] ?? 0);
+    $metodo = $_POST['metodo_pago'] ?? '';
     $observaciones = $_POST['observaciones'] ?? '';
 
+    if (!$factura_id) {
+        throw new Exception("Factura ID es obligatorio.");
+    }
     if ($monto_pagado <= 0) {
         throw new Exception("El monto debe ser mayor a cero.");
     }
 
-    // Obtener saldo pendiente actual
-    $stmt = $pdo->prepare("SELECT saldo_pendiente FROM facturas WHERE id = ?");
+    // Obtener saldo pendiente y venta_id desde factura
+    $stmt = $pdo->prepare("SELECT saldo_pendiente, venta_id FROM facturas WHERE id = ?");
     $stmt->execute([$factura_id]);
-    $factura = $stmt->fetch();
+    $factura = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$factura) throw new Exception("Factura no encontrada.");
+    if (!$factura) {
+        throw new Exception("Factura no encontrada.");
+    }
 
     $nuevoSaldo = $factura['saldo_pendiente'] - $monto_pagado;
     if ($nuevoSaldo < 0) $nuevoSaldo = 0;
 
-    // Insertar el nuevo pago
+    // Obtener cliente_id desde venta
+    $stmtVenta = $pdo->prepare("SELECT cliente_id FROM ventas WHERE id = ?");
+    $stmtVenta->execute([$factura['venta_id']]);
+    $venta = $stmtVenta->fetch(PDO::FETCH_ASSOC);
+
+    if (!$venta) {
+        throw new Exception("Venta no encontrada.");
+    }
+    $cliente_id = $venta['cliente_id'];
+
+    // Insertar el pago
     $pdo->prepare("INSERT INTO pagos (factura_id, monto_pagado, fecha_pago, metodo_pago, observaciones) 
                    VALUES (?, ?, NOW(), ?, ?)")
         ->execute([$factura_id, $monto_pagado, $metodo, $observaciones]);
 
-    // Obtener el ID del estado correspondiente
+    // Obtener el ID del estado para la factura
     $estado_nombre = $nuevoSaldo <= 0 ? 'Pagada' : 'Pendiente';
-
     $stmtEstado = $pdo->prepare("SELECT id FROM estados WHERE nombre = ? AND entidad = 'factura'");
     $stmtEstado->execute([$estado_nombre]);
-    $estado = $stmtEstado->fetch();
+    $estado = $stmtEstado->fetch(PDO::FETCH_ASSOC);
 
     if (!$estado) {
         throw new Exception("Estado '{$estado_nombre}' no registrado en la tabla estados.");
     }
 
-    // Actualizar el saldo pendiente y el estado_id
+    // Actualizar saldo pendiente y estado en factura
     $pdo->prepare("UPDATE facturas SET saldo_pendiente = ?, estado_id = ? WHERE id = ?")
         ->execute([$nuevoSaldo, $estado['id'], $factura_id]);
 
+    // Verificar si cliente_id está en pedidos
+    $stmtPedido = $pdo->prepare("SELECT id FROM pedidos WHERE cliente_id = ?");
+    $stmtPedido->execute([$cliente_id]);
+    $pedido = $stmtPedido->fetch(PDO::FETCH_ASSOC);
+
+    if ($pedido) {
+        // Cliente tiene pedido(s), actualizar estado a 'en_produccion'
+
+        // Obtener id de estado 'en_produccion' para entidad pedido
+        $stmtEstadoPedido = $pdo->prepare("SELECT id FROM estados WHERE nombre = 'en_produccion' AND entidad = 'pedido'");
+        $stmtEstadoPedido->execute();
+        $estadoPedido = $stmtEstadoPedido->fetch(PDO::FETCH_ASSOC);
+
+        if (!$estadoPedido) {
+            throw new Exception("Estado 'en_produccion' no registrado en la tabla estados.");
+        }
+
+        // Actualizar todos los pedidos de ese cliente a estado 'en_produccion'
+        $pdo->prepare("UPDATE pedidos SET estado_id = ? WHERE cliente_id = ?")
+            ->execute([$estadoPedido['id'], $cliente_id]);
+    }
+
     $response['success'] = true;
+    $response['message'] = "Pago registrado correctamente.";
 
 } catch (Exception $e) {
     $response['message'] = $e->getMessage();

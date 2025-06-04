@@ -22,7 +22,7 @@ CREATE TABLE configuracion (
 CREATE TABLE estados (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nombre VARCHAR(100) NOT NULL, 
-  entidad ENUM('produccion', 'proyecto', 'solicitud', 'venta', 'factura') NOT NULL
+  entidad ENUM('produccion', 'proyecto', 'pedido', 'venta', 'factura') NOT NULL
 );
 
 

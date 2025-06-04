@@ -61,14 +61,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (empty($pedido['servicio_id'])) {  // corregido el nombre del campo
             // Solo producto
             $stmt = $pdo->prepare("INSERT INTO detalles_venta 
-                (venta_id, tipo, producto_id, servicio_id, cantidad, precio_unitario)
-                VALUES (?, 'producto', ?, NULL, 1, ?)");
-            $stmt->execute([$idVenta, $producto_id, $pedido['estimacion_total']]);
+                (venta_id, tipo, producto_id, servicio_id, cantidad, precio_unitario, subtotal)
+                VALUES (?, 'producto', ?, NULL, 1, ?,?)");
+            $stmt->execute([$idVenta, $producto_id, $pedido['estimacion_total'],$pedido['estimacion_total']]);
         } else {
             // Producto
             $stmt = $pdo->prepare("INSERT INTO detalles_venta 
-                (venta_id, tipo, producto_id, servicio_id, cantidad, precio_unitario)
-                VALUES (?, 'producto', ?, ?, 1, ?)");
+                (venta_id, tipo, producto_id, servicio_id, cantidad, precio_unitario,subtotal)
+                VALUES (?, 'producto', ?, ?, 1,?, ?)");
             $stmt->execute([$idVenta, $producto_id, $pedido['servicio_id'], $pedido['estimacion_total']]);
 
             // Servicio

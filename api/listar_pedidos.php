@@ -47,10 +47,10 @@ $solicitudes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 function getEstadoBadgeClass($estado) {
     $estado = strtolower($estado);
     return match($estado) {
-        'cotizado' => 'bg-secondary',   // Amarillo suave
+        'cotizado' => 'bg-secondary',   // griss
         'aprobado' => 'bg-success',             // Verde
         'entregado' => 'bg-primary',            // Azul
-        'en_produccion' => 'bg-warning',             // Rojo
+        'en_produccion' => 'bg-warning text-dark',             // amarillo
         'cancelado' => 'bg-danger',             // Rojo
         default => 'bg-secondary',              // Gris por defecto
     };
