@@ -3,16 +3,16 @@
 require_once '../config/conexion.php'; // $pdo debe estar definido aquí
 
 header("Content-Type: application/json");
- 
+
 
 try {
     // Validar existencia de datos mínimos
- 
+
     $clienteId = !empty($_POST['cliente_id']) ? intval($_POST['cliente_id']) : null;
     $nombreCliente = $_POST['nombre_cliente'] ?? null;
     $dniCliente = $_POST['dni_cliente'] ?? null;
     $direccionCliente = $_POST['direccion_cliente'] ?? null;
-    
+
     if (is_null($clienteId) && empty($nombreCliente)) {
         echo json_encode(['success' => false, 'message' => 'Debe seleccionar un cliente o ingresar su nombre.']);
         exit;
@@ -24,6 +24,34 @@ try {
 
     $metodoPago = $_POST['metodo_pago'] ?? 'efectivo';
     $totalVenta = floatval($_POST['total'] ?? 0);
+
+
+    // 1. VALIDACIÓN PREVIA de productos y stock
+    foreach ($_POST['tipo'] as $i => $tipo) {
+        $tipo = trim($tipo);
+        $itemId = isset($_POST['item_id'][$i]) ? intval($_POST['item_id'][$i]) : null;
+        $cantidad = isset($_POST['cantidad'][$i]) ? intval($_POST['cantidad'][$i]) : 1;
+
+        if (!in_array($tipo, ['producto', 'servicio']) || !$itemId) {
+            throw new Exception("Datos de producto o servicio inválidos en la posición $i.");
+        }
+
+        if ($tipo === 'producto') {
+            $stmtStock = $pdo->prepare("SELECT nombre, stock FROM productos WHERE id = ?");
+            $stmtStock->execute([$itemId]);
+            $producto = $stmtStock->fetch(PDO::FETCH_ASSOC);
+
+            if (!$producto) {
+                throw new Exception("Producto con ID $itemId no encontrado.");
+            }
+
+            if ($producto['stock'] < $cantidad) {
+                throw new Exception("Stock insuficiente para el producto:  {$producto['nombre']}. con ID $itemId. Disponible: {$producto['stock']}, solicitado: $cantidad.");
+            }
+        }
+    }
+
+
 
     // Iniciar transacción
     $pdo->beginTransaction();

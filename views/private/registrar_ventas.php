@@ -1,5 +1,5 @@
 <?php
-$productos = $pdo->query("SELECT id, nombre, precio_unitario FROM productos")->fetchAll(PDO::FETCH_ASSOC);
+$productos = $pdo->query("SELECT id, nombre, precio_unitario, stock FROM productos WHERE stock > 0")->fetchAll(PDO::FETCH_ASSOC);
 $servicios = $pdo->query("SELECT id, nombre, precio_base FROM servicios")->fetchAll(PDO::FETCH_ASSOC);
 
 ?>

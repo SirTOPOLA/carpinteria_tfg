@@ -13,7 +13,7 @@ $stmt = $pdo->prepare("
     INNER JOIN clientes c ON p.cliente_id = c.id
     INNER JOIN ventas v ON v.cliente_id = c.id
     INNER JOIN facturas f ON f.venta_id = v.id
-    WHERE es.nombre = 'en_produccion'
+    WHERE es.nombre = 'aprobado'
       AND f.saldo_pendiente < f.monto_total 
 ");
 $stmt->execute();

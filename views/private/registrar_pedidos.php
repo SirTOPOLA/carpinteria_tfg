@@ -6,7 +6,7 @@
 $stmt = $pdo->query("SELECT id, CONCAT(nombre, ' ', apellido) AS nombre_completo  FROM empleados ORDER BY id");
 $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$productos_sin_stock = $pdo->query("SELECT id, nombre FROM productos WHERE stock = 0")->fetchAll(PDO::FETCH_ASSOC);
+$productos_sin_stock = $pdo->query("SELECT * FROM productos WHERE stock = 0")->fetchAll(PDO::FETCH_ASSOC);
 
 // Obtener lista de servicios
 $stmt = $pdo->query("SELECT * FROM servicios ");
@@ -92,7 +92,8 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <select name="producto_id" id="producto_existente" class="form-select">
                                 <option value="">Seleccione producto</option>
                                 <?php foreach ($productos_sin_stock as $prod): ?>
-                                    <option value="<?= $prod['id'] ?>">
+                                    <option value="<?= $prod['id'] ?>"
+                                     data-descripcion="<?= $prod['descripcion'] ?>">
                                         <?= htmlspecialchars($prod['nombre']) ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -227,7 +228,7 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         adicionales
                     </h6>
                     <div class="col-12">
-                        <textarea name="descripcion" class="form-control" rows="3"
+                        <textarea name="descripcion" class="form-control" rows="3" id="descripcion"
                             placeholder="Observaciones, requerimientos especiales, etc."></textarea>
                     </div>
                 </div>
@@ -404,6 +405,15 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
         const clone = table.rows[0].cloneNode(true);
         clone.querySelectorAll('input').forEach(input => input.value = '');
         table.appendChild(clone);
+    }
+descripcionProductoExistente()
+    function descripcionProductoExistente() {
+        document.getElementById('producto_existente').addEventListener('change', function () {
+            const selectedOption = this.options[this.selectedIndex];
+            const descripcion = selectedOption.getAttribute('data-descripcion');
+            document.getElementById('descripcion').value = descripcion;
+        });
+
     }
 
     function costeServicio() {
