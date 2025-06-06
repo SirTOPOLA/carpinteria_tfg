@@ -117,27 +117,32 @@ try {
 
 
 <!-- Modal Cambiar Estado -->
-<div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-labelledby="modalCambiarEstadoLabel"
-    aria-hidden="true">
+<div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-labelledby="modalCambiarEstadoLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form id="formCambiarEstado">
+        <form id="formCambiarEstado" enctype="multipart/form-data">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Cambiar Estado de produccion</h5>
+                    <h5 class="modal-title" id="modalCambiarEstadoLabel">Cambiar Estado de Producción</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
-                <div class="modal-body">
-                    <input type="hidden" id="tipoCambio" name="tipo">
 
+                <div class="modal-body">
                     <input type="hidden" id="produccionId" name="id">
+
                     <div class="mb-3">
                         <label for="nuevoEstado" class="form-label">Nuevo Estado</label>
                         <select class="form-select" name="estado" id="nuevoEstado" required>
                             <option value="">Seleccione estado</option>
-                            <option value="cotizado">Terminado</option>
+                            <option value="finalizado">Finalizada</option>
                         </select>
                     </div>
+
+                    <div class="mb-3">
+                        <label for="fotoProducto" class="form-label">Foto del Producto Terminado</label>
+                        <input type="file" name="foto" id="fotoProducto" class="form-control" accept="image/*" required>
+                    </div>
                 </div>
+
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Guardar</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -158,6 +163,11 @@ try {
         clickPaginacion()
         manejarEventosAjaxTbody(); // Necesario cuando cargamos html por ajax
         // buscar()
+
+
+
+
+
 
     });
 
@@ -203,7 +213,7 @@ try {
         });
 
     }
-moverMaterial()
+    moverMaterial()
     function moverMaterial() {
         document.addEventListener('click', function (e) {
             if (e.target.closest('.mover-material-btn')) {
@@ -211,51 +221,103 @@ moverMaterial()
                 const materialId = btn.dataset.materialId;
                 const produccionId = btn.dataset.produccionId;
 
-                const cantidadInput = document.querySelector(`.cantidad-mover[data-material-id="${materialId}"]`);
-                const motivoInput = document.querySelector(`.motivo-mover[data-material-id="${materialId}"]`);
+                const cantidad = document.querySelector(`.cantidad-mover[data-material-id="${materialId}"]`)?.value;
+                const motivo = document.querySelector(`.motivo-mover[data-material-id="${materialId}"]`)?.value;
+                const tipo = document.querySelector(`.tipo-movimiento[data-material-id="${materialId}"]`)?.value;
 
-                const cantidad = parseInt(cantidadInput.value);
-                const motivo = motivoInput.value.trim();
-
-                if (isNaN(cantidad) || cantidad <= 0) {
-                    return alert('Cantidad inválida');
+                if (!cantidad || cantidad <= 0 || !motivo) {
+                    alert('Por favor, completa todos los campos correctamente.');
+                    return;
                 }
-
-                if (motivo === '') {
-                    return alert('Ingrese un motivo válido');
-                }
-
-                btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
 
                 const formData = new FormData();
                 formData.append('material_id', materialId);
                 formData.append('produccion_id', produccionId);
                 formData.append('cantidad', cantidad);
                 formData.append('motivo', motivo);
+                formData.append('tipo', tipo); // clave aquí
 
-                fetch('registrar_movimiento.php', {
+                fetch('api/guardar_movimiento.php', {
                     method: 'POST',
                     body: formData
                 })
                     .then(res => res.json())
                     .then(data => {
                         if (data.success) {
-                            alert('Movimiento registrado con éxito');
-                            btn.innerHTML = '<i class="bi bi-check-circle-fill text-success"></i>';
+                            alert('Movimiento registrado correctamente');
+                            // recargar materiales o actualizar stock si deseas
                         } else {
-                            alert(data.message || 'Error al registrar movimiento');
-                            btn.disabled = false;
-                            btn.innerHTML = '<i class="bi bi-arrow-right-circle"></i> Mover';
+                            alert(data.message);
                         }
                     })
                     .catch(err => {
-                        alert('Error de red');
-                        btn.disabled = false;
-                        btn.innerHTML = '<i class="bi bi-arrow-right-circle"></i> Mover';
+                        console.error(err);
+                        alert('Error al realizar el movimiento');
                     });
             }
+            /* ------ cambo de boton e icon segun tipo de movimiento --------------- */
+
+            if (e.target.closest('.tipo-movimiento')) {
+                const select = e.target.closest('.tipo-movimiento');
+                select.addEventListener('change', function () {
+                    const materialId = this.dataset.materialId;
+                    const tipo = this.value;
+
+                    const btn = document.querySelector(`.mover-material-btn[data-material-id="${materialId}"]`);
+                    const icono = btn.querySelector('.icono-movimiento');
+
+                    // Cambiar clases de color del botón
+                    btn.classList.remove('btn-outline-primary', 'btn-outline-success');
+                    if (tipo === 'salida') {
+                        btn.classList.add('btn-outline-primary'); // azul
+                        icono.className = 'bi bi-arrow-right-circle icono-movimiento'; // flecha derecha
+                    } else {
+                        btn.classList.add('btn-outline-success'); // verde
+                        icono.className = 'bi bi-arrow-left-circle icono-movimiento'; // flecha izquierda
+                    }
+                });
+
+
+            }
+
+
+
         });
+        /* ---------------- recalcular el valor disponible de material -------- */
+        document.addEventListener('change', function (e) {
+            if (e.target.classList.contains('tipo-movimiento')) {
+                const materialId = e.target.dataset.materialId;
+                const tipo = e.target.value;
+
+                const cantidadInput = document.querySelector(`.cantidad-mover[data-material-id='${materialId}']`);
+                const motivoInput = document.querySelector(`.motivo-mover[data-material-id='${materialId}']`);
+                const moverBtn = document.querySelector(`.mover-material-btn[data-material-id='${materialId}']`);
+                const restanteSpan = document.querySelector(`.restante[data-material-id='${materialId}']`);
+
+                const restante = parseInt(restanteSpan.dataset.restante);
+
+                if (tipo === 'entrada') {
+                    cantidadInput.disabled = false;
+                    motivoInput.disabled = false;
+                    moverBtn.disabled = false;
+                    cantidadInput.removeAttribute('max');
+                } else {
+                    const disable = restante <= 0;
+                    cantidadInput.disabled = disable;
+                    motivoInput.disabled = disable;
+                    moverBtn.disabled = disable;
+                    cantidadInput.setAttribute('max', restante);
+                }
+            }
+        });
+
+        // Inicializar correctamente al cargar
+        document.querySelectorAll('.tipo-movimiento').forEach(select => {
+            select.dispatchEvent(new Event('change'));
+        });
+
+
+
     }
 
 
@@ -341,8 +403,7 @@ moverMaterial()
 
             // Asigna datos al formulario
             document.getElementById('produccionId').value = btn.dataset.id;
-            document.getElementById('nuevoEstado').value = btn.dataset.estado;
-            document.getElementById('tipoCambio').value = btn.dataset.tipo; // tipo: solicitud, proyecto, produccion
+            document.getElementById('nuevoEstado').value = btn.dataset.estado; 
         }
     });
 
@@ -351,7 +412,7 @@ moverMaterial()
         e.preventDefault();
         const formData = new FormData(this);
 
-        fetch('api/actualizar_estado_pedido.php', {
+        fetch('api/actualizar_estado_produccion.php', {
             method: 'POST',
             body: formData
         })

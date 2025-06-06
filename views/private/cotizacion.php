@@ -3,19 +3,17 @@ include('../../config/conexion.php');
 
 $solicitud_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-// Cargar información general incluyendo servicio, precio_obra y estimacion_total
+// Obtener datos generales del pedido
 $stmt = $pdo->prepare("
     SELECT 
-        sp.id, sp.fecha_solicitud, sp.precio_obra, sp.estimacion_total,
-        c.nombre AS cliente, c.direccion, c.telefono, 
-        p.nombre AS proyecto,
+        p.id, p.fecha_solicitud, p.precio_obra, p.estimacion_total, p.proyecto,
+        c.nombre AS cliente, c.direccion, c.telefono,  
         s.nombre AS servicio,
         s.precio_base AS precio_servicio
-    FROM solicitudes_proyecto sp
-    JOIN clientes c ON sp.cliente_id = c.id
-    JOIN proyectos p ON sp.proyecto_id = p.id
-    LEFT JOIN servicios s ON sp.servicio_id = s.id
-    WHERE sp.id = ?
+    FROM pedidos p
+    JOIN clientes c ON p.cliente_id = c.id 
+    LEFT JOIN servicios s ON p.servicio_id = s.id
+    WHERE p.id = ?
 ");
 $stmt->execute([$solicitud_id]);
 $solicitud = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -25,26 +23,37 @@ if (!$solicitud) {
     exit;
 }
 
-// Cargar materiales solicitados
+// Cargar materiales solicitados y precios
 $stmt = $pdo->prepare("
-    SELECT m.nombre, dsm.cantidad, dsm.precio_unitario, dsm.subtotal, m.unidad_medida
-    FROM detalles_solicitud_material dsm
-    JOIN materiales m ON dsm.material_id = m.id
-    WHERE dsm.solicitud_id = ?
+    SELECT 
+        m.id AS material_id,
+        m.nombre AS nombre,
+        m.unidad_medida,
+        dpm.cantidad,
+        dc.max_precio_unitario AS precio_unitario,
+        (dpm.cantidad * dc.max_precio_unitario) AS subtotal
+    FROM detalles_pedido_material dpm
+    INNER JOIN materiales m ON m.id = dpm.material_id
+    INNER JOIN (
+        SELECT material_id, MAX(precio_unitario) AS max_precio_unitario
+        FROM detalles_compra
+        GROUP BY material_id
+    ) dc ON dc.material_id = dpm.material_id
+    WHERE dpm.pedido_id = ?
 ");
 $stmt->execute([$solicitud_id]);
 $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Cargar configuración de empresa
+// Cargar datos de la empresa
 $config = $pdo->query("SELECT * FROM configuracion LIMIT 1")->fetch(PDO::FETCH_ASSOC);
 
+// Enlace al PDF
 $baseUrl = "https://tu-dominio.com";
 $pdfUrl = "$baseUrl/controladores/pdf_proforma.php?id=$solicitud_id";
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <title>Proforma #<?= htmlspecialchars($solicitud['id']) ?></title>
@@ -58,8 +67,7 @@ $pdfUrl = "$baseUrl/controladores/pdf_proforma.php?id=$solicitud_id";
             max-height: 80px;
         }
 
-        .table th,
-        .table td {
+        .table th, .table td {
             vertical-align: middle;
         }
 
@@ -70,7 +78,6 @@ $pdfUrl = "$baseUrl/controladores/pdf_proforma.php?id=$solicitud_id";
         }
     </style>
 </head>
-
 <body class="p-4">
     <div class="container border p-4 rounded shadow-sm">
         <div class="d-flex justify-content-between align-items-center mb-4 no-print">
@@ -180,13 +187,12 @@ $pdfUrl = "$baseUrl/controladores/pdf_proforma.php?id=$solicitud_id";
         </table>
 
         <div class="mt-5">
-            <p class="fst-italic">* Esta proforma no representa un compromiso definitivo. Está sujeta a cambios por
-                disponibilidad de materiales o modificaciones del proyecto.</p>
+            <p class="fst-italic">* Esta proforma no representa un compromiso definitivo. Está sujeta a cambios por disponibilidad de materiales o modificaciones del proyecto.</p>
         </div>
 
         <div class="row no-print mt-3">
             <div class="col-md-6">
-                <a href="https://wa.me/?text=Hola,%20aquí%20tienes%20tu%20proforma%20<?= urlencode($pdfUrl) ?>" target="_blank" class="btn btn-success">
+                <a href="https://wa.me/?text=Hola,%20aquí%20tienes%20tu%20proforma:%20<?= urlencode($pdfUrl) ?>" target="_blank" class="btn btn-success">
                     📱 Enviar por WhatsApp
                 </a>
             </div>
@@ -201,5 +207,4 @@ $pdfUrl = "$baseUrl/controladores/pdf_proforma.php?id=$solicitud_id";
         </div>
     </div>
 </body>
-
 </html>

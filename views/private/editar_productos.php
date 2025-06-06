@@ -17,10 +17,9 @@ if (!isset($_SESSION['usuario'])) {
 
 
 $stmtProd = $pdo->prepare("
-    SELECT p.*, i.ruta_imagen AS imagen
-    FROM productos p
-    LEFT JOIN imagenes_producto i ON p.id = i.producto_id
-    WHERE p.id = :id
+    SELECT *
+    FROM productos 
+    WHERE id = :id
 ");
 $stmtProd->execute([':id' => $_id]);
 $producto = $stmtProd->fetch(PDO::FETCH_ASSOC);
@@ -32,11 +31,11 @@ if (!$producto) {
 }
 
 // Establecer valores iniciales del formulario
-$nombre = $producto['nombre'];
-$descripcion = $producto['descripcion'];
-$precio = $producto['precio_unitario'];
-$stock = $producto['stock'];
-$imagen = $producto['imagen'];
+$nombre = $producto['nombre'] ?? '';
+$descripcion = $producto['descripcion'] ?? '';
+$precio = $producto['precio_unitario'] ?? '';
+$stock = $producto['stock'] ?? '';
+$imagen = $producto['imagen'] ?? '';
 ?>
 
 <div id="content" class="container-fluid">

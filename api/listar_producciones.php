@@ -54,12 +54,12 @@ foreach ($producciones as $prod) {
     $estadoLower = strtolower($prod['nombre_estado'] ?? '');
     $badgeColor = match ($estadoLower) {
         'pendiente'    => 'bg-secondary',
-        'en proceso'   => 'bg-warning text-dark',
+        'en_proceso'   => 'bg-warning text-dark',
         'finalizado'   => 'bg-success',
         default        => 'bg-light text-dark'
     };
 
-    $btnEstado = ($estadoLower === 'en proceso' || $estadoLower === 'pendiente') ? "
+    $btnEstado = ($estadoLower === 'en_proceso' || $estadoLower === 'pendiente') ? "
         <button class='btn btn-sm btn-outline-success cambiar-estado-btn' 
                 data-id='{$prod['id']}' 
                 data-estado='{$prod['nombre_estado']}'
@@ -78,21 +78,32 @@ foreach ($producciones as $prod) {
             <i class='bi bi-box-seam'></i> Ver Materiales
         </button>";
 
-    $acciones = '';
-    if (!empty($_SESSION['usuario']['rol']) && $_SESSION['usuario']['rol'] === 'Administrador') {
-        $acciones = "
-        <td class='text-center'>
-            <a href='index.php?vista=editar_producciones&id={$prod['id']}' class='btn btn-sm btn-outline-warning' title='Editar'>
-                <i class='bi bi-pencil-square'></i>
-            </a>
-            <a href='#' class='btn btn-sm btn-danger btn-eliminar' data-id='{$prod['id']}' title='Eliminar'>
-                <i class='bi bi-trash-fill'></i>
-            </a>
-            $btnEstado
-            $btnVerMateriales
-        </td>";
-    }
-
+        $acciones = '';
+        if (!empty($_SESSION['usuario']['rol']) && $_SESSION['usuario']['rol'] === 'Administrador') {
+            // Solo mostrar editar/ver materiales si el estado no es 'finalizado'
+            $btnEditar = '';
+            $btnVerMaterialesHTML = '';
+            
+            if ($estadoLower !== 'finalizado') {
+                $btnEditar = "
+                    <a href='index.php?vista=editar_producciones&id={$prod['id']}' class='btn btn-sm btn-outline-warning' title='Editar'>
+                        <i class='bi bi-pencil-square'></i>
+                    </a>";
+        
+                $btnVerMaterialesHTML = $btnVerMateriales;
+            }
+        
+            $acciones = "
+            <td class='text-center'>
+                $btnEditar
+                <a href='#' class='btn btn-sm btn-danger btn-eliminar' data-id='{$prod['id']}' title='Eliminar'>
+                    <i class='bi bi-trash-fill'></i>
+                </a>
+                $btnEstado
+                $btnVerMaterialesHTML
+            </td>";
+        }
+        
     $html .= " 
         <tr>
             <td>{$prod['id']}</td>

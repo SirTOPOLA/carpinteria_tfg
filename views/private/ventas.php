@@ -950,6 +950,8 @@
         buscador.addEventListener('keyup', function () {
             const termino = this.value.trim();
             cargarVentas(1, termino);
+            cargarPagos(1, termino);
+            cargarFacturas(1, termino);
         });
 
         document.getElementById('paginacionVentas').addEventListener('click', function (e) {
@@ -959,6 +961,24 @@
                 cargarVentas(pagina, termino);
                 /* cargarFacturas(pagina, termino);
                 cargarPagos(pagina, termino); */
+            }
+        });
+        document.getElementById('paginacionFacturas').addEventListener('click', function (e) {
+            if (e.target.classList.contains('pagina-link')) {
+                const pagina = e.target.dataset.pagina;
+                const termino = buscador.value.trim();
+                //cargarVentas(pagina, termino);
+                 cargarFacturas(pagina, termino);
+                //cargarPagos(pagina, termino); 
+            }
+        });
+        document.getElementById('paginacionPagos').addEventListener('click', function (e) {
+            if (e.target.classList.contains('pagina-link')) {
+                const pagina = e.target.dataset.pagina;
+                const termino = buscador.value.trim();
+                //cargarVentas(pagina, termino);
+                //cargarFacturas(pagina, termino);
+                cargarPagos(pagina, termino); 
             }
         });
     });

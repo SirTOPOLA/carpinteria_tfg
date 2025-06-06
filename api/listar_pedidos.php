@@ -56,16 +56,18 @@ function getEstadoBadgeClass($estado) {
     };
 }
 
+ 
 $html = '';
 foreach ($solicitudes as $solicitud) {
-
-    $btnDetalle = (($_SESSION['usuario']['rol'] === 'Administrador') || ($_SESSION['usuario']['rol'] === 'Diseñador'))
-        ? "<a href='views/private/cotizacion.php?id={$solicitud['id']}' target='_blank' class='btn btn-sm btn-outline-primary'>
-                <i class='bi bi-file-earmark-text'></i> Detalles
+    // Enlace directo al PDF generado automáticamente
+    $btnPDF = (($_SESSION['usuario']['rol'] === 'Administrador') || ($_SESSION['usuario']['rol'] === 'Diseñador'))
+        ? "<a href='views/private/cotizacion.php?id={$solicitud['id']}' 
+                target='_blank' 
+                class='btn btn-sm btn-outline-success'>
+                <i class='bi bi-file-earmark-pdf'></i> PDF
            </a>"
         : '';
 
-    // Botón cambiar estado, activo para estados que no sean "entregado" o "cancelado"
     $estadosSinCambio = ['entregado', 'cancelado'];
 
     if (strtolower($solicitud['estado_nombre']) === 'cotizado') {
@@ -82,7 +84,6 @@ foreach ($solicitudes as $solicitud) {
     } else {
         $btnEstado = '';
     }
-    
 
     $html .= "
         <tr>
@@ -91,15 +92,14 @@ foreach ($solicitudes as $solicitud) {
             <td>" . htmlspecialchars($solicitud['proyecto']) . "</td>
             <td>" . htmlspecialchars($solicitud['descripcion']) . "</td>
             <td>" . date("d/m/Y", strtotime($solicitud['fecha_solicitud'])) . "</td>
-           <td>
+            <td>
                 <span class='badge " . getEstadoBadgeClass($solicitud['estado_nombre']) . "'>
                     " . ucfirst(htmlspecialchars($solicitud['estado_nombre'])) . "
                 </span>
             </td>
-
             <td>XAF/ " . number_format($solicitud['estimacion_total'], 2) . "</td>
             <td class='text-center'>
-                $btnDetalle 
+                $btnPDF 
                 $btnEstado
             </td>
         </tr>

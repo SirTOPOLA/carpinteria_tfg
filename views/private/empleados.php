@@ -106,9 +106,48 @@ $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
         cargarDatos();
         clickPaginacion()
         manejarEventosAjaxTbody(); // Necesario cuando cargamos html por ajax
-        // buscar()
+        buscador.addEventListener('input',   () => {
+            paginaActual = 1;
+           // console.log( buscador.value.trim())
+             cargarDatos(paginaActual, buscador.value.trim());
+        });
 
     });
+    
+    async function cargarDatos(pagina = 1, termino = '') {
+        const formData = new FormData();
+        formData.append('pagina', pagina);
+        formData.append('termino', termino);
+        console.log('TERMINO: '+termino)
+        console.log('PAGINA: '+pagina)
+        try {
+            const res = await fetch('api/listar_empleados.php', {
+                method: 'POST',
+                body: formData
+            })
+            
+            const data = await res.json();
+            console.log('PAGINA: '+data.error)
+            if (data.success) {
+                document.getElementById('tbody').innerHTML = data.html;
+               // console.log(data.message)
+              //  console.log(data.err)
+                document.getElementById('paginacion').innerHTML = data.paginacion;
+                document.getElementById('resumen-paginacion').textContent = data.resumen;
+                paginaActual = pagina; // actualizar página actual
+            } else {
+                //alert(data.message);
+                //console.log()
+            }
+
+        } catch (error) {
+           // alert('Error al cargar datos:', error);
+            console.log(error)
+        }
+
+    }
+
+    
 
     function manejarEventosAjaxTbody() {
         document.getElementById("tbody").addEventListener("click", function (e) {
@@ -148,42 +187,6 @@ $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
 
-    async function cargarDatos(pagina = 1, termino = '') {
-        const formData = new FormData();
-        formData.append('pagina', pagina);
-        formData.append('termino', termino);
-        try {
-            const res = await fetch('api/listar_empleados.php', {
-                method: 'POST',
-                body: formData
-            })
-
-            const data = await res.json();
-            if (data.success) {
-                document.getElementById('tbody').innerHTML = data.html;
-                document.getElementById('paginacion').innerHTML = data.paginacion;
-                document.getElementById('resumen-paginacion').textContent = data.resumen;
-                paginaActual = pagina; // actualizar página actual
-            } else {
-                alert(data.message);
-                console.log()
-            }
-
-        } catch (error) {
-            alert('Error al cargar datos:', error);
-            console.log(error)
-        }
-
-    }
-
-    // Buscar
-    function buscar() {
-        buscador.addEventListener('input', async () => {
-            paginaActual = 1;
-            await cargarDatos(paginaActual, buscador.value.trim());
-        });
-
-    }
     // Manejar clics en paginación
     function clickPaginacion() {
         document.getElementById('paginacion').addEventListener('click', async e => {

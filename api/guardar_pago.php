@@ -1,4 +1,4 @@
-<?php 
+<?php
 require_once '../config/conexion.php';
 header("Content-Type: application/json");
 
@@ -27,7 +27,8 @@ try {
     }
 
     $nuevoSaldo = $factura['saldo_pendiente'] - $monto_pagado;
-    if ($nuevoSaldo < 0) $nuevoSaldo = 0;
+    if ($nuevoSaldo < 0)
+        $nuevoSaldo = 0;
 
     // Obtener cliente_id desde venta
     $stmtVenta = $pdo->prepare("SELECT cliente_id FROM ventas WHERE id = ?");
@@ -63,19 +64,20 @@ try {
     $stmtPedido->execute([$cliente_id]);
     $pedido = $stmtPedido->fetch(PDO::FETCH_ASSOC);
 
-    if ($pedido) {
-        // Cliente tiene pedido(s), actualizar estado a 'en_produccion'
+    // Verificar si cliente_id está en pedidos y si el saldo está totalmente pagado
+    if ($pedido && $nuevoSaldo == 0) {
+        // Cliente tiene pedido(s) y pago está completo, actualizar estado a 'entregado'
 
-        // Obtener id de estado 'en_produccion' para entidad pedido
-        $stmtEstadoPedido = $pdo->prepare("SELECT id FROM estados WHERE nombre = 'en_produccion' AND entidad = 'pedido'");
+        // Obtener id de estado 'entregado' para entidad pedido
+        $stmtEstadoPedido = $pdo->prepare("SELECT id FROM estados WHERE nombre = 'entregado' AND entidad = 'pedido'");
         $stmtEstadoPedido->execute();
         $estadoPedido = $stmtEstadoPedido->fetch(PDO::FETCH_ASSOC);
 
         if (!$estadoPedido) {
-            throw new Exception("Estado 'en_produccion' no registrado en la tabla estados.");
+            throw new Exception("Estado 'entregado' no registrado en la tabla estados.");
         }
 
-        // Actualizar todos los pedidos de ese cliente a estado 'en_produccion'
+        // Actualizar todos los pedidos de ese cliente a estado 'entregado'
         $pdo->prepare("UPDATE pedidos SET estado_id = ? WHERE cliente_id = ?")
             ->execute([$estadoPedido['id'], $cliente_id]);
     }

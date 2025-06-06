@@ -1,11 +1,7 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 require '../config/conexion.php';
-
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
+ 
 header('Content-Type: application/json');
 
 $pagina = isset($_POST['pagina']) ? max(1, intval($_POST['pagina'])) : 1;
@@ -82,16 +78,16 @@ foreach ($pagos as $pago) {
 // Paginación
 $paginacion = '';
 if ($pagina > 1) {
-    $paginacion .= "<button class='btn btn-sm btn-outline-secondary pagina-link-pagos' data-pagina='" . ($pagina - 1) . "'>&laquo; Anterior</button>";
+    $paginacion .= "<button class='btn btn-sm btn-outline-secondary pagina-link' data-pagina='" . ($pagina - 1) . "'>&laquo; Anterior</button>";
 }
 
 for ($i = max(1, $pagina - 2); $i <= min($totalPaginas, $pagina + 2); $i++) {
     $active = ($i == $pagina) ? 'btn-primary' : 'btn-outline-secondary';
-    $paginacion .= "<button class='btn btn-sm $active pagina-link-pagos' data-pagina='$i'>$i</button>";
+    $paginacion .= "<button class='btn btn-sm $active pagina-link' data-pagina='$i'>$i</button>";
 }
 
 if ($pagina < $totalPaginas) {
-    $paginacion .= "<button class='btn btn-sm btn-outline-secondary pagina-link-pagos' data-pagina='" . ($pagina + 1) . "'>Siguiente &raquo;</button>";
+    $paginacion .= "<button class='btn btn-sm btn-outline-secondary pagina-link' data-pagina='" . ($pagina + 1) . "'>Siguiente &raquo;</button>";
 }
 
 $desde = ($pagina - 1) * $porPagina + 1;

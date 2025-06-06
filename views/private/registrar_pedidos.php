@@ -6,6 +6,7 @@
 $stmt = $pdo->query("SELECT id, CONCAT(nombre, ' ', apellido) AS nombre_completo  FROM empleados ORDER BY id");
 $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+$productos_sin_stock = $pdo->query("SELECT id, nombre FROM productos WHERE stock = 0")->fetchAll(PDO::FETCH_ASSOC);
 
 // Obtener lista de servicios
 $stmt = $pdo->query("SELECT * FROM servicios ");
@@ -71,17 +72,58 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 </button>
                             </div>
                         </div>
-                        <!-- Proyecto -->
-                        <div id="" class="col-md-3">
-                            <label for="nombre" class="form-label"> <i
-                                    class="bi bi-wrench-adjustable-circle-fill me-2"></i> Nombre del Proyecto</label>
+                        <!-- Tipo de Producto/Proyecto -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-box-fill me-1"></i>Tipo de Producto
+                            </label>
+                            <select name="tipo_producto" id="tipo_producto" class="form-select" required>
+                                <option value="">Seleccione una opción</option>
+                                <option value="nuevo">Nuevo Proyecto</option>
+                                <option value="existente">Producto Existente (sin stock)</option>
+                            </select>
+                        </div>
+
+                        <!-- Seleccionar Producto Existente si aplica -->
+                        <div class="col-md-4 d-none" id="producto_existente_div">
+                            <label class="form-label">
+                                <i class="bi bi-archive-fill me-1"></i>Producto existente
+                            </label>
+                            <select name="producto_id" id="producto_existente" class="form-select">
+                                <option value="">Seleccione producto</option>
+                                <?php foreach ($productos_sin_stock as $prod): ?>
+                                    <option value="<?= $prod['id'] ?>">
+                                        <?= htmlspecialchars($prod['nombre']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <!-- Nombre del Proyecto si es nuevo -->
+                        <div class="col-md-3 d-none" id="producto_nuevo_div">
+                            <label for="nombre" class="form-label">
+                                <i class="bi bi-wrench-adjustable-circle-fill me-2"></i> Nombre del Proyecto
+                            </label>
                             <input type="text" name="proyecto" id="proyecto" class="form-control">
                             <input type="hidden" name="estado_id" id="estadoPedido" value="cotizado"
                                 class="form-control">
                         </div>
+
+                        <!-- Cantidad de Productos -->
+                        <div class="col-md-4">
+                            <label class="form-label">
+                                <i class="bi bi-123 me-1"></i>Cantidad de productos <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" name="cantidad_producto" id="cantidad_producto" class="form-control"
+                                value="1" min="1" required>
+                        </div>
+
+
+                        <!-- Proyecto -->
+
                         <!-- fecha_entrega -->
                         <div id="" class="col-md-2">
-                            <label for="fecha_entrega" class="form-label"> <i class="bi bi-number me-2"></i>  
+                            <label for="fecha_entrega" class="form-label"> <i class="bi bi-number me-2"></i>
                                 (días)</label>
                             <input type="text" name="fecha_entrega" id="fecha_entrega" class="form-control">
                         </div>
@@ -98,7 +140,11 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <i class="bi bi-ui-checks-grid"></i> ¿Aplicar servicio?
                                 </label>
                             </div>
-                        </div> 
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+
                     </div>
                     <!-- SECCIÓN: Servicios -->
                     <div id="contenedorServicio" class="border-top mt-2 py-3  d-none">
@@ -226,8 +272,7 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
             <div class="modal-body">
-                <form id="formRegistarCliente" method="POST"  
-                    class="row g-3 needs-validation" novalidate>
+                <form id="formRegistarCliente" method="POST" class="row g-3 needs-validation" novalidate>
 
                     <!-- Nombre completo -->
                     <div class="col-md-6">
@@ -293,22 +338,52 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 <script>
-    /*  document.querySelectorAll('input[name="opcion"]').forEach(radio => {
-         radio.addEventListener('change', () => {
-             const value = radio.value;
-             document.getElementById('proyectoExistente').classList.toggle('d-none', value !== 'v');
-             document.getElementById('proyectoNuevo').classList.toggle('d-none', value !== 'f');
-         });
-     }); */
 
-    function calcularSubtotal(el) {
-        const row = el.closest('tr');
-        const cantidad = parseFloat(row.querySelector('input[name="cantidad[]"]').value) || 0;
-        const precio = parseFloat(row.querySelector('input[name="precio_unitario[]"]').value) || 0;
-        const subtotal = cantidad * precio;
-        row.querySelector('.subtotal').value = subtotal.toFixed(2);
+    document.addEventListener("DOMContentLoaded", function () {
+        // ---------- Varios productos --------
+        const tipoProducto = document.getElementById("tipo_producto");
+        const productoExistenteDiv = document.getElementById("producto_existente_div");
+        const productoNuevoDiv = document.getElementById("producto_nuevo_div");
+        const cantidadInput = document.getElementById("cantidad_producto");
+        const proyecto = document.getElementById("proyecto");
+
+        tipoProducto.addEventListener("change", function () {
+            if (this.value === "existente") {
+                productoExistenteDiv.classList.remove("d-none");
+                productoNuevoDiv.classList.add("d-none");
+                proyecto.setAttribute('disabled', true);
+            } else if (this.value === "nuevo") {
+                productoNuevoDiv.classList.remove("d-none");
+                productoExistenteDiv.classList.add("d-none");
+                proyecto.setAttribute('disabled', false);
+            } else {
+                // En caso de que no se seleccione nada
+                productoExistenteDiv.classList.add("d-none");
+                productoNuevoDiv.classList.add("d-none");
+            }
+        });
+
+        cantidadInput.addEventListener("input", function () {
+            actualizarSubtotalesPorCantidad();
+            calcularTotal();
+        });
+
+
+
+    });
+
+    function calcularSubtotal(elemento) {
+        const fila = elemento.closest('tr');
+        const cantidadMaterial = parseFloat(fila.querySelector('input[name="cantidad[]"]').value) || 0;
+        const precioUnitario = parseFloat(fila.querySelector('input[name="precio_unitario[]"]').value) || 0;
+        const cantidadProducto = parseInt(document.getElementById("cantidad_producto").value) || 1;
+
+        const subtotal = (cantidadMaterial * cantidadProducto) * precioUnitario;
+        fila.querySelector('.subtotal').value = subtotal.toFixed(2);
+
         calcularTotal();
     }
+
 
     function calcularTotal() {
         let total = 0;
@@ -421,6 +496,7 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
         fila.querySelector('.subtotal').value = subtotal.toFixed(2);
         calcularTotal();
     }
+
 
     function calcularTotal() {
         let total = 0;
@@ -579,4 +655,43 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 
+    function actualizarSubtotalesPorCantidad() {
+        document.querySelectorAll('#tabla-materiales tbody tr').forEach(fila => {
+            calcularSubtotal(fila.querySelector('input[name="cantidad[]"]'));
+        });
+    }
+
 </script>
+
+<!-- 
+<script>
+ function calcularSubtotal(el) {
+        const row = el.closest('tr');
+        const cantidad = parseFloat(row.querySelector('input[name="cantidad[]"]').value) || 0;
+        const precio = parseFloat(row.querySelector('input[name="precio_unitario[]"]').value) || 0;
+        const subtotal = cantidad * precio;
+        row.querySelector('.subtotal').value = subtotal.toFixed(2);
+        calcularTotal();
+    }
+
+function actualizarSubtotalesPorCantidad() {
+    document.querySelectorAll('#tabla-materiales tbody tr').forEach(fila => {
+        calcularSubtotal(fila.querySelector('input[name="cantidad[]"]'));
+    });
+}
+
+function calcularTotal() {
+    let total = 0;
+    document.querySelectorAll('.subtotal').forEach(input => {
+        total += parseFloat(input.value) || 0;
+    });
+
+    const manoObra = parseFloat(document.getElementById("mano_obra").value) || 0;
+    const costeServicio = parseFloat(document.getElementById("coste_servicio")?.value || 0);
+
+    total += manoObra + costeServicio;
+
+    document.getElementById("total").value = total.toFixed(2);
+}
+</script>
+ -->
