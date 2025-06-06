@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 04-06-2025 a las 17:05:30
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.0.30
+-- Host: 127.0.0.1
+-- Generation Time: Jun 06, 2025 at 10:31 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `carpinteria`
+-- Database: `carpinteria`
 --
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `avances_produccion`
+-- Table structure for table `avances_produccion`
 --
 
 CREATE TABLE `avances_produccion` (
@@ -38,7 +38,7 @@ CREATE TABLE `avances_produccion` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `clientes`
+-- Table structure for table `clientes`
 --
 
 CREATE TABLE `clientes` (
@@ -53,18 +53,19 @@ CREATE TABLE `clientes` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `clientes`
+-- Dumping data for table `clientes`
 --
 
 INSERT INTO `clientes` (`id`, `nombre`, `codigo`, `telefono`, `direccion`, `email`, `codigo_acceso`, `creado_en`) VALUES
 (1, 'Rufina Batapa', '000121323', '555908967', 'lampert', 'rufina@gmail.com', 'RUBA25001', '2025-06-01 16:11:31'),
 (2, 'Marieta manga', '1445785245641', '55120456', 'banapa', 'la@gmail.com', 'MAMA25002', '2025-06-03 14:27:32'),
-(3, 'lucas moreno', '0001454788', '222001122', 'lamper', 'lucas@gmail.com', 'LUMO25003', '2025-06-03 14:27:44');
+(3, 'lucas moreno', '0001454788', '222001122', 'lamper', 'lucas@gmail.com', 'LUMO25003', '2025-06-03 14:27:44'),
+(4, 'carmina', '0014578', '222547895', 'begoña 1', '', 'CACA25004', '2025-06-06 07:04:27');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `compras`
+-- Table structure for table `compras`
 --
 
 CREATE TABLE `compras` (
@@ -76,16 +77,17 @@ CREATE TABLE `compras` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `compras`
+-- Dumping data for table `compras`
 --
 
 INSERT INTO `compras` (`id`, `proveedor_id`, `fecha`, `total`, `codigo`) VALUES
-(1, 1, '2025-05-31', 115000.00, '#247');
+(1, 1, '2025-05-31', 115000.00, '#247'),
+(2, 1, '2025-06-05', 435000.00, '#SIXBOKU-20250606-0001');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `configuracion`
+-- Table structure for table `configuracion`
 --
 
 CREATE TABLE `configuracion` (
@@ -105,7 +107,7 @@ CREATE TABLE `configuracion` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `configuracion`
+-- Dumping data for table `configuracion`
 --
 
 INSERT INTO `configuracion` (`id`, `nombre_empresa`, `direccion`, `telefono`, `correo`, `logo`, `iva`, `nif`, `moneda`, `imagen`, `vision`, `mision`, `historia`) VALUES
@@ -114,7 +116,7 @@ INSERT INTO `configuracion` (`id`, `nombre_empresa`, `direccion`, `telefono`, `c
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `detalles_compra`
+-- Table structure for table `detalles_compra`
 --
 
 CREATE TABLE `detalles_compra` (
@@ -127,18 +129,22 @@ CREATE TABLE `detalles_compra` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `detalles_compra`
+-- Dumping data for table `detalles_compra`
 --
 
 INSERT INTO `detalles_compra` (`id`, `compra_id`, `material_id`, `cantidad`, `precio_unitario`, `stock`) VALUES
 (4, 1, 6, 10, 3500.00, 0),
 (5, 1, 4, 10, 5000.00, 0),
-(6, 1, 5, 20, 1500.00, 0);
+(6, 1, 5, 20, 1500.00, 0),
+(7, 2, 1, 50, 2000.00, 50),
+(8, 2, 2, 70, 3500.00, 70),
+(9, 2, 6, 5, 4000.00, 5),
+(10, 2, 4, 10, 7000.00, 10);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `detalles_pedido_material`
+-- Table structure for table `detalles_pedido_material`
 --
 
 CREATE TABLE `detalles_pedido_material` (
@@ -149,19 +155,23 @@ CREATE TABLE `detalles_pedido_material` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `detalles_pedido_material`
+-- Dumping data for table `detalles_pedido_material`
 --
 
 INSERT INTO `detalles_pedido_material` (`id`, `pedido_id`, `material_id`, `cantidad`) VALUES
-(1, 1, 4, 2),
-(4, 3, 4, 2),
-(5, 3, 5, 3),
-(6, 4, 6, 2);
+(7, 5, 6, 5),
+(8, 5, 5, 4),
+(13, 8, 6, 2),
+(14, 8, 5, 3),
+(15, 9, 5, 2),
+(16, 9, 4, 9),
+(17, 9, 1, 5),
+(18, 9, 6, 2);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `detalles_venta`
+-- Table structure for table `detalles_venta`
 --
 
 CREATE TABLE `detalles_venta` (
@@ -177,7 +187,7 @@ CREATE TABLE `detalles_venta` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `detalles_venta`
+-- Dumping data for table `detalles_venta`
 --
 
 INSERT INTO `detalles_venta` (`id`, `venta_id`, `tipo`, `producto_id`, `servicio_id`, `cantidad`, `precio_unitario`, `descuento`, `subtotal`) VALUES
@@ -187,12 +197,16 @@ INSERT INTO `detalles_venta` (`id`, `venta_id`, `tipo`, `producto_id`, `servicio
 (4, 3, 'servicio', NULL, 2, 2, 2000.00, 0.00, 4000.00),
 (5, 3, 'servicio', NULL, 3, 2, 5000.00, 0.00, 10000.00),
 (6, 4, 'producto', 1, NULL, 1, 12000.00, 0.00, 12000.00),
-(8, 7, 'producto', 4, NULL, 1, 22000.00, 0.00, 22000.00);
+(8, 7, 'producto', NULL, NULL, 1, 22000.00, 0.00, 22000.00),
+(9, 8, 'producto', 5, NULL, 1, 48500.00, 0.00, 48500.00),
+(10, 9, 'producto', 6, NULL, 1, 41500.00, 0.00, 41500.00),
+(11, 10, 'producto', 1, NULL, 1, 12000.00, 0.00, 12000.00),
+(12, 11, 'producto', 7, NULL, 1, 134000.00, 0.00, 134000.00);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `empleados`
+-- Table structure for table `empleados`
 --
 
 CREATE TABLE `empleados` (
@@ -212,16 +226,18 @@ CREATE TABLE `empleados` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `empleados`
+-- Dumping data for table `empleados`
 --
 
 INSERT INTO `empleados` (`id`, `nombre`, `apellido`, `fecha_nacimiento`, `codigo`, `genero`, `telefono`, `direccion`, `email`, `horario_trabajo`, `fecha_ingreso`, `creado_en`, `salario`) VALUES
-(2, 'Jesus Crispín', 'TOPOLÁ BOÑAHO', '1997-06-30', '000175362', 'M', '551718822', 'Ela Nguema (Bisinga)', 'sirtopola@gmail.com', 'lunes - viernes', '2025-05-26', '2025-06-01 15:19:11', NULL);
+(2, 'Jesus Crispín', 'TOPOLÁ BOÑAHO', '1997-06-30', '000175362', 'M', '551718822', 'Ela Nguema (Bisinga)', 'sirtopola@gmail.com', 'lunes - viernes', '2025-05-26', '2025-06-01 15:19:11', NULL),
+(3, 'Bienvenido', 'Sipepe', '2000-06-14', '000144578', 'M', '555477895', 'bata', '', 'lunes - Sabado', '2017-06-07', '2025-06-06 06:50:09', NULL),
+(4, 'Merin', 'Compe  Buale', '2008-05-06', '00080910', 'M', '555154578', 'begoña 1', 'martin@gmail.com', 'lunes - viernes', '2020-06-10', '2025-06-06 06:53:54', NULL);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `estados`
+-- Table structure for table `estados`
 --
 
 CREATE TABLE `estados` (
@@ -231,7 +247,7 @@ CREATE TABLE `estados` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `estados`
+-- Dumping data for table `estados`
 --
 
 INSERT INTO `estados` (`id`, `nombre`, `entidad`) VALUES
@@ -242,12 +258,15 @@ INSERT INTO `estados` (`id`, `nombre`, `entidad`) VALUES
 (5, 'aprobado', 'pedido'),
 (6, 'en_produccion', 'pedido'),
 (7, 'en_proceso', 'produccion'),
-(8, 'pendiente', 'produccion');
+(8, 'pendiente', 'produccion'),
+(9, 'finalizado', 'produccion'),
+(10, 'finalizado', 'pedido'),
+(11, 'entregado', 'pedido');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `facturas`
+-- Table structure for table `facturas`
 --
 
 CREATE TABLE `facturas` (
@@ -260,7 +279,7 @@ CREATE TABLE `facturas` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `facturas`
+-- Dumping data for table `facturas`
 --
 
 INSERT INTO `facturas` (`id`, `venta_id`, `fecha_emision`, `monto_total`, `saldo_pendiente`, `estado_id`) VALUES
@@ -268,12 +287,16 @@ INSERT INTO `facturas` (`id`, `venta_id`, `fecha_emision`, `monto_total`, `saldo
 (2, 1, '2025-06-02', 7500.00, 0.00, 2),
 (3, 3, '2025-06-02', 44000.00, 3998.00, 1),
 (4, 4, '2025-06-03', 12000.00, 0.00, 2),
-(5, 7, '2025-06-04', 22000.00, 0.00, 2);
+(5, 7, '2025-06-04', 22000.00, 0.00, 2),
+(6, 8, '2025-06-05', 48500.00, 0.00, 2),
+(7, 9, '2025-06-05', 41500.00, 0.00, 2),
+(8, 10, '2025-06-06', 12000.00, 0.00, 2),
+(9, 11, '2025-06-06', 134000.00, 80000.00, 1);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `materiales`
+-- Table structure for table `materiales`
 --
 
 CREATE TABLE `materiales` (
@@ -287,21 +310,21 @@ CREATE TABLE `materiales` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `materiales`
+-- Dumping data for table `materiales`
 --
 
 INSERT INTO `materiales` (`id`, `nombre`, `descripcion`, `unidad_medida`, `stock_actual`, `stock_minimo`, `creado_en`) VALUES
-(1, 'Madera Pino', 'Madera blanda y económica para estructuras y muebles básicos.', 'metro cúbico', 0, 5, '2025-06-01 16:30:42'),
-(2, 'Madera Cedro', 'Madera resistente y aromática, ideal para muebles finos.', 'metro cúbico', 0, 5, '2025-06-01 16:31:16'),
+(1, 'Madera Pino', 'Madera blanda y económica para estructuras y muebles básicos.', 'metro cúbico', 50, 5, '2025-06-01 16:30:42'),
+(2, 'Madera Cedro', 'Madera resistente y aromática, ideal para muebles finos.', 'metro cúbico', 70, 5, '2025-06-01 16:31:16'),
 (3, 'Madera MDF', 'Tablero de fibra de densidad media, ideal para interiores.', 'hoja', 0, 5, '2025-06-01 16:31:55'),
-(4, 'Cola de carpintero', 'Adhesivo blanco para unión de madera.', 'litro', 10, 2, '2025-06-01 16:32:31'),
-(5, 'Tornillos para madera 100mm', 'Tornillos galvanizados para fijaciones pequeñas.', 'kg', 20, 5, '2025-06-01 16:34:06'),
-(6, 'Barniz transparente', 'Barniz protector con acabado brillante o mate.', 'litro', 10, 2, '2025-06-01 16:35:32');
+(4, 'Cola de carpintero', 'Adhesivo blanco para unión de madera.', 'litro', 20, 2, '2025-06-01 16:32:31'),
+(5, 'Tornillos para madera 100mm', 'Tornillos galvanizados para fijaciones pequeñas.', 'kg', 16, 5, '2025-06-01 16:34:06'),
+(6, 'Barniz transparente', 'Barniz protector con acabado brillante o mate.', 'litro', 7, 2, '2025-06-01 16:35:32');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `movimientos_material`
+-- Table structure for table `movimientos_material`
 --
 
 CREATE TABLE `movimientos_material` (
@@ -314,10 +337,21 @@ CREATE TABLE `movimientos_material` (
   `produccion_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `movimientos_material`
+--
+
+INSERT INTO `movimientos_material` (`id`, `material_id`, `tipo_movimiento`, `cantidad`, `fecha`, `motivo`, `produccion_id`) VALUES
+(1, 6, 'salida', 5, '2025-06-05 04:10:02', 'salida', 2),
+(2, 5, 'salida', 4, '2025-06-05 04:10:14', 'salida', 2),
+(3, 6, 'salida', 2, '2025-06-05 04:38:10', 'barnizado', 1),
+(4, 6, 'entrada', 1, '2025-06-05 04:41:49', 'montaje', 1),
+(5, 6, 'salida', 2, '2025-06-05 07:56:07', 'salida', 3);
+
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `pagos`
+-- Table structure for table `pagos`
 --
 
 CREATE TABLE `pagos` (
@@ -330,7 +364,7 @@ CREATE TABLE `pagos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `pagos`
+-- Dumping data for table `pagos`
 --
 
 INSERT INTO `pagos` (`id`, `factura_id`, `monto_pagado`, `fecha_pago`, `metodo_pago`, `observaciones`) VALUES
@@ -345,12 +379,18 @@ INSERT INTO `pagos` (`id`, `factura_id`, `monto_pagado`, `fecha_pago`, `metodo_p
 (9, 3, 40000.00, '2025-06-02', 'efectivo', 'a deber'),
 (10, 4, 12000.00, '2025-06-03', 'efectivo', 'factura sin costes.'),
 (11, 5, 11000.00, '2025-06-04', 'efectivo', 'pagara el resto en la entrega'),
-(12, 5, 11000.00, '2025-06-04', 'efectivo', 'pagara el resto en la entrega');
+(12, 5, 11000.00, '2025-06-04', 'efectivo', 'pagara el resto en la entrega'),
+(13, 6, 30000.00, '2025-06-05', 'efectivo', ''),
+(14, 6, 18500.00, '2025-06-05', 'efectivo', ''),
+(15, 7, 22000.00, '2025-06-05', '', ''),
+(16, 7, 19500.00, '2025-06-05', 'efectivo', ''),
+(17, 8, 12000.00, '2025-06-06', 'efectivo', ''),
+(18, 9, 54000.00, '2025-06-06', 'efectivo', 'paga el resto alfinal');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `pedidos`
+-- Table structure for table `pedidos`
 --
 
 CREATE TABLE `pedidos` (
@@ -367,18 +407,18 @@ CREATE TABLE `pedidos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `pedidos`
+-- Dumping data for table `pedidos`
 --
 
 INSERT INTO `pedidos` (`id`, `cliente_id`, `proyecto`, `servicio_id`, `descripcion`, `fecha_solicitud`, `fecha_entrega`, `precio_obra`, `estimacion_total`, `estado_id`) VALUES
-(1, 1, 'aparador de pared', NULL, 'moderno', '2025-06-03', 1970, 12.00, 0.00, 4),
-(3, 3, 'closet moderno', NULL, 'un moderno y elegante closet', '2025-06-03', 22, 25000.00, 0.00, 4),
-(4, 2, 'Mesita de salón', NULL, 'coder', '2025-06-03', 2, 15000.00, 22000.00, 6);
+(5, 3, 'aparador de pared', NULL, 'un aparador moderno de 2x3 para un salon mediano', '2025-06-05', 20, 25000.00, 48500.00, 11),
+(8, 2, 'Mesita de salón', NULL, 'un mueble elegante', '2025-06-05', 25, 30000.00, 41500.00, 11),
+(9, 4, 'aparador moderno', NULL, 'una replica moderna para salon grande', '2025-06-06', 10, 50000.00, 134000.00, 5);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `producciones`
+-- Table structure for table `producciones`
 --
 
 CREATE TABLE `producciones` (
@@ -392,16 +432,18 @@ CREATE TABLE `producciones` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `producciones`
+-- Dumping data for table `producciones`
 --
 
 INSERT INTO `producciones` (`id`, `solicitud_id`, `responsable_id`, `fecha_inicio`, `fecha_fin`, `estado_id`, `created_at`) VALUES
-(1, 4, 2, '2025-06-09', '2025-06-11', 8, '2025-06-04 14:22:13');
+(1, NULL, 2, '2025-06-09', '2025-06-05', 9, '2025-06-04 14:22:13'),
+(2, 5, 2, '2025-06-16', '2025-06-05', 9, '2025-06-04 23:06:00'),
+(3, NULL, 2, '2025-06-09', '2025-06-05', 9, '2025-06-05 07:55:50');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `productos`
+-- Table structure for table `productos`
 --
 
 CREATE TABLE `productos` (
@@ -414,18 +456,19 @@ CREATE TABLE `productos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `productos`
+-- Dumping data for table `productos`
 --
 
 INSERT INTO `productos` (`id`, `nombre`, `descripcion`, `imagen`, `precio_unitario`, `stock`) VALUES
-(1, 'aparador moderno', 'un elgante articulo', 'uploads/productos/img_683d2a31893d7.jpg', 12000.00, 1),
-(2, 'Mesita de salón', 'coder', NULL, 22000.00, 0),
-(4, 'Mesita de salón', 'coder', NULL, 22000.00, 0);
+(1, 'aparador moderno', 'un elgante articulo', 'uploads/productos/img_683d2a31893d7.jpg', 12000.00, 0),
+(5, 'aparador de pared', 'un aparador moderno de 2x3 para un salon mediano', 'producto_68413437b40868.73728009.jpeg', 48500.00, 0),
+(6, 'Mesita de salón', 'un mueble elegante', NULL, 41500.00, 0),
+(7, 'aparador moderno', 'una replica moderna para salon grande', NULL, 134000.00, 0);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `proveedores`
+-- Table structure for table `proveedores`
 --
 
 CREATE TABLE `proveedores` (
@@ -438,7 +481,7 @@ CREATE TABLE `proveedores` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `proveedores`
+-- Dumping data for table `proveedores`
 --
 
 INSERT INTO `proveedores` (`id`, `nombre`, `contacto`, `telefono`, `email`, `direccion`) VALUES
@@ -447,7 +490,7 @@ INSERT INTO `proveedores` (`id`, `nombre`, `contacto`, `telefono`, `email`, `dir
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `roles`
+-- Table structure for table `roles`
 --
 
 CREATE TABLE `roles` (
@@ -456,7 +499,7 @@ CREATE TABLE `roles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `roles`
+-- Dumping data for table `roles`
 --
 
 INSERT INTO `roles` (`id`, `nombre`) VALUES
@@ -469,7 +512,7 @@ INSERT INTO `roles` (`id`, `nombre`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `servicios`
+-- Table structure for table `servicios`
 --
 
 CREATE TABLE `servicios` (
@@ -483,7 +526,7 @@ CREATE TABLE `servicios` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `servicios`
+-- Dumping data for table `servicios`
 --
 
 INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `precio_base`, `unidad`, `activo`, `creado_en`) VALUES
@@ -495,7 +538,7 @@ INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `precio_base`, `unidad`,
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `tareas_produccion`
+-- Table structure for table `tareas_produccion`
 --
 
 CREATE TABLE `tareas_produccion` (
@@ -511,7 +554,7 @@ CREATE TABLE `tareas_produccion` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `usuarios`
+-- Table structure for table `usuarios`
 --
 
 CREATE TABLE `usuarios` (
@@ -525,7 +568,7 @@ CREATE TABLE `usuarios` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `usuarios`
+-- Dumping data for table `usuarios`
 --
 
 INSERT INTO `usuarios` (`id`, `empleado_id`, `username`, `password`, `imagen`, `rol_id`, `activo`) VALUES
@@ -534,7 +577,7 @@ INSERT INTO `usuarios` (`id`, `empleado_id`, `username`, `password`, `imagen`, `
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `ventas`
+-- Table structure for table `ventas`
 --
 
 CREATE TABLE `ventas` (
@@ -549,7 +592,7 @@ CREATE TABLE `ventas` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `ventas`
+-- Dumping data for table `ventas`
 --
 
 INSERT INTO `ventas` (`id`, `cliente_id`, `nombre_cliente`, `dni_cliente`, `direccion_cliente`, `fecha`, `total`, `metodo_pago`) VALUES
@@ -557,41 +600,45 @@ INSERT INTO `ventas` (`id`, `cliente_id`, `nombre_cliente`, `dni_cliente`, `dire
 (2, NULL, 'Mandela', '000145478', 'Sampaca', '2025-06-01 17:19:19', 4000.00, 'efectivo'),
 (3, NULL, 'Felipe Raso', '0001405478', 'lampert', '2025-06-02 03:09:49', 44000.00, 'efectivo'),
 (4, NULL, 'Felipe', '0014578', 'los angeles', '2025-06-03 10:58:39', 12000.00, 'efectivo'),
-(7, 2, NULL, NULL, NULL, '2025-06-04 12:24:01', 22000.00, 'efectivo');
+(7, 2, NULL, NULL, NULL, '2025-06-04 12:24:01', 22000.00, 'efectivo'),
+(8, 3, NULL, NULL, NULL, '2025-06-04 23:03:23', 48500.00, 'efectivo'),
+(9, 2, NULL, NULL, NULL, '2025-06-05 07:54:23', 41500.00, 'efectivo'),
+(10, NULL, 'carmina', ' 0014578', 'begoña 1', '2025-06-06 06:59:18', 12000.00, 'efectivo'),
+(11, 4, NULL, NULL, NULL, '2025-06-06 07:10:01', 134000.00, 'efectivo');
 
 --
--- Índices para tablas volcadas
+-- Indexes for dumped tables
 --
 
 --
--- Indices de la tabla `avances_produccion`
+-- Indexes for table `avances_produccion`
 --
 ALTER TABLE `avances_produccion`
   ADD PRIMARY KEY (`id`),
   ADD KEY `produccion_id` (`produccion_id`);
 
 --
--- Indices de la tabla `clientes`
+-- Indexes for table `clientes`
 --
 ALTER TABLE `clientes`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `codigo` (`codigo`);
 
 --
--- Indices de la tabla `compras`
+-- Indexes for table `compras`
 --
 ALTER TABLE `compras`
   ADD PRIMARY KEY (`id`),
   ADD KEY `proveedor_id` (`proveedor_id`);
 
 --
--- Indices de la tabla `configuracion`
+-- Indexes for table `configuracion`
 --
 ALTER TABLE `configuracion`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `detalles_compra`
+-- Indexes for table `detalles_compra`
 --
 ALTER TABLE `detalles_compra`
   ADD PRIMARY KEY (`id`),
@@ -599,7 +646,7 @@ ALTER TABLE `detalles_compra`
   ADD KEY `material_id` (`material_id`);
 
 --
--- Indices de la tabla `detalles_pedido_material`
+-- Indexes for table `detalles_pedido_material`
 --
 ALTER TABLE `detalles_pedido_material`
   ADD PRIMARY KEY (`id`),
@@ -607,7 +654,7 @@ ALTER TABLE `detalles_pedido_material`
   ADD KEY `material_id` (`material_id`);
 
 --
--- Indices de la tabla `detalles_venta`
+-- Indexes for table `detalles_venta`
 --
 ALTER TABLE `detalles_venta`
   ADD PRIMARY KEY (`id`),
@@ -616,19 +663,19 @@ ALTER TABLE `detalles_venta`
   ADD KEY `servicio_id` (`servicio_id`);
 
 --
--- Indices de la tabla `empleados`
+-- Indexes for table `empleados`
 --
 ALTER TABLE `empleados`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `estados`
+-- Indexes for table `estados`
 --
 ALTER TABLE `estados`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `facturas`
+-- Indexes for table `facturas`
 --
 ALTER TABLE `facturas`
   ADD PRIMARY KEY (`id`),
@@ -636,13 +683,13 @@ ALTER TABLE `facturas`
   ADD KEY `estado_id` (`estado_id`);
 
 --
--- Indices de la tabla `materiales`
+-- Indexes for table `materiales`
 --
 ALTER TABLE `materiales`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `movimientos_material`
+-- Indexes for table `movimientos_material`
 --
 ALTER TABLE `movimientos_material`
   ADD PRIMARY KEY (`id`),
@@ -650,14 +697,14 @@ ALTER TABLE `movimientos_material`
   ADD KEY `produccion_id` (`produccion_id`);
 
 --
--- Indices de la tabla `pagos`
+-- Indexes for table `pagos`
 --
 ALTER TABLE `pagos`
   ADD PRIMARY KEY (`id`),
   ADD KEY `factura_id` (`factura_id`);
 
 --
--- Indices de la tabla `pedidos`
+-- Indexes for table `pedidos`
 --
 ALTER TABLE `pedidos`
   ADD PRIMARY KEY (`id`),
@@ -666,7 +713,7 @@ ALTER TABLE `pedidos`
   ADD KEY `estado_id` (`estado_id`);
 
 --
--- Indices de la tabla `producciones`
+-- Indexes for table `producciones`
 --
 ALTER TABLE `producciones`
   ADD PRIMARY KEY (`id`),
@@ -675,31 +722,31 @@ ALTER TABLE `producciones`
   ADD KEY `estado_id` (`estado_id`);
 
 --
--- Indices de la tabla `productos`
+-- Indexes for table `productos`
 --
 ALTER TABLE `productos`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `proveedores`
+-- Indexes for table `proveedores`
 --
 ALTER TABLE `proveedores`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `roles`
+-- Indexes for table `roles`
 --
 ALTER TABLE `roles`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `servicios`
+-- Indexes for table `servicios`
 --
 ALTER TABLE `servicios`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `tareas_produccion`
+-- Indexes for table `tareas_produccion`
 --
 ALTER TABLE `tareas_produccion`
   ADD PRIMARY KEY (`id`),
@@ -708,7 +755,7 @@ ALTER TABLE `tareas_produccion`
   ADD KEY `estado_id` (`estado_id`);
 
 --
--- Indices de la tabla `usuarios`
+-- Indexes for table `usuarios`
 --
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id`),
@@ -717,180 +764,180 @@ ALTER TABLE `usuarios`
   ADD KEY `rol_id` (`rol_id`);
 
 --
--- Indices de la tabla `ventas`
+-- Indexes for table `ventas`
 --
 ALTER TABLE `ventas`
   ADD PRIMARY KEY (`id`),
   ADD KEY `cliente_id` (`cliente_id`);
 
 --
--- AUTO_INCREMENT de las tablas volcadas
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT de la tabla `avances_produccion`
+-- AUTO_INCREMENT for table `avances_produccion`
 --
 ALTER TABLE `avances_produccion`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `clientes`
+-- AUTO_INCREMENT for table `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT de la tabla `compras`
+-- AUTO_INCREMENT for table `compras`
 --
 ALTER TABLE `compras`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT de la tabla `configuracion`
+-- AUTO_INCREMENT for table `configuracion`
 --
 ALTER TABLE `configuracion`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT de la tabla `detalles_compra`
+-- AUTO_INCREMENT for table `detalles_compra`
 --
 ALTER TABLE `detalles_compra`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT de la tabla `detalles_pedido_material`
+-- AUTO_INCREMENT for table `detalles_pedido_material`
 --
 ALTER TABLE `detalles_pedido_material`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
--- AUTO_INCREMENT de la tabla `detalles_venta`
+-- AUTO_INCREMENT for table `detalles_venta`
 --
 ALTER TABLE `detalles_venta`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT de la tabla `empleados`
+-- AUTO_INCREMENT for table `empleados`
 --
 ALTER TABLE `empleados`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT de la tabla `estados`
+-- AUTO_INCREMENT for table `estados`
 --
 ALTER TABLE `estados`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT de la tabla `facturas`
+-- AUTO_INCREMENT for table `facturas`
 --
 ALTER TABLE `facturas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
--- AUTO_INCREMENT de la tabla `materiales`
+-- AUTO_INCREMENT for table `materiales`
 --
 ALTER TABLE `materiales`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT de la tabla `movimientos_material`
+-- AUTO_INCREMENT for table `movimientos_material`
 --
 ALTER TABLE `movimientos_material`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT de la tabla `pagos`
+-- AUTO_INCREMENT for table `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
--- AUTO_INCREMENT de la tabla `pedidos`
+-- AUTO_INCREMENT for table `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
--- AUTO_INCREMENT de la tabla `producciones`
+-- AUTO_INCREMENT for table `producciones`
 --
 ALTER TABLE `producciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT de la tabla `productos`
+-- AUTO_INCREMENT for table `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT de la tabla `proveedores`
+-- AUTO_INCREMENT for table `proveedores`
 --
 ALTER TABLE `proveedores`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT de la tabla `roles`
+-- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT de la tabla `servicios`
+-- AUTO_INCREMENT for table `servicios`
 --
 ALTER TABLE `servicios`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT de la tabla `tareas_produccion`
+-- AUTO_INCREMENT for table `tareas_produccion`
 --
 ALTER TABLE `tareas_produccion`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `usuarios`
+-- AUTO_INCREMENT for table `usuarios`
 --
 ALTER TABLE `usuarios`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT de la tabla `ventas`
+-- AUTO_INCREMENT for table `ventas`
 --
 ALTER TABLE `ventas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- Restricciones para tablas volcadas
+-- Constraints for dumped tables
 --
 
 --
--- Filtros para la tabla `avances_produccion`
+-- Constraints for table `avances_produccion`
 --
 ALTER TABLE `avances_produccion`
   ADD CONSTRAINT `avances_produccion_ibfk_1` FOREIGN KEY (`produccion_id`) REFERENCES `producciones` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `compras`
+-- Constraints for table `compras`
 --
 ALTER TABLE `compras`
   ADD CONSTRAINT `compras_ibfk_1` FOREIGN KEY (`proveedor_id`) REFERENCES `proveedores` (`id`) ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `detalles_compra`
+-- Constraints for table `detalles_compra`
 --
 ALTER TABLE `detalles_compra`
   ADD CONSTRAINT `detalles_compra_ibfk_1` FOREIGN KEY (`compra_id`) REFERENCES `compras` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `detalles_compra_ibfk_2` FOREIGN KEY (`material_id`) REFERENCES `materiales` (`id`) ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `detalles_pedido_material`
+-- Constraints for table `detalles_pedido_material`
 --
 ALTER TABLE `detalles_pedido_material`
   ADD CONSTRAINT `detalles_pedido_material_ibfk_1` FOREIGN KEY (`pedido_id`) REFERENCES `pedidos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `detalles_pedido_material_ibfk_2` FOREIGN KEY (`material_id`) REFERENCES `materiales` (`id`) ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `detalles_venta`
+-- Constraints for table `detalles_venta`
 --
 ALTER TABLE `detalles_venta`
   ADD CONSTRAINT `detalles_venta_ibfk_1` FOREIGN KEY (`venta_id`) REFERENCES `ventas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -898,27 +945,27 @@ ALTER TABLE `detalles_venta`
   ADD CONSTRAINT `detalles_venta_ibfk_3` FOREIGN KEY (`servicio_id`) REFERENCES `servicios` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `facturas`
+-- Constraints for table `facturas`
 --
 ALTER TABLE `facturas`
   ADD CONSTRAINT `facturas_ibfk_1` FOREIGN KEY (`venta_id`) REFERENCES `ventas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `facturas_ibfk_2` FOREIGN KEY (`estado_id`) REFERENCES `estados` (`id`) ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `movimientos_material`
+-- Constraints for table `movimientos_material`
 --
 ALTER TABLE `movimientos_material`
   ADD CONSTRAINT `movimientos_material_ibfk_1` FOREIGN KEY (`material_id`) REFERENCES `materiales` (`id`) ON UPDATE CASCADE,
   ADD CONSTRAINT `movimientos_material_ibfk_2` FOREIGN KEY (`produccion_id`) REFERENCES `producciones` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `pagos`
+-- Constraints for table `pagos`
 --
 ALTER TABLE `pagos`
   ADD CONSTRAINT `pagos_ibfk_1` FOREIGN KEY (`factura_id`) REFERENCES `facturas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `pedidos`
+-- Constraints for table `pedidos`
 --
 ALTER TABLE `pedidos`
   ADD CONSTRAINT `pedidos_ibfk_1` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`) ON UPDATE CASCADE,
@@ -926,7 +973,7 @@ ALTER TABLE `pedidos`
   ADD CONSTRAINT `pedidos_ibfk_3` FOREIGN KEY (`estado_id`) REFERENCES `estados` (`id`) ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `producciones`
+-- Constraints for table `producciones`
 --
 ALTER TABLE `producciones`
   ADD CONSTRAINT `producciones_ibfk_1` FOREIGN KEY (`solicitud_id`) REFERENCES `pedidos` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
@@ -934,7 +981,7 @@ ALTER TABLE `producciones`
   ADD CONSTRAINT `producciones_ibfk_3` FOREIGN KEY (`estado_id`) REFERENCES `estados` (`id`) ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `tareas_produccion`
+-- Constraints for table `tareas_produccion`
 --
 ALTER TABLE `tareas_produccion`
   ADD CONSTRAINT `tareas_produccion_ibfk_1` FOREIGN KEY (`produccion_id`) REFERENCES `producciones` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -942,14 +989,14 @@ ALTER TABLE `tareas_produccion`
   ADD CONSTRAINT `tareas_produccion_ibfk_3` FOREIGN KEY (`estado_id`) REFERENCES `estados` (`id`) ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `usuarios`
+-- Constraints for table `usuarios`
 --
 ALTER TABLE `usuarios`
   ADD CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`empleado_id`) REFERENCES `empleados` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `usuarios_ibfk_2` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`) ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `ventas`
+-- Constraints for table `ventas`
 --
 ALTER TABLE `ventas`
   ADD CONSTRAINT `ventas_ibfk_1` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
