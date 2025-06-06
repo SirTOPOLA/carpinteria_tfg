@@ -34,18 +34,21 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered table-hover table-custom align-middle mb-0">
-                    <thead>
+                    <thead class="table-light">
                         <tr>
                             <th><i class="bi bi-hash me-1"></i>ID</th>
-                            <th><i class="bi bi-file-text me-1"></i>Cliente</th>
                             <th><i class="bi bi-card-heading me-1"></i>Proyecto</th>
                             <th><i class="bi bi-flag-fill me-1"></i>Descripción</th>
+                            <th><i class="bi bi-layers me-1"></i>Piezas</th>
+                            <th><i class="bi bi-cash-coin me-1"></i>Adelanto</th>
+                            <th><i class="bi bi-currency-exchange me-1"></i>Estimado</th>
+                            <th><i class="bi bi-calendar"></i>Días</th>
                             <th><i class="bi bi-calendar-event me-1"></i>Creado</th>
                             <th><i class="bi bi-calendar-check me-1"></i>Estado</th>
-                            <th><i class="bi bi-clock-history me-1"></i>Coste</th>
                             <th class="text-center"><i class="bi bi-gear-fill me-1"></i>Acciones</th>
                         </tr>
                     </thead>
+
                     <tbody id="tbody">
                         <?php if (!empty($pedidos) === 0): ?>
 
@@ -92,6 +95,8 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
 
 
 </div>
+
+
 <!-- Modal Cambiar Estado -->
 <div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-labelledby="modalCambiarEstadoLabel"
     aria-hidden="true">
@@ -104,13 +109,23 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="pedidoId" name="id">
+                    <input type="hidden" id="totalEstimado" name="total_estimado"> <!-- total oculto -->
+
                     <div class="mb-3">
                         <label for="nuevoEstado" class="form-label">Nuevo Estado</label>
                         <select class="form-select" name="estado" id="nuevoEstado" required>
                             <option value="">Seleccione estado</option>
                             <option value="aprobado">Aprobado</option>
-
                         </select>
+                    </div>
+
+                    <div class="mb-3 d-none" id="montoAprobadoGroup">
+                        <label for="montoPagado" class="form-label">Monto de adelanto (XAF)</label>
+                        <input type="number" step="1" min="0" class="form-control" id="montoPagado" name="monto_pagado"
+                            placeholder="Ingrese monto">
+                        <div id="montoError" class="text-danger small mt-1 d-none">El monto debe ser mayor que cero y no
+                            superar el total estimado.</div>
+                        <div class="form-text">Total estimado: <span id="totalEstimadoTexto"></span> XAF</div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -121,6 +136,7 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
         </form>
     </div>
 </div>
+
 <script>
 
     const buscador = document.getElementById('buscador');
@@ -133,6 +149,9 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
         manejarEventosAjaxTbody(); // Necesario cuando cargamos html por ajax
         // buscar()
 
+
+
+
     });
 
     function manejarEventosAjaxTbody() {
@@ -142,8 +161,28 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
                 const id = e.target.closest(".btn-eliminar").dataset.id;
                 eliminar(id);
             }
+            if (e.target.closest('.cambiar-estado-btn')) {
+                const btn = e.target.closest('.cambiar-estado-btn');
+                const pedidoId = btn.dataset.id;
+                const totalEstimado = btn.dataset.total; // ya debe venir desde el botón
+                document.getElementById('pedidoId').value = pedidoId;
+                document.getElementById('totalEstimado').value = totalEstimado;
+                document.getElementById('totalEstimadoTexto').innerText = parseInt(totalEstimado).toLocaleString();
+                document.getElementById('montoPagado').value = ''; // limpiar campo anterior
+                document.getElementById('montoError').classList.add('d-none');
+                document.getElementById('montoAprobadoGroup').classList.add('d-none');
 
-
+                // Mostrar/ocultar campo de monto si seleccionan "Aprobado"
+                document.getElementById('nuevoEstado').addEventListener('change', function () {
+                    const group = document.getElementById('montoAprobadoGroup');
+                    if (this.value === 'aprobado') {
+                        group.classList.remove('d-none');
+                    } else {
+                        group.classList.add('d-none');
+                    }
+                });
+                modalEstado()
+            }
 
         });
 
@@ -225,51 +264,54 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
     }
 
 
-    // Abre el modal y carga los datos para cambiar estado 
-    document.addEventListener('click', function (e) {
-        if (e.target.closest('.cambiar-estado-btn')) {
-            const btn = e.target.closest('.cambiar-estado-btn');
 
-            // Asigna datos al formulario
-            document.getElementById('pedidoId').value = btn.dataset.id;
-            document.getElementById('nuevoEstado').value = btn.dataset.estado;
 
-        }
-    });
+    // Validar antes de enviar
 
-    // Enviar formulario de cambio de estado
-    document.getElementById('formCambiarEstado').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const formData = new FormData(this);
+    function modalEstado() {
 
-        fetch('api/actualizar_estado_pedido.php', {
-            method: 'POST',
-            body: formData
-        })
-            .then(async resp => {
-                const contentType = resp.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    return resp.json();
+        document.getElementById('formCambiarEstado').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const estado = document.getElementById('nuevoEstado').value;
+            const monto = parseFloat(document.getElementById('montoPagado').value || 0);
+            const total = parseFloat(document.getElementById('totalEstimado').value || 0);
+            const errorDiv = document.getElementById('montoError');
+
+            if (estado === 'aprobado') {
+                if (isNaN(monto) || monto <= 0 || monto > total) {
+                    errorDiv.classList.remove('d-none');
+                    return;
                 } else {
-                    const text = await resp.text();
-                    throw new Error('Respuesta no JSON: ' + text);
+                    errorDiv.classList.add('d-none');
                 }
+            }
+
+            const formData = new FormData(this);
+            fetch('api/actualizar_estado_pedido.php', {
+                method: 'POST',
+                body: formData
             })
-            .then(data => {
-                if (data.success) {
-                    bootstrap.Modal.getInstance(document.getElementById('modalCambiarEstado')).hide();
-                    location.reload();
-                } else {
-                    alert('Error al actualizar estado: ' + (data.message || ''));
-                }
-            })
-            .catch(err => console.error('Error en la petición:', err));
+                .then(async resp => {
+                    const contentType = resp.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        return resp.json();
+                    } else {
+                        const text = await resp.text();
+                        throw new Error('Respuesta no JSON: ' + text);
+                    }
+                })
+                .then(data => {
+                    if (data.success) {
+                        bootstrap.Modal.getInstance(document.getElementById('modalCambiarEstado')).hide();
+                        location.reload();
+                    } else {
+                        alert('Error al actualizar estado: ' + (data.message || ''));
+                    }
+                })
+                .catch(err => console.error('Error en la petición:', err));
+        });
 
-    });
-
-
-
-
-
+    }
 
 </script>

@@ -10,11 +10,9 @@ $stmt = $pdo->prepare("
     SELECT DISTINCT p.id, p.proyecto AS nombre, p.fecha_entrega AS tiempo
     FROM pedidos p
     INNER JOIN estados es ON p.estado_id = es.id
-    INNER JOIN clientes c ON p.cliente_id = c.id
-    INNER JOIN ventas v ON v.cliente_id = c.id
-    INNER JOIN facturas f ON f.venta_id = v.id
+    INNER JOIN clientes c ON p.cliente_id = c.id 
     WHERE es.nombre = 'aprobado'
-      AND f.saldo_pendiente < f.monto_total 
+      AND  p.adelanto != 0
 ");
 $stmt->execute();
 $pedidos = $stmt->fetchAll(PDO::FETCH_ASSOC);

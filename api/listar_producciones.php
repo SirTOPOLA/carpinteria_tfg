@@ -53,13 +53,33 @@ $html = '';
 foreach ($producciones as $prod) {
     $estadoLower = strtolower($prod['nombre_estado'] ?? '');
     $badgeColor = match ($estadoLower) {
-        'pendiente'    => 'bg-secondary',
-        'en_proceso'   => 'bg-warning text-dark',
-        'finalizado'   => 'bg-success',
-        default        => 'bg-light text-dark'
+        'pendiente' => 'bg-secondary',
+        'en_proceso' => 'bg-warning text-dark',
+        'finalizado' => 'bg-success',
+        default => 'bg-light text-dark'
     };
+   $btnTareas = ($estadoLower === 'en_proceso') ? "
+        <button class='btn btn-sm btn-outline-primary registrar-tarea-btn'
+                data-id='{$prod['id']}'
+                data-proyecto='" . htmlspecialchars($prod['nombre_proyecto']) . "'
+                data-bs-toggle='modal'
+                data-bs-target='#modalRegistrarTarea'>
+            <i class='bi bi-list-task'></i> Tareas
+        </button>
+        ": '' ;
 
-    $btnEstado = ($estadoLower === 'en_proceso' || $estadoLower === 'pendiente') ? "
+
+    $btnAvances =  ($estadoLower === 'en_proceso') ? "
+            <button class='btn btn-sm btn-outline-info registrar-avance-btn' 
+                    data-id='{$prod['id']}'
+                    data-proyecto='" . htmlspecialchars($prod['nombre_proyecto']) . "'
+                    data-bs-toggle='modal' 
+                    data-bs-target='#modalRegistrarAvance'>
+                <i class='bi bi-clipboard-plus'></i> Avance
+            </button>" : '';
+
+
+    $btnEstado = ($estadoLower === 'en_proceso') ? "
         <button class='btn btn-sm btn-outline-success cambiar-estado-btn' 
                 data-id='{$prod['id']}' 
                 data-estado='{$prod['nombre_estado']}'
@@ -78,22 +98,22 @@ foreach ($producciones as $prod) {
             <i class='bi bi-box-seam'></i> Ver Materiales
         </button>";
 
-        $acciones = '';
-        if (!empty($_SESSION['usuario']['rol']) && $_SESSION['usuario']['rol'] === 'Administrador') {
-            // Solo mostrar editar/ver materiales si el estado no es 'finalizado'
-            $btnEditar = '';
-            $btnVerMaterialesHTML = '';
-            
-            if ($estadoLower !== 'finalizado') {
-                $btnEditar = "
+    $acciones = '';
+    if (!empty($_SESSION['usuario']['rol']) && $_SESSION['usuario']['rol'] === 'Administrador') {
+        // Solo mostrar editar/ver materiales si el estado no es 'finalizado'
+        $btnEditar = '';
+        $btnVerMaterialesHTML = '';
+
+        if ($estadoLower !== 'finalizado') {
+            $btnEditar = "
                     <a href='index.php?vista=editar_producciones&id={$prod['id']}' class='btn btn-sm btn-outline-warning' title='Editar'>
                         <i class='bi bi-pencil-square'></i>
                     </a>";
-        
-                $btnVerMaterialesHTML = $btnVerMateriales;
-            }
-        
-            $acciones = "
+
+            $btnVerMaterialesHTML = $btnVerMateriales;
+        }
+
+        $acciones = "
             <td class='text-center'>
                 $btnEditar
                 <a href='#' class='btn btn-sm btn-danger btn-eliminar' data-id='{$prod['id']}' title='Eliminar'>
@@ -101,9 +121,14 @@ foreach ($producciones as $prod) {
                 </a>
                 $btnEstado
                 $btnVerMaterialesHTML
+                 $btnTareas
+            $btnAvances
             </td>";
-        }
-        
+
+    }
+
+
+
     $html .= " 
         <tr>
             <td>{$prod['id']}</td>

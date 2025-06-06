@@ -73,10 +73,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->beginTransaction();
 
         // Insertar pedido
-        $stmtPedido = $pdo->prepare("INSERT INTO pedidos (cliente_id, proyecto, servicio_id, descripcion, fecha_solicitud, fecha_entrega, precio_obra, estimacion_total, estado_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmtPedido = $pdo->prepare("INSERT INTO pedidos (cliente_id, proyecto, piezas, servicio_id, descripcion, fecha_solicitud, fecha_entrega, precio_obra, estimacion_total, estado_id) VALUES (?, ?, ?,?, ?, ?, ?, ?, ?, ?)");
         $stmtPedido->execute([
             $cliente_id,
             $proyecto ?: null,
+            $cantidad_producto,
             $servicio_id ?: null,
             $descripcion,
             $fecha_solicitud,
@@ -98,12 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-       /*  // Relación con producto existente
-        if ($tipo_producto === 'existente' && $producto_id) {
-            $stmtProducto = $pdo->prepare("INSERT INTO detalles_pedido_material (pedido_id, producto_id, cantidad) VALUES (?, ?, ?)");
-            $stmtProducto->execute([$pedido_id, $producto_id, $cantidad_producto]);
-        } */
-
+     
         $pdo->commit();
 
         echo json_encode(['status' => true, 'message' => 'Pedido registrado correctamente.']);

@@ -22,6 +22,12 @@ try {
     $stmt = $pdo->query($sql);
     $producciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    $sql = "SELECT * FROM empleados  ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
 } catch (PDOException $e) {
     echo "Error al cargar producciones: " . $e->getMessage();
 }
@@ -117,7 +123,8 @@ try {
 
 
 <!-- Modal Cambiar Estado -->
-<div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-labelledby="modalCambiarEstadoLabel" aria-hidden="true">
+<div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-labelledby="modalCambiarEstadoLabel"
+    aria-hidden="true">
     <div class="modal-dialog">
         <form id="formCambiarEstado" enctype="multipart/form-data">
             <div class="modal-content">
@@ -125,7 +132,6 @@ try {
                     <h5 class="modal-title" id="modalCambiarEstadoLabel">Cambiar Estado de Producción</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
-
                 <div class="modal-body">
                     <input type="hidden" id="produccionId" name="id">
 
@@ -134,14 +140,37 @@ try {
                         <select class="form-select" name="estado" id="nuevoEstado" required>
                             <option value="">Seleccione estado</option>
                             <option value="finalizado">Finalizada</option>
+                            <option value="en_proceso">En proceso</option>
+                            <!--  <option value="cancelado">Cancelado</option> -->
                         </select>
                     </div>
 
-                    <div class="mb-3">
+                    <!-- Checkbox para stock -->
+                    <div class="form-check d-none" id="checkStockContainer">
+                        <input class="form-check-input" type="checkbox" id="deseaStock">
+                        <label class="form-check-label" for="deseaStock">Deseo actualizar stock</label>
+                    </div>
+
+                    <!-- Campo de stock (opcional) -->
+                    <div class="mb-3 d-none" id="stockContainer">
+                        <label for="stockFinal" class="form-label">Cantidad a Stock</label>
+                        <input type="number" name="stock" id="stockFinal" class="form-control" min="1"
+                            placeholder="Cantidad en unidades">
+                    </div>
+
+                    <!-- Checkbox para imagen -->
+                    <div class="form-check d-none" id="checkImagenContainer">
+                        <input class="form-check-input" type="checkbox" id="deseaImagen">
+                        <label class="form-check-label" for="deseaImagen">Deseo actualizar imagen del producto</label>
+                    </div>
+
+                    <!-- Campo imagen (opcional) -->
+                    <div class="mb-3 d-none" id="fotoContainer">
                         <label for="fotoProducto" class="form-label">Foto del Producto Terminado</label>
-                        <input type="file" name="foto" id="fotoProducto" class="form-control" accept="image/*" required>
+                        <input type="file" name="foto" id="fotoProducto" class="form-control" accept="image/*">
                     </div>
                 </div>
+
 
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Guardar</button>
@@ -151,6 +180,88 @@ try {
         </form>
     </div>
 </div>
+
+
+<!--  registrar avances del pedido ------ -->
+<div class="modal fade" id="modalRegistrarAvance" tabindex="-1" aria-labelledby="avanceLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form id="formRegistrarAvance" enctype="multipart/form-data">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title"><i class="bi bi-clipboard-plus"></i> Registrar Avance</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="produccion_id" id="produccion_id">
+                    <div class="mb-3">
+                        <label for="descripcion_avance" class="form-label">Descripción del Avance</label>
+                        <textarea name="descripcion" class="form-control" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="imagen" class="form-label">Imagen (opcional)</label>
+                        <input type="file" name="imagen" class="form-control" accept="image/*">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-info">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ---- modal de registro de tareas ------- -->
+<!-- Modal para registrar tarea -->
+<div class="modal fade" id="modalRegistrarTarea" tabindex="-1" aria-labelledby="tituloRegistrarTarea"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form id="formRegistrarTarea">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="tituloRegistrarTarea">Registrar Nueva Tarea</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="produccion_id" id="produccion_id_tarea">
+
+                    <div class="mb-3">
+                        <label for="descripcion_tarea" class="form-label">Descripción de la Tarea</label>
+                        <textarea class="form-control" name="descripcion" id="descripcion_tarea" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="responsable_tarea" class="form-label">Responsable</label>
+                        <select class="form-select" name="responsable_id" id="responsable_tarea" required>
+                            <option value="">Seleccione un empleado</option>
+                            <?php foreach ($empleados as $prod): ?>
+                                <option value="<?= $prod['id'] ?>"><?= htmlspecialchars($prod['nombre']) ?>
+                                    <?= htmlspecialchars($prod['apellido']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="fecha_inicio_tarea" class="form-label">Fecha de Inicio</label>
+                        <input type="date" class="form-control" name="fecha_inicio" id="fecha_inicio_tarea" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="fecha_fin_tarea" class="form-label">Fecha de Fin</label>
+                        <input type="date" class="form-control" name="fecha_fin" id="fecha_fin_tarea" required>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Guardar Tarea</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
 <script>
 
@@ -162,11 +273,108 @@ try {
         cargarDatos();
         clickPaginacion()
         manejarEventosAjaxTbody(); // Necesario cuando cargamos html por ajax
-        // buscar()
+        // buscar() 
+        const estadoSelect = document.getElementById('nuevoEstado');
 
+        const checkStockContainer = document.getElementById('checkStockContainer');
+        const checkboxStock = document.getElementById('deseaStock');
+        const stockContainer = document.getElementById('stockContainer');
+        const stockInput = document.getElementById('stockFinal');
 
+        const checkImagenContainer = document.getElementById('checkImagenContainer');
+        const checkboxImagen = document.getElementById('deseaImagen');
+        const fotoContainer = document.getElementById('fotoContainer');
+        const fotoInput = document.getElementById('fotoProducto');
 
+        estadoSelect.addEventListener('change', () => {
+            const estado = estadoSelect.value;
 
+            if (estado === 'finalizado') {
+                // Mostrar los checkboxes de opciones
+                checkStockContainer.classList.remove('d-none');
+                checkImagenContainer.classList.remove('d-none');
+
+                // Ocultar campos por defecto hasta que se activen los checkbox
+                stockContainer.classList.add('d-none');
+                fotoContainer.classList.add('d-none');
+
+                // Limpiar valores y requerimientos
+                stockInput.value = '';
+                stockInput.removeAttribute('required');
+                checkboxStock.checked = false;
+
+                fotoInput.value = '';
+                fotoInput.removeAttribute('required');
+                checkboxImagen.checked = false;
+
+            } else {
+                // Si el estado no es 'finalizado', ocultamos todo
+                checkStockContainer.classList.add('d-none');
+                stockContainer.classList.add('d-none');
+                checkboxStock.checked = false;
+                stockInput.value = '';
+                stockInput.removeAttribute('required');
+
+                checkImagenContainer.classList.add('d-none');
+                fotoContainer.classList.add('d-none');
+                checkboxImagen.checked = false;
+                fotoInput.value = '';
+                fotoInput.removeAttribute('required');
+            }
+        });
+
+        // Mostrar/ocultar campo stock
+        checkboxStock.addEventListener('change', () => {
+            if (checkboxStock.checked) {
+                stockContainer.classList.remove('d-none');
+                stockInput.setAttribute('required', 'required');
+            } else {
+                stockContainer.classList.add('d-none');
+                stockInput.value = '';
+                stockInput.removeAttribute('required');
+            }
+        });
+
+        // Mostrar/ocultar campo imagen
+        checkboxImagen.addEventListener('change', () => {
+            if (checkboxImagen.checked) {
+                fotoContainer.classList.remove('d-none');
+                fotoInput.setAttribute('required', 'required');
+            } else {
+                fotoContainer.classList.add('d-none');
+                fotoInput.value = '';
+                fotoInput.removeAttribute('required');
+            }
+        });
+
+        /* avances del pedido segun fases de la produccion ----- */
+        document.addEventListener('click', function (e) {
+            if (e.target.closest('.registrar-avance-btn')) {
+                const btn = e.target.closest('.registrar-avance-btn');
+                const produccionId = btn.dataset.id;
+                document.getElementById('produccion_id').value = produccionId;
+            }
+        });
+
+        document.getElementById('formRegistrarAvance')?.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            const res = await fetch('api/guardar_avance.php', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                alert('Avance registrado con éxito');
+                document.getElementById('formRegistrarAvance').reset();
+                bootstrap.Modal.getInstance(document.getElementById('modalRegistrarAvance')).hide();
+                // Opcional: recargar listado o mostrar avance
+            } else {
+                alert('Error al registrar el avance');
+            }
+        });
 
 
     });
@@ -178,6 +386,7 @@ try {
                 const id = e.target.closest(".btn-eliminar").dataset.id;
                 eliminar(id);
             }
+
 
             /* ----- modal de listado de materialesasociados al pedido --------- */
             if (e.target.closest('.ver-materiales-btn')) {
@@ -206,13 +415,56 @@ try {
                     });
             }
 
+            /* -------registrar tareas ------------ */
+            if (e.target.closest(".registrar-tarea-btn")) {
+                const btn = e.target.closest(".registrar-tarea-btn");
+                const produccionId = btn.dataset.id;
+                const proyecto = btn.dataset.proyecto;
 
+                document.getElementById('produccion_id_tarea').value = produccionId;
+                document.getElementById('tituloRegistrarTarea').textContent = `Registrar Tarea para "${proyecto}"`;
 
+            }
 
 
         });
 
     }
+
+    document.getElementById('formRegistrarTarea').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const datos = new FormData(form);
+
+        fetch('api/guardar_operacion.php', {
+            method: 'POST',
+            body: datos
+        })
+            .then(res => res.text())
+            .then(text => {
+                try {
+                    const resp = JSON.parse(text);
+                    //console.log(resp);
+                    if (resp.success) {
+                        alert('Tarea registrada correctamente');
+                        form.reset();
+                        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('modalRegistrarTarea'));
+                        modal.hide();
+                    } else {
+                        form.reset();
+                        alert(resp.message || 'Error al registrar la tarea');
+                    }
+                } catch (e) {
+                    //console.error("Respuesta no válida:", text);
+                    alert('Error inesperado en el servidor');
+                }
+            })
+            .catch(err => console.error(err));
+
+    });
+
+
     moverMaterial()
     function moverMaterial() {
         document.addEventListener('click', function (e) {
@@ -246,6 +498,7 @@ try {
                         if (data.success) {
                             alert('Movimiento registrado correctamente');
                             // recargar materiales o actualizar stock si deseas
+                            location.reload();
                         } else {
                             alert(data.message);
                         }
@@ -403,7 +656,7 @@ try {
 
             // Asigna datos al formulario
             document.getElementById('produccionId').value = btn.dataset.id;
-            document.getElementById('nuevoEstado').value = btn.dataset.estado; 
+            document.getElementById('nuevoEstado').value = btn.dataset.estado;
         }
     });
 

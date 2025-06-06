@@ -398,11 +398,13 @@ CREATE TABLE `pedidos` (
   `cliente_id` int(11) NOT NULL,
   `proyecto` varchar(100) NOT NULL,
   `servicio_id` int(11) DEFAULT NULL,
+  `piezas` int(11) DEFAULT 1,
   `descripcion` text DEFAULT NULL,
   `fecha_solicitud` date NOT NULL,
   `fecha_entrega` int(11) NOT NULL,
+  `adelanto` decimal(10,2) DEFAULT 0.00,
   `precio_obra` decimal(10,2) DEFAULT 0.00,
-  `estimacion_total` decimal(10,2) DEFAULT NULL,
+  `estimacion_total` decimal(10,2) DEFAULT 00.0,
   `estado_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

@@ -55,14 +55,15 @@ $menu = [
         'Pedidos'       => 'pedidos',
         'Producciones'  => 'producciones',        
         'Roles'         => 'roles',
-       // 'Reportes'      => 'reportes',
+        // 'Reportes'      => 'reportes',
         'Productos'     => 'productos',
         'Ventas'        => 'ventas',
         'Compras'       => 'compras',
         'Configuración' => 'configuracion',
         'Operaciones'   => 'operaciones',
-    ],
-    'operario' => [
+        'Mis_pedidos'       => 'mis_pedidos',
+      ],
+      'operario' => [
       'Dashboard'     => 'dashboard',
       'Producción'    => 'produccion',
       'Tareas'        => 'tareas',
@@ -85,13 +86,9 @@ $menu = [
         
        /*  'Diseños'       => 'diseños'  */
     ],
-    'cliente' => [
-        'Dashboard'     => 'dashboard',
-        'Mi Perfil'     => 'perfil',
-        'Mis Pedidos'   => 'mis_pedidos',
-        'Pedidos'       => 'pedidos',
-        'Productos'     => 'productos', // si puede ver catálogo
-        'Servicios'     => 'servicios', // si puede ver lo que se ofrece
+    'cliente' => [ 
+      'Dashboard'     => 'dashboard',
+        'Mis Pedidos'   => 'mis_pedidos' 
     ],
  
 

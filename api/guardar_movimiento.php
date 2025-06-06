@@ -95,19 +95,58 @@ try {
     }
     $stmt->execute([':cantidad' => $cantidad, ':id' => $materialId]);
 
-    // Actualizar estado de la producción (solo si es salida)
-    if ($tipoMovimiento === 'salida') {
+   // Cambiar estado a 'en_proceso' solo si el actual es 'pendiente' y tipo es 'salida'
+if ($tipoMovimiento === 'salida') {
+    // Verificar estado actual de la producción
+    $stmt = $pdo->prepare("
+        SELECT prod.estado_id, est.nombre 
+        FROM producciones prod
+        JOIN estados est ON prod.estado_id = est.id
+        WHERE prod.id = ?
+        LIMIT 1
+    ");
+    $stmt->execute([$produccionId]);
+    $estadoActual = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($estadoActual && strtolower($estadoActual['nombre']) === 'pendiente') {
+        // Cambiar estado de la producción a 'en_proceso'
         $stmt = $pdo->prepare("SELECT id FROM estados WHERE nombre = 'en_proceso' AND entidad = 'produccion' LIMIT 1");
         $stmt->execute();
-        $estado = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($estado) {
+        $estadoEnProceso = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($estadoEnProceso) {
             $stmt = $pdo->prepare("UPDATE producciones SET estado_id = :estado_id WHERE id = :produccion_id");
             $stmt->execute([
-                ':estado_id' => $estado['id'],
+                ':estado_id' => $estadoEnProceso['id'],
                 ':produccion_id' => $produccionId
             ]);
         }
+
+        // Cambiar estado del pedido relacionado a 'en_produccion'
+        $stmt = $pdo->prepare("
+            SELECT p.estado_id, e.nombre
+            FROM pedidos p
+            JOIN estados e ON p.estado_id = e.id
+            WHERE p.id = ?
+            LIMIT 1
+        ");
+        $stmt->execute([$pedidoId]);
+        $estadoPedido = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($estadoPedido && strtolower($estadoPedido['nombre']) === 'aprobado') {
+            $stmt = $pdo->prepare("SELECT id FROM estados WHERE nombre = 'en_produccion' AND entidad = 'pedido' LIMIT 1");
+            $stmt->execute();
+            $estadoEnProduccion = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($estadoEnProduccion) {
+                $stmt = $pdo->prepare("UPDATE pedidos SET estado_id = :estado_id WHERE id = :pedido_id");
+                $stmt->execute([
+                    ':estado_id' => $estadoEnProduccion['id'],
+                    ':pedido_id' => $pedidoId
+                ]);
+            }
+        }
     }
+}
+
 
     $pdo->commit();
     echo json_encode(['success' => true]);
