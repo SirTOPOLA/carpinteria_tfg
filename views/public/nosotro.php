@@ -62,7 +62,7 @@
       <?php if (!empty($equipo)): ?>
         <?php foreach ($equipo as $miembro): ?>
           <div class="col-6 col-md-4 col-lg-3 text-center">
-            <img src="api/<?= htmlspecialchars($miembro['perfil']) ?>" class="rounded-circle shadow"
+            <img src="api/<?= htmlspecialchars($miembro['imagen']) ?>" class="rounded-circle shadow"
               alt="<?= htmlspecialchars($miembro['nombre'] . ' ' . $miembro['apellido']) ?>" width="120" height="120"
               style="object-fit: cover;">
             <h6 class="mt-3 mb-0 fw-bold">

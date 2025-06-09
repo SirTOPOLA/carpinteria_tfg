@@ -44,7 +44,7 @@ try {
     e.nombre,
     e.apellido,
     e.genero,
-    u.perfil,
+    u.imagen,
     r.nombre AS rol
   FROM usuarios u
   INNER JOIN empleados e ON u.empleado_id = e.id

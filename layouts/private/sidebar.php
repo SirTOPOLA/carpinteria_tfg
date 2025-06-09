@@ -64,11 +64,11 @@ $menu = [
         'Mis_pedidos'       => 'mis_pedidos',
       ],
       'operario' => [
-      'Dashboard'     => 'dashboard',
-      'Producción'    => 'produccion',
-      'Tareas'        => 'tareas',
+        'Dashboard'     => 'dashboard',
+        'Operaciones'   => 'operaciones',
+       
         
-        'Movimientos'   => 'movimientos', // si lleva control de materiales
+        
       ],
       'vendedor' => [
         'Dashboard'     => 'dashboard',

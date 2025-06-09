@@ -101,7 +101,7 @@ if ($configuracion !== false) {
   $correo = $configuracion['correo'];
   $logo = $configuracion['logo'];
   $historia = $configuracion['historia']; // o historia, según tu DB
-  $imagen_portada = $configuracion['imagen'];
+  $imagen_portada = $configuracion['logo'];
 } else {
   // No hay configuración en la BD
   $nombre_empresa = '';

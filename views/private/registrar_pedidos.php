@@ -352,11 +352,11 @@ $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
             if (this.value === "existente") {
                 productoExistenteDiv.classList.remove("d-none");
                 productoNuevoDiv.classList.add("d-none");
-                proyecto.setAttribute('disabled', true);
+                //proyecto.setAttribute('disabled', true);
             } else if (this.value === "nuevo") {
                 productoNuevoDiv.classList.remove("d-none");
                 productoExistenteDiv.classList.add("d-none");
-                proyecto.setAttribute('disabled', false);
+                //proyecto.setAttribute('disabled', false);
             } else {
                 // En caso de que no se seleccione nada
                 productoExistenteDiv.classList.add("d-none");

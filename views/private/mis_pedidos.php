@@ -69,7 +69,7 @@ foreach ($pedidos as $pedido) {
     <div class="container">
         <div class="mb-4">
             <h2 class="fw-bold"><i class="bi bi-person-circle me-2"></i>Bienvenido,
-                <?= htmlspecialchars($_SESSION['usuario']['usuario']) ?></h2>
+                <?= htmlspecialchars($_SESSION['usuario']['nombre']) ?></h2>
         </div>
 
         <?php foreach ($producciones_data as $data):

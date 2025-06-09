@@ -24,7 +24,7 @@ switch ($rol) {
             ['titulo' => 'Total Productos', 'tabla' => 'productos', 'icono' => 'bi-box-seam'],
             ['titulo' => 'Total Servicios', 'tabla' => 'servicios', 'icono' => 'bi-gear-fill'],
             ['titulo' => 'Total Materiales', 'tabla' => 'materiales', 'icono' => 'bi-hammer'],
-            ['titulo' => 'Proyectos Activos', 'tabla' => 'proyectos', 'filtro' => "estado != 'finalizado'", 'icono' => 'bi-kanban-fill'],
+            
         ];
         break;
         /*  */
@@ -40,7 +40,7 @@ switch ($rol) {
         
     case 'operario':
         $tarjetas = [
-            ['titulo' => 'Producciones Activas', 'tabla' => 'producciones', 'filtro' => "estado != 'terminado'", 'icono' => 'bi-tools'],
+           // ['titulo' => 'Producciones Activas', 'tabla' => 'producciones', 'filtro' => "estado != 'terminado'", 'icono' => 'bi-tools'],
             ['titulo' => 'Total Materiales', 'tabla' => 'materiales', 'icono' => 'bi-hammer']
         ];
         break;
@@ -56,7 +56,7 @@ switch ($rol) {
         case 'cliente':
             $cliente_id = $_SESSION['usuario']['id'];
             $tarjetas = [
-                ['titulo' => 'Mis Pedidos', 'tabla' => 'solicitudes_proyecto', 'filtro' => "cliente_id = $cliente_id", 'icono' => 'bi-cart-check']
+                ['titulo' => 'Mis Pedidos', 'tabla' => 'pedidos', 'filtro' => "cliente_id = $cliente_id", 'icono' => 'bi-cart-check']
             ];
             break;
 

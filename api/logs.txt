@@ -6,3 +6,4 @@ Nombre: Marieta manga | Código: 1445785245641 | Teléfono: 55120456 | Direcció
 Nombre: Rufina Batapa | Código: 000121323 | Teléfono: 555908967 | Dirección: lampert | Email: rufina@gmail.com | Descripción: necesito una mecita
 2025-06-03 12:56:14 | Nombre: Felipe | Código: 0014578 | Teléfono: 222141517 | Dirección: los angeles | Email:  | Descripción: estoy interesado en un adaptador
 2025-06-06 08:55:29 | Nombre: carmina | Código: 0014578 | Teléfono: 222547895 | Dirección: begoña 1 | Email:  | Descripción: necesito un aparador
+2025-06-07 11:03:41 | Nombre: carlos mete | Código: 000123456 | Teléfono: 222474569 | Dirección: elanguema | Email:  | Descripción: necesitas un aparador

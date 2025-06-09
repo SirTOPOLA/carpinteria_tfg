@@ -1,8 +1,5 @@
-<?php
- 
- // Verificar si la sesión ya está iniciada
- if (session_status() == PHP_SESSION_NONE) {
-     // Si la sesión no está iniciada, se inicia
+<?php 
+ if (session_status() == PHP_SESSION_NONE) { 
      session_start();
  }  
  
@@ -26,7 +23,7 @@ if (in_array($vista, $publicas)) {
     // --- PRIVADO ---
     verificarAcceso($vista);
     include 'layouts/private/header.php';
-      include 'layouts/private/navbar.php';
+    include 'layouts/private/navbar.php';
     include 'layouts/private/sidebar.php';
     include "views/private/{$vista}.php";
     include 'layouts/private/footer.php';

@@ -8,12 +8,15 @@
         <button id="toggleSidebar" class="btn btn-outline-dark me-3" aria-label="Menú lateral">
             <i class="bi bi-list fs-5"></i>
         </button>
+ 
+       
+            <!-- Logo y título -->
+            <span class="navbar-brand d-flex align-items-center text-dark fw-semibold mb-0">
+                <i class="bi bi-hammer me-2 fs-4"></i> Panel <?= htmlspecialchars($_SESSION['usuario']['rol']) ?>: <?= htmlspecialchars($_SESSION['usuario']['nombre']) ?>
+            </span>
 
-        <!-- Logo y título -->
-        <span class="navbar-brand d-flex align-items-center text-dark fw-semibold mb-0">
-            <i class="bi bi-hammer me-2 fs-4"></i> Panel Carpintería
-        </span>
-
+ 
+        
         <!-- Elementos del lado derecho -->
         <div class="ms-auto d-flex align-items-center gap-3">
             <!-- Botón Home -->
@@ -26,7 +29,7 @@
                 <div class="fw-bold text-dark"><?= htmlspecialchars($_SESSION['usuario']['nombre']) ?></div>
                 <small class="text-muted"><?= htmlspecialchars($_SESSION['usuario']['rol']) ?></small>
             </div>
-
+<?php if($_SESSION['usuario']['rol'] === 'Administrador'):?>
             <!-- Botón de notificaciones -->
             <button id="btnNotificaciones" class="btn btn-sm btn-outline-warning position-relative" aria-label="Notificaciones">
                 <i class="bi bi-bell-fill"></i>
@@ -34,7 +37,7 @@
                     0
                 </span>
             </button>
-
+            <?php endif;?>
             <!-- Botón logout -->
             <button id="cerrarSession" class="btn btn-sm btn-outline-danger d-flex align-items-center">
                 <i class="bi bi-box-arrow-right me-1"></i> Salir

@@ -20,6 +20,7 @@
 </script>
 
 <script>
+    
     document.addEventListener('DOMContentLoaded', function () {
 
         document.getElementById("toggleSidebar").addEventListener("click", function () {
@@ -37,7 +38,6 @@
 
             }
         });
-
 
     });
 </script>

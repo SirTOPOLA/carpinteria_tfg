@@ -1,7 +1,5 @@
-<?php
-// Verificar si la sesión ya está iniciada
-if (session_status() == PHP_SESSION_NONE) {
-    // Si la sesión no está iniciada, se inicia
+<?php 
+if (session_status() == PHP_SESSION_NONE) { 
     session_start();
 }
 
@@ -75,7 +73,7 @@ function verificarAcceso($vista)
             'operaciones',
             'mis_pedidos'
         ],
-        'empleado' => [
+        'operario' => [
             'dashboard',
              'operaciones',
         ],  

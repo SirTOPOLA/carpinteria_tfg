@@ -37,10 +37,8 @@ if ($fotoProducto && $fotoProducto['error'] !== UPLOAD_ERR_NO_FILE) {
                 mkdir($directorio, 0755, true);
             }
 
-            $nombreFoto = uniqid('producto_', true) . '.' . $ext;
-            $destino = $directorio . '/' . $nombreFoto;
-
-            if (!move_uploaded_file($fotoProducto['tmp_name'], $destino)) {
+            $nombreFoto =  $directorio . '/' . uniqid('producto_', true) . '.' . $ext;
+            if (!move_uploaded_file($fotoProducto['tmp_name'], $nombreFoto)) {
                 echo json_encode(['success' => false, 'message' => 'Error al guardar la imagen.']);
                 exit;
             }
@@ -87,42 +85,9 @@ if ($idPedido) {
     $stmt->execute([$idPedido]);
 }
 
-// 4. Calcular materiales sobrantes y devolverlos
-$stmt = $pdo->prepare("
-    SELECT d.material_id, d.cantidad AS cantidad_solicitada,
-        COALESCE(SUM(CASE WHEN m.tipo_movimiento = 'salida' THEN m.cantidad ELSE 0 END), 0) AS cantidad_movida
-    FROM detalles_pedido_material d
-    LEFT JOIN movimientos_material m ON m.material_id = d.material_id AND m.produccion_id = ?
-    WHERE d.pedido_id = ?
-    GROUP BY d.material_id
-");
-$stmt->execute([$idProduccion, $idPedido]);
-$materiales = $stmt->fetchAll();
-
 $resumen = [];
 
-foreach ($materiales as $mat) {
-    $restante = $mat['cantidad_solicitada'] - $mat['cantidad_movida'];
-    if ($restante > 0) {
-        $stmt = $pdo->prepare("
-            INSERT INTO movimientos_material (material_id, tipo_movimiento, cantidad, motivo, produccion_id)
-            VALUES (?, 'entrada', ?, ?, ?)
-        ");
-        $stmt->execute([
-            $mat['material_id'],
-            $restante,
-            'Devolución automática por finalización de producción',
-            $idProduccion
-        ]);
-
-        $pdo->prepare("UPDATE materiales SET stock_actual = stock_actual + ? WHERE id = ?")
-            ->execute([$restante, $mat['material_id']]);
-
-        $resumen[] = "Material ID {$mat['material_id']}: devolución de $restante unidades.";
-    }
-}
-
-// 5. Asociar imagen y stock al producto si corresponde
+// 4. Asociar imagen y stock al producto si corresponde
 if ($nombreFoto && $proyecto) {
     $nombreProyecto = normalizarTexto($proyecto);
 
@@ -145,7 +110,7 @@ if ($nombreFoto && $proyecto) {
     }
 }
 
-// 6. Final
+// 5. Final
 echo json_encode([
     'success' => true,
     'message' => 'Producción finalizada correctamente.',
