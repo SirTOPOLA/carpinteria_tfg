@@ -12,43 +12,33 @@ $offset = ($pagina - 1) * $porPagina;
 
 $params = [];
 $condicion = '';
-$filtroResponsable = '';
-$esAdministrador = $_SESSION['usuario']['rol'] === 'Administrador';
-$empleadoId = $_SESSION['usuario']['empleado_id'] ?? null;
 
-// Filtro por búsqueda
 if ($termino !== '') {
-    $condicion .= " AND (pr.proyecto LIKE :busqueda OR emp.nombre LIKE :busqueda OR emp.apellido LIKE :busqueda)";
+    $condicion = "WHERE pr.proyecto LIKE :busqueda OR emp.nombre LIKE :busqueda OR emp.apellido LIKE :busqueda";
     $params[':busqueda'] = "%$termino%";
 }
 
-// Filtro por empleado si no es administrador
-if (!$esAdministrador && $empleadoId) {
-    $condicion .= " AND tp.responsable_id = :empleado_id";
-    $params[':empleado_id'] = $empleadoId;
-}
-
-// Obtener total de producciones
+// Obtener el total de producciones únicas
 $totalQuery = $pdo->prepare("
     SELECT COUNT(DISTINCT tp.produccion_id)
     FROM tareas_produccion tp
     INNER JOIN producciones prod ON tp.produccion_id = prod.id
     INNER JOIN pedidos pr ON prod.solicitud_id = pr.id
     LEFT JOIN empleados emp ON tp.responsable_id = emp.id
-    WHERE 1=1 $condicion
+    $condicion
 ");
 $totalQuery->execute($params);
 $totalRegistros = $totalQuery->fetchColumn();
 $totalPaginas = ceil($totalRegistros / $porPagina);
 
-// Obtener IDs de producciones para la página actual
+// Obtener los IDs de producciones a mostrar
 $produccionesQuery = $pdo->prepare("
     SELECT DISTINCT tp.produccion_id
     FROM tareas_produccion tp
     INNER JOIN producciones prod ON tp.produccion_id = prod.id
     INNER JOIN pedidos pr ON prod.solicitud_id = pr.id
     LEFT JOIN empleados emp ON tp.responsable_id = emp.id
-    WHERE 1=1 $condicion
+    $condicion
     ORDER BY tp.produccion_id DESC
     LIMIT $offset, $porPagina
 ");
@@ -65,7 +55,7 @@ if (empty($produccionIds)) {
     exit;
 }
 
-// Obtener tareas completas de esas producciones
+// Obtener tareas con información relacionada
 $inClause = implode(',', array_fill(0, count($produccionIds), '?'));
 
 $sql = "
@@ -80,21 +70,13 @@ $sql = "
     LEFT JOIN empleados emp ON tp.responsable_id = emp.id
     INNER JOIN estados e ON tp.estado_id = e.id
     WHERE tp.produccion_id IN ($inClause)
+    ORDER BY tp.produccion_id DESC, tp.fecha_inicio ASC
 ";
-
-// Filtro adicional si no es administrador
-if (!$esAdministrador && $empleadoId) {
-    $sql .= " AND tp.responsable_id = ?";
-    $produccionIds[] = $empleadoId;
-}
-
-$sql .= " ORDER BY tp.produccion_id DESC, tp.fecha_inicio ASC";
-
 $stmt = $pdo->prepare($sql);
 $stmt->execute($produccionIds);
 $tareas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Agrupar por producción
+// Agrupar tareas por producción
 $agrupadas = [];
 foreach ($tareas as $t) {
     $agrupadas[$t['produccion_id']]['proyecto'] = $t['proyecto'];
@@ -103,19 +85,19 @@ foreach ($tareas as $t) {
     $agrupadas[$t['produccion_id']]['tareas'][] = $t;
 }
 
-// Función para clase CSS del estado
+// Función para clase visual de estado
 function getEstadoClass($estado)
 {
     return match (strtolower($estado)) {
         'pendiente' => 'bg-warning text-dark',
-        'en_progreso' => 'bg-primary text-white',
-        'completado' => 'bg-success',
+        'en progreso' => 'bg-info text-dark',
+        'completada' => 'bg-success',
         'cancelada' => 'bg-danger',
         default => 'bg-secondary'
     };
 }
 
-// Construcción del HTML
+// Construir HTML
 $html = '';
 foreach ($agrupadas as $produccionId => $datos) {
     $html .= "

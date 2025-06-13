@@ -5,114 +5,140 @@ header('Content-Type: application/json; charset=utf-8');
 $idProduccion = isset($_POST['id']) ? (int) $_POST['id'] : null;
 $nuevoEstado = isset($_POST['estado']) ? trim($_POST['estado']) : null;
 $fotoProducto = $_FILES['foto'] ?? null;
-$nuevoStock = isset($_POST['stock_actual']) ? (int) $_POST['stock_actual'] : null;
 
 if (!$idProduccion || $nuevoEstado !== 'finalizado') {
     echo json_encode(['success' => false, 'message' => 'Datos inválidos o estado no permitido.']);
     exit;
 }
 
-// Función para normalizar nombres
-function normalizarTexto($texto) {
-    $texto = mb_strtolower($texto, 'UTF-8');
-    $texto = iconv('UTF-8', 'ASCII//TRANSLIT', $texto);
-    $texto = preg_replace('/[^a-z0-9\s]/', '', $texto);
-    $texto = preg_replace('/\s+/', ' ', $texto);
-    return trim($texto);
-}
+$pdo->beginTransaction();
 
-// Manejo de imagen (opcional)
-$nombreFoto = null;
-if ($fotoProducto && $fotoProducto['error'] !== UPLOAD_ERR_NO_FILE) {
-    if ($fotoProducto['error'] === UPLOAD_ERR_OK) {
-        $permitidos = ['jpg', 'jpeg', 'png', 'webp'];
-        $mimePermitidos = ['image/jpeg', 'image/png', 'image/webp'];
+try {
+    // 1. Verificar porcentaje total de avances
+    $stmt = $pdo->prepare("SELECT SUM(porcentaje) AS total FROM avances_produccion WHERE produccion_id = ?");
+    $stmt->execute([$idProduccion]);
+    $total = (int) $stmt->fetchColumn();
 
-        $ext = strtolower(pathinfo($fotoProducto['name'], PATHINFO_EXTENSION));
-        $mime = mime_content_type($fotoProducto['tmp_name']);
-
-        if (in_array($ext, $permitidos) && in_array($mime, $mimePermitidos)) {
-            $directorio = 'uploads/productos';
-            if (!is_dir($directorio)) {
-                mkdir($directorio, 0755, true);
-            }
-
-            $nombreFoto =  $directorio . '/' . uniqid('producto_', true) . '.' . $ext;
-            if (!move_uploaded_file($fotoProducto['tmp_name'], $nombreFoto)) {
-                echo json_encode(['success' => false, 'message' => 'Error al guardar la imagen.']);
-                exit;
-            }
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Formato de imagen no permitido.']);
-            exit;
-        }
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Error al subir la imagen.']);
-        exit;
+    // 2. Si < 100, completar
+    if ($total < 100) {
+        $faltante = 100 - $total;
+        $stmt = $pdo->prepare("
+            INSERT INTO avances_produccion (produccion_id, descripcion, imagen, porcentaje, fecha)
+            VALUES (?, ?, ?, ?, NOW())
+        ");
+        $stmt->execute([
+            $idProduccion,
+            'Avance automático para completar producción.',
+            null,
+            $faltante
+        ]);
     }
-}
 
-// 1. Actualizar producción
-$stmt = $pdo->prepare("
-    UPDATE producciones 
-    SET estado_id = (
-        SELECT id FROM estados WHERE nombre = 'finalizado' AND entidad = 'produccion'
-    ), fecha_fin = CURDATE()
-    WHERE id = ?
-");
-$stmt->execute([$idProduccion]);
-
-// 2. Obtener pedido relacionado
-$stmt = $pdo->prepare("
-    SELECT p.id, p.proyecto 
-    FROM pedidos p 
-    JOIN producciones pr ON pr.solicitud_id = p.id 
-    WHERE pr.id = ?
-");
-$stmt->execute([$idProduccion]);
-$pedido = $stmt->fetch();
-$idPedido = $pedido['id'] ?? null;
-$proyecto = $pedido['proyecto'] ?? null;
-
-// 3. Actualizar pedido si existe
-if ($idPedido) {
+    // 3. Finalizar producción
     $stmt = $pdo->prepare("
-        UPDATE pedidos 
+        UPDATE producciones 
         SET estado_id = (
-            SELECT id FROM estados WHERE nombre = 'finalizado' AND entidad = 'pedido'
-        ) WHERE id = ?
+            SELECT id FROM estados WHERE nombre = 'finalizado' AND entidad = 'produccion'
+        ), fecha_fin = CURDATE()
+        WHERE id = ?
     ");
-    $stmt->execute([$idPedido]);
-}
+    $stmt->execute([$idProduccion]);
 
-$resumen = [];
+    // 4. Obtener el pedido relacionado
+    $stmt = $pdo->prepare("
+        SELECT p.id, p.proyecto 
+        FROM pedidos p 
+        JOIN producciones pr ON pr.solicitud_id = p.id 
+        WHERE pr.id = ?
+    ");
+    $stmt->execute([$idProduccion]);
+    $pedido = $stmt->fetch(PDO::FETCH_ASSOC);
+    $idPedido = $pedido['id'] ?? null;
+    $nombreProyecto = trim($pedido['proyecto'] ?? '');
 
-// 4. Asociar imagen y stock al producto si corresponde
-if ($nombreFoto && $proyecto) {
-    $nombreProyecto = normalizarTexto($proyecto);
+    if ($idPedido) {
+        $stmt = $pdo->prepare("
+            UPDATE pedidos 
+            SET estado_id = (
+                SELECT id FROM estados WHERE nombre = 'finalizado' AND entidad = 'pedido'
+            )
+            WHERE id = ?
+        ");
+        $stmt->execute([$idPedido]);
+    }
 
-    $stmtProd = $pdo->prepare("SELECT id, nombre FROM productos");
-    $stmtProd->execute();
-    $productos = $stmtProd->fetchAll();
+    // 5. Verificar si el proyecto existe como nombre exacto de producto
+    $stmt = $pdo->prepare("SELECT id FROM productos WHERE BINARY nombre = ?");
+    $stmt->execute([$nombreProyecto]);
+    $productoExistente = $stmt->fetchColumn();
 
-    foreach ($productos as $producto) {
-        if (normalizarTexto($producto['nombre']) === $nombreProyecto) {
-            $pdo->prepare("UPDATE productos SET imagen = ? WHERE id = ?")
-                ->execute([$nombreFoto, $producto['id']]);
+    if (!$productoExistente) {
+        // Insertar nuevo producto
+        $stmt = $pdo->prepare("INSERT INTO productos (nombre, descripcion, stock ) VALUES (?, ?, 0)");
+        $stmt->execute([$nombreProyecto, 'Producto generado automáticamente desde producción']);
+        $productoExistente = $pdo->lastInsertId();
 
-            if (!is_null($nuevoStock)) {
-                $pdo->prepare("UPDATE productos SET stock = ? WHERE id = ?")
-                    ->execute([$nuevoStock, $producto['id']]);
-                $resumen[] = "Stock actualizado a $nuevoStock unidades.";
-            }
-            break;
+        // Insertar detalle_produccion asociado (si no existe ya)
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM detalles_produccion WHERE produccion_id = ? AND producto_id = ?");
+        $stmt->execute([$idProduccion, $productoExistente]);
+        $existeDetalle = $stmt->fetchColumn();
+
+        if (!$existeDetalle) {
+            $stmt = $pdo->prepare("
+                INSERT INTO detalles_produccion (produccion_id, producto_id, descripcion, cantidad)
+                VALUES (?, ?, ?, ?)
+            ");
+            $stmt->execute([
+                $idProduccion,
+                $productoExistente,
+                'Asociación automática desde nombre de proyecto',
+                1
+            ]);
         }
     }
-}
 
-// 5. Final
-echo json_encode([
-    'success' => true,
-    'message' => 'Producción finalizada correctamente.',
-    'resumen' => $resumen
-]);
+    // 6. Generar productos fabricados según detalles
+    $stmt = $pdo->prepare("
+        SELECT producto_id, cantidad 
+        FROM detalles_produccion 
+        WHERE produccion_id = ?
+    ");
+    $stmt->execute([$idProduccion]);
+    $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $resumen = [];
+
+    foreach ($productos as $prod) {
+        $productoId = (int)$prod['producto_id'];
+        $cantidad = (int)$prod['cantidad'];
+
+        if ($productoId <= 0 || $cantidad <= 0) {
+            throw new Exception("Datos inválidos para producto_id ($productoId) o cantidad ($cantidad)");
+        }
+
+        // Actualizar stock
+        $stmtUpdate = $pdo->prepare("UPDATE productos SET stock = stock + ? WHERE id = ?");
+        $stmtUpdate->execute([$cantidad, $productoId]);
+
+        $resumen[] = [
+            'producto_id' => $productoId,
+            'cantidad_fabricada' => $cantidad
+        ];
+    }
+
+    $pdo->commit();
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'Producción finalizada correctamente.',
+        'resumen' => $resumen
+    ]);
+}  
+catch (Exception $e) {
+    $pdo->rollBack();
+    echo json_encode([
+        'success' => false,
+        'message' => 'Error al finalizar la producción.',
+        'error' => $e->getMessage()
+    ]);
+}

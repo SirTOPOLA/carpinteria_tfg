@@ -140,7 +140,7 @@ try {
                         <select class="form-select" name="estado" id="nuevoEstado" required>
                             <option value="">Seleccione estado</option>
                             <option value="finalizado">Finalizada</option>
-                            <option value="en_proceso">En proceso</option>
+                           <!--  <option value="en_proceso">En proceso</option> -->
                             <!--  <option value="cancelado">Cancelado</option> -->
                         </select>
                     </div>
@@ -157,18 +157,7 @@ try {
                         <input type="number" name="stock" id="stockFinal" class="form-control" min="1"
                             placeholder="Cantidad en unidades">
                     </div>
-
-                    <!-- Checkbox para imagen -->
-                    <div class="form-check d-none" id="checkImagenContainer">
-                        <input class="form-check-input" type="checkbox" id="deseaImagen">
-                        <label class="form-check-label" for="deseaImagen">Deseo actualizar imagen del producto</label>
-                    </div>
-
-                    <!-- Campo imagen (opcional) -->
-                    <div class="mb-3 d-none" id="fotoContainer">
-                        <label for="fotoProducto" class="form-label">Foto del Producto Terminado</label>
-                        <input type="file" name="foto" id="fotoProducto" class="form-control" accept="image/*">
-                    </div>
+ 
                 </div>
 
 
@@ -182,7 +171,7 @@ try {
 </div>
 
 
-<!--  registrar avances del pedido ------ -->
+<!-- Modal Registrar Avance -->
 <div class="modal fade" id="modalRegistrarAvance" tabindex="-1" aria-labelledby="avanceLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <form id="formRegistrarAvance" enctype="multipart/form-data">
@@ -193,23 +182,37 @@ try {
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="produccion_id" id="produccion_id">
+
+                    <!-- Descripción -->
                     <div class="mb-3">
                         <label for="descripcion_avance" class="form-label">Descripción del Avance</label>
-                        <textarea name="descripcion" class="form-control" required></textarea>
+                        <textarea name="descripcion" class="form-control" rows="3" required></textarea>
                     </div>
+
+                    <!-- Imagen -->
                     <div class="mb-3">
                         <label for="imagen" class="form-label">Imagen (opcional)</label>
                         <input type="file" name="imagen" class="form-control" accept="image/*">
                     </div>
+
+                    <!-- Porcentaje de avance -->
+                    <div class="mb-3">
+                        <label for="porcentaje" class="form-label">Progreso del Pedido: 
+                            <span id="valorPorcentaje" class="badge bg-primary">0%</span>
+                        </label>
+                        <input type="range" name="porcentaje" id="porcentaje" class="form-range" min="0" max="100" step="1" value="0" oninput="actualizarPorcentaje(this.value)">
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-info">Guardar</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-info"><i class="bi bi-check2-circle"></i> Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i> Cancelar</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
+
+
 
 <!-- ---- modal de registro de tareas ------- -->
 <!-- Modal para registrar tarea -->
@@ -262,8 +265,61 @@ try {
     </div>
 </div>
 
-
+<!-- Script para mostrar porcentaje dinámico -->
 <script>
+
+    /* --------- Avances de proyecto ----------- */
+/* barra de progreso de los avances
+ */
+ 
+let porcentajeRestante = 100;
+
+function cargarProgresoActual(produccionId) {
+    fetch('api/obtener_progreso.php?produccion_id=' + produccionId)
+        .then(response => response.json())
+        .then(data => {
+            const totalActual = parseInt(data.total_porcentaje);
+            const range = document.getElementById('porcentaje');
+            const badge = document.getElementById('valorPorcentaje');
+
+            // Establecer los límites del rango
+            range.min = totalActual;
+            range.max = 100;
+            range.value = totalActual;
+
+            actualizarPorcentaje(range.value);
+ 
+        });
+}
+
+document.getElementById('modalRegistrarAvance').addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget; // El botón que abrió el modal
+    const produccionId = button?.getAttribute('data-produccion-id');
+
+    if (produccionId) {
+        // Asigna el ID al input hidden
+        document.getElementById('produccion_id').value = produccionId;
+
+        // Llama a la función que carga el porcentaje actual
+        cargarProgresoActual(produccionId);
+    }
+});
+
+function actualizarPorcentaje(valor) {
+    const badge = document.getElementById('valorPorcentaje');
+    const valorNum = parseInt(valor);
+
+    badge.innerText = valorNum + '%';
+
+    let bg = 'bg-danger';
+    if (valorNum >= 75) bg = 'bg-success';
+    else if (valorNum >= 40) bg = 'bg-warning';
+
+    badge.className = 'badge ' + bg;
+}
+
+
+/* fin modal de edicion de avances */
 
     const buscador = document.getElementById('buscador');
     let paginaActual = 1;
@@ -281,31 +337,22 @@ try {
         const stockContainer = document.getElementById('stockContainer');
         const stockInput = document.getElementById('stockFinal');
 
-        const checkImagenContainer = document.getElementById('checkImagenContainer');
-        const checkboxImagen = document.getElementById('deseaImagen');
-        const fotoContainer = document.getElementById('fotoContainer');
-        const fotoInput = document.getElementById('fotoProducto');
-
+        
         estadoSelect.addEventListener('change', () => {
             const estado = estadoSelect.value;
 
             if (estado === 'finalizado') {
                 // Mostrar los checkboxes de opciones
                 checkStockContainer.classList.remove('d-none');
-                checkImagenContainer.classList.remove('d-none');
+               // checkImagenContainer.classList.remove('d-none');
 
                 // Ocultar campos por defecto hasta que se activen los checkbox
-                stockContainer.classList.add('d-none');
-                fotoContainer.classList.add('d-none');
+                stockContainer.classList.add('d-none'); 
 
                 // Limpiar valores y requerimientos
                 stockInput.value = '';
                 stockInput.removeAttribute('required');
-                checkboxStock.checked = false;
-
-                fotoInput.value = '';
-                fotoInput.removeAttribute('required');
-                checkboxImagen.checked = false;
+                checkboxStock.checked = false; 
 
             } else {
                 // Si el estado no es 'finalizado', ocultamos todo
@@ -314,12 +361,7 @@ try {
                 checkboxStock.checked = false;
                 stockInput.value = '';
                 stockInput.removeAttribute('required');
-
-                checkImagenContainer.classList.add('d-none');
-                fotoContainer.classList.add('d-none');
-                checkboxImagen.checked = false;
-                fotoInput.value = '';
-                fotoInput.removeAttribute('required');
+ 
             }
         });
 
@@ -335,17 +377,7 @@ try {
             }
         });
 
-        // Mostrar/ocultar campo imagen
-        checkboxImagen.addEventListener('change', () => {
-            if (checkboxImagen.checked) {
-                fotoContainer.classList.remove('d-none');
-                fotoInput.setAttribute('required', 'required');
-            } else {
-                fotoContainer.classList.add('d-none');
-                fotoInput.value = '';
-                fotoInput.removeAttribute('required');
-            }
-        });
+       
 
         /* avances del pedido segun fases de la produccion ----- */
         document.addEventListener('click', function (e) {
@@ -423,7 +455,7 @@ try {
 
                 document.getElementById('produccion_id_tarea').value = produccionId;
                 document.getElementById('tituloRegistrarTarea').textContent = `Registrar Tarea para "${proyecto}"`;
-
+                document.getElementById('produccion_id').value = produccionId
             }
 
 
@@ -677,7 +709,8 @@ try {
                     // Recargar tabla o volver a hacer fetch
                     location.reload();
                 } else {
-                    alert('Error al actualizar estado: ' + (data.message || ''));
+                    alert('Error al actualizar estado: ' + (data.message || '') + '\n' + (data.error || ''));
+                   // alert('Error al actualizar estado: ' + (data.message || ''));
                 }
             })
             .catch(err => console.error('Error en la petición:', err));

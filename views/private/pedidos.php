@@ -97,40 +97,48 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
 </div>
 
 
-<!-- Modal Cambiar Estado -->
-<div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-labelledby="modalCambiarEstadoLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-        <form id="formCambiarEstado">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Cambiar Estado de Pedido</h5>
+<!-- Modal Cambiar Estado (Diseño Moderno) -->
+<div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-labelledby="modalCambiarEstadoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form id="formCambiarEstado" class="w-100">
+            <div class="modal-content shadow rounded-4 border-0">
+                <div class="modal-header bg-light border-bottom-0 rounded-top-4 px-4 pt-4">
+                    <h5 class="modal-title fw-semibold" id="modalCambiarEstadoLabel">
+                        <i class="bi bi-pencil-square me-2 text-primary"></i>
+                        Cambiar Estado del Pedido
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
-                <div class="modal-body">
+
+                <div class="modal-body px-4">
                     <input type="hidden" id="pedidoId" name="id">
-                    <input type="hidden" id="totalEstimado" name="total_estimado"> <!-- total oculto -->
+                    <input type="hidden" id="totalEstimado" name="total_estimado">
 
                     <div class="mb-3">
-                        <label for="nuevoEstado" class="form-label">Nuevo Estado</label>
-                        <select class="form-select" name="estado" id="nuevoEstado" required>
+                        <label for="nuevoEstado" class="form-label fw-medium">Nuevo Estado</label>
+                        <select class="form-select rounded-pill shadow-sm" name="estado" id="nuevoEstado" required>
                             <option value="">Seleccione estado</option>
                             <option value="aprobado">Aprobado</option>
+                            <!-- Puedes añadir más opciones aquí -->
                         </select>
                     </div>
 
                     <div class="mb-3 d-none" id="montoAprobadoGroup">
-                        <label for="montoPagado" class="form-label">Monto de adelanto (XAF)</label>
-                        <input type="number" step="1" min="0" class="form-control" id="montoPagado" name="monto_pagado"
-                            placeholder="Ingrese monto">
-                        <div id="montoError" class="text-danger small mt-1 d-none">El monto debe ser mayor que cero y no
-                            superar el total estimado.</div>
-                        <div class="form-text">Total estimado: <span id="totalEstimadoTexto"></span> XAF</div>
+                        <label for="montoPagado" class="form-label fw-medium">Monto de adelanto (XAF)</label>
+                        <input type="number" step="1" min="0" class="form-control rounded-pill shadow-sm"
+                            id="montoPagado" name="monto_pagado" placeholder="Ingrese monto">
+                        <div id="montoError" class="text-danger small mt-1 d-none">El monto debe ser mayor que cero y no superar el total estimado.</div>
+                        <div class="form-text mt-1">Total estimado: <strong><span id="totalEstimadoTexto"></span></strong> XAF</div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+
+                <div class="modal-footer bg-light border-top-0 rounded-bottom-4 px-4 pb-4">
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">
+                        <i class="bi bi-save me-1"></i> Guardar
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-1"></i> Cancelar
+                    </button>
                 </div>
             </div>
         </form>

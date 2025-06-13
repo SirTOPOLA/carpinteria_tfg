@@ -68,10 +68,12 @@ foreach ($producciones as $prod) {
         </button>
         ": '' ;
 
-
+       
+    
     $btnAvances =  ($estadoLower === 'en_proceso') ? "
             <button class='btn btn-sm btn-outline-info registrar-avance-btn' 
                     data-id='{$prod['id']}'
+                    data-produccion-id='{$prod['id']}'
                     data-proyecto='" . htmlspecialchars($prod['nombre_proyecto']) . "'
                     data-bs-toggle='modal' 
                     data-bs-target='#modalRegistrarAvance'>

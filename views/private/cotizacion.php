@@ -2,209 +2,302 @@
 include('../../config/conexion.php');
 
 $solicitud_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+if ($solicitud_id <= 0) {
+  echo "ID inválido";
+  exit;
+}
 
-// Obtener datos generales del pedido
+// 1. Datos generales del pedido y cliente
 $stmt = $pdo->prepare("
-    SELECT 
-        p.id, p.fecha_solicitud, p.precio_obra, p.estimacion_total, p.proyecto,
-        c.nombre AS cliente, c.direccion, c.telefono,  
-        s.nombre AS servicio,
-        s.precio_base AS precio_servicio
-    FROM pedidos p
-    JOIN clientes c ON p.cliente_id = c.id 
-    LEFT JOIN servicios s ON p.servicio_id = s.id
-    WHERE p.id = ?
+  SELECT
+    p.id, p.fecha_solicitud, 
+    p.precio_obra, p.estimacion_total, p.proyecto, p.piezas,
+    p.adelanto,
+    c.nombre AS cliente, c.direccion, c.telefono,
+    s.nombre AS servicio, s.precio_base AS precio_servicio
+  FROM pedidos p
+  JOIN clientes c ON p.cliente_id = c.id
+  LEFT JOIN servicios s ON p.servicio_id = s.id
+  WHERE p.id = ?
 ");
 $stmt->execute([$solicitud_id]);
 $solicitud = $stmt->fetch(PDO::FETCH_ASSOC);
-
 if (!$solicitud) {
-    echo "Solicitud no encontrada";
-    exit;
+  echo "Solicitud no encontrada";
+  exit;
 }
 
-// Cargar materiales solicitados y precios
+// 2. Total piezas (sumado desde detalles si quieres exactitud real)
+/* $stmt = $pdo->prepare("
+  SELECT SUM(cantidad) AS total_piezas
+  FROM detalles_pedido_material
+  WHERE pedido_id = ?
+");
+$stmt->execute([$solicitud_id]);
+$totalPiezasRow = $stmt->fetch(PDO::FETCH_ASSOC);
+$total_piezas = intval($totalPiezasRow['total_piezas'] ?? $solicitud['piezas']);
+ */
+// 3. Detalles de materiales
 $stmt = $pdo->prepare("
-    SELECT 
-        m.id AS material_id,
-        m.nombre AS nombre,
-        m.unidad_medida,
-        dpm.cantidad,
-        dc.max_precio_unitario AS precio_unitario,
-        (dpm.cantidad * dc.max_precio_unitario) AS subtotal
-    FROM detalles_pedido_material dpm
-    INNER JOIN materiales m ON m.id = dpm.material_id
-    INNER JOIN (
-        SELECT material_id, MAX(precio_unitario) AS max_precio_unitario
-        FROM detalles_compra
-        GROUP BY material_id
-    ) dc ON dc.material_id = dpm.material_id
-    WHERE dpm.pedido_id = ?
+  SELECT m.id AS material_id, m.nombre, m.unidad_medida,
+         dpm.cantidad, dc.max_precio_unitario AS precio_unitario,
+         (dpm.cantidad * dc.max_precio_unitario) AS subtotal
+  FROM detalles_pedido_material dpm
+  JOIN materiales m ON m.id = dpm.material_id
+  JOIN (
+    SELECT material_id, MAX(precio_unitario) AS max_precio_unitario
+    FROM detalles_compra
+    GROUP BY material_id
+  ) dc ON dc.material_id = dpm.material_id
+  WHERE dpm.pedido_id = ?
+  ORDER BY m.nombre
 ");
 $stmt->execute([$solicitud_id]);
 $materiales = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Cargar datos de la empresa
+// 4. Configuración empresa
 $config = $pdo->query("SELECT * FROM configuracion LIMIT 1")->fetch(PDO::FETCH_ASSOC);
 
-// Enlace al PDF
+// 5. URL PDF
 $baseUrl = "https://tu-dominio.com";
 $pdfUrl = "$baseUrl/controladores/pdf_proforma.php?id=$solicitud_id";
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Proforma #<?= htmlspecialchars($solicitud['id']) ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-size: 14px;
-        }
+  <meta charset="UTF-8">
+  <title>Proforma #<?= htmlspecialchars($solicitud['id']) ?></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap y Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2c3e50;
+      --accent: #18bc9c;
+      --text: #2d3436;
+      --font-main: 'Segoe UI', sans-serif;
+    }
 
-        .logo {
-            max-height: 80px;
-        }
+    body {
+      font-family: var(--font-main);
+      background: #f0f2f5;
+      color: var(--text);
+      margin: 0;
+      padding: 2rem;
+    }
 
-        .table th, .table td {
-            vertical-align: middle;
-        }
+    .card {
+      border: 0;
+      border-radius: 1rem;
+      box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1);
+    }
 
-        @media print {
-            .no-print {
-                display: none;
-            }
-        }
-    </style>
+    .section {
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 0.25rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .table th {
+      background: #ecf0f1;
+    }
+
+    .no-print {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+
+      .no-print,
+      .card {
+        box-shadow: none;
+      }
+    }
+  </style>
 </head>
-<body class="p-4">
-    <div class="container border p-4 rounded shadow-sm">
-        <div class="d-flex justify-content-between align-items-center mb-4 no-print">
-            <h3>Proforma N° <?= htmlspecialchars($solicitud['id']) ?></h3>
-        </div>
 
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <h4 class="fw-bold"><?= htmlspecialchars($config['nombre_empresa']) ?></h4>
-                <p class="mb-1"><?= htmlspecialchars($config['direccion']) ?></p>
-                <p class="mb-1">Tel: <?= htmlspecialchars($config['telefono']) ?></p>
-                <p class="mb-1">Email: <?= htmlspecialchars($config['correo']) ?></p>
-            </div>
-            <div class="col-md-6 text-end">
-                <?php if (!empty($config['logo'])): ?>
-                    <img src="../uploads/<?= htmlspecialchars($config['logo']) ?>" class="logo" alt="Logo">
-                <?php endif; ?>
-                <p><strong>Fecha:</strong> <?= date('d/m/Y', strtotime($solicitud['fecha_solicitud'])) ?></p>
-            </div>
-        </div>
+<body>
+  <div class="container">
+    <div class="card p-4 bg-white">
+      <!-- Cabezera -->
+      <div class="d-flex justify-content-between align-items-center section">
+        <div>
+          <h2 class="text-uppercase mb-0">
+            <?= ($solicitud['adelanto'] > 0) ? 'Factura' : 'Proforma' ?> #<?= htmlspecialchars($solicitud['id']) ?>
+          </h2>
 
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <h6>Cliente:</h6>
-                <p class="mb-1"><strong><?= htmlspecialchars($solicitud['cliente']) ?></strong></p>
-                <p class="mb-1">Dirección: <?= htmlspecialchars($solicitud['direccion']) ?></p>
-                <p class="mb-1">Teléfono: <?= htmlspecialchars($solicitud['telefono']) ?></p>
-            </div>
-            <div class="col-md-6">
-                <h6>Proyecto:</h6>
-                <p class="mb-1"><?= htmlspecialchars($solicitud['proyecto']) ?></p>
-                <?php if (!empty($solicitud['servicio'])): ?>
-                    <h6>Servicio:</h6>
-                    <p class="mb-1"><?= htmlspecialchars($solicitud['servicio']) ?></p>
-                <?php endif; ?>
-            </div>
+          <small class="text-muted">Fecha: <?= date('d/m/Y', strtotime($solicitud['fecha_solicitud'])) ?></small>
         </div>
+        <?php if (!empty($config['logo'])): ?>
+          <img src="../uploads/<?= htmlspecialchars($config['logo']) ?>" alt="Logo" style="max-height:80px">
+        <?php endif; ?>
+      </div>
 
-        <h6>Materiales Solicitados</h6>
-        <table class="table table-bordered table-sm">
-            <thead class="table-light">
-                <tr>
-                    <th>Material</th>
-                    <th>Unidad</th>
-                    <th>Cantidad</th>
-                    <th>Precio Unitario (<?= htmlspecialchars($config['moneda']) ?>)</th>
-                    <th>Subtotal (<?= htmlspecialchars($config['moneda']) ?>)</th>
-                </tr>
+      <!-- Empresa & Cliente -->
+      <div class="row section">
+        <div class="col-md-6">
+          <h5 class="section-title">Empresa</h5>
+          <p class="mb-1"><i
+              class="bi bi-building-fill me-2 text-info"></i><strong><?= htmlspecialchars($config['nombre_empresa']) ?></strong>
+          </p>
+          <p class="mb-1"><i class="bi bi-geo-alt-fill me-2"></i><?= htmlspecialchars($config['direccion']) ?></p>
+          <p class="mb-1"><i class="bi bi-telephone-fill me-2"></i><?= htmlspecialchars($config['telefono']) ?></p>
+          <p class="mb-1"><i class="bi bi-envelope-fill me-2"></i><?= htmlspecialchars($config['correo']) ?></p>
+        </div>
+        <div class="col-md-6">
+          <h5 class="section-title">Cliente</h5>
+          <p class="mb-1"><strong><?= htmlspecialchars($solicitud['cliente']) ?></strong></p>
+          <p class="mb-1"><i class="bi bi-geo-alt me-2"></i><?= htmlspecialchars($solicitud['direccion']) ?></p>
+          <p class="mb-1"><i class="bi bi-telephone me-2"></i><?= htmlspecialchars($solicitud['telefono']) ?></p>
+        </div>
+      </div>
+
+      <!-- Proyecto y Servicio -->
+      <div class="section">
+        <h5 class="section-title">Proyecto</h5>
+        <p><?= htmlspecialchars($solicitud['proyecto']) ?></p>
+        <?php if ($solicitud['servicio']): ?>
+          <h5 class="section-title">Servicio</h5>
+          <p><?= htmlspecialchars($solicitud['servicio']) ?></p>
+        <?php endif; ?>
+        <p class="mt-3"><strong>Total de piezas:</strong> <?= htmlspecialchars($solicitud['piezas']) ?> unidades</p>
+      </div>
+
+      <!-- Materiales -->
+      <div class="section">
+        <h5 class="section-title">Materiales Solicitados</h5>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Material</th>
+                <th>Unidad</th>
+                <th>Cantidad</th>
+                <th>PU (<?= htmlspecialchars($config['moneda']) ?>)</th>
+                <th>Subtotal (<?= htmlspecialchars($config['moneda']) ?>)</th>
+              </tr>
             </thead>
             <tbody>
-                <?php
-                $total_materiales = 0;
-                foreach ($materiales as $mat):
-                    $total_materiales += $mat['subtotal'];
+              <?php
+              $totalMat = 0;
+              foreach ($materiales as $i => $m):
+                $totalMat += $m['subtotal'];
                 ?>
-                    <tr>
-                        <td><?= htmlspecialchars($mat['nombre']) ?></td>
-                        <td><?= htmlspecialchars($mat['unidad_medida']) ?></td>
-                        <td><?= htmlspecialchars($mat['cantidad']) ?></td>
-                        <td><?= number_format($mat['precio_unitario'], 2) ?></td>
-                        <td><?= number_format($mat['subtotal'], 2) ?></td>
-                    </tr>
-                <?php endforeach; ?>
+                <tr>
+                  <td><?= $i + 1 ?></td>
+                  <td><?= htmlspecialchars($m['nombre']) ?></td>
+                  <td><?= htmlspecialchars($m['unidad_medida']) ?></td>
+                  <td><?= htmlspecialchars($m['cantidad']) ?></td>
+                  <td><?= number_format($m['precio_unitario'], 2) ?></td>
+                  <td><?= number_format($m['subtotal'], 2) ?></td>
+                </tr>
+              <?php endforeach; ?>
             </tbody>
-        </table>
-
-        <table class="table table-borderless table-sm w-auto ms-auto">
-            <tbody>
-                <tr>
-                    <th class="text-end" style="width: 200px;">Total Materiales:</th>
-                    <td class="text-end"><?= number_format($total_materiales, 2) ?> <?= htmlspecialchars($config['moneda']) ?></td>
-                </tr>
-
-                <?php if (!empty($solicitud['precio_servicio'])): ?>
-                <tr>
-                    <th class="text-end">Precio Servicio:</th>
-                    <td class="text-end"><?= number_format($solicitud['precio_servicio'], 2) ?> <?= htmlspecialchars($config['moneda']) ?></td>
-                </tr>
-                <?php endif; ?>
-
-                <tr>
-                    <th class="text-end">Mano de Obra:</th>
-                    <td class="text-end"><?= number_format($solicitud['precio_obra'], 2) ?> <?= htmlspecialchars($config['moneda']) ?></td>
-                </tr>
-
-                <?php
-                $subtotal_general = $total_materiales + ($solicitud['precio_servicio'] ?? 0) + $solicitud['precio_obra'];
-                $iva = !empty($config['iva']) ? $subtotal_general * ($config['iva'] / 100) : 0;
-                ?>
-
-                <tr class="border-top">
-                    <th class="text-end">Subtotal:</th>
-                    <td class="text-end"><?= number_format($subtotal_general, 2) ?> <?= htmlspecialchars($config['moneda']) ?></td>
-                </tr>
-
-                <?php if ($iva > 0): ?>
-                <tr>
-                    <th class="text-end">IVA (<?= htmlspecialchars($config['iva']) ?>%):</th>
-                    <td class="text-end"><?= number_format($iva, 2) ?> <?= htmlspecialchars($config['moneda']) ?></td>
-                </tr>
-                <tr>
-                    <th class="text-end">Total con IVA:</th>
-                    <td class="text-end"><?= number_format($subtotal_general + $iva, 2) ?> <?= htmlspecialchars($config['moneda']) ?></td>
-                </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-
-        <div class="mt-5">
-            <p class="fst-italic">* Esta proforma no representa un compromiso definitivo. Está sujeta a cambios por disponibilidad de materiales o modificaciones del proyecto.</p>
+          </table>
         </div>
+      </div>
 
-        <div class="row no-print mt-3">
-            <div class="col-md-6">
-                <a href="https://wa.me/?text=Hola,%20aquí%20tienes%20tu%20proforma:%20<?= urlencode($pdfUrl) ?>" target="_blank" class="btn btn-success">
-                    📱 Enviar por WhatsApp
-                </a>
-            </div>
-            <div class="col-md-6 text-end">
-                <button onclick="window.print()" class="btn btn-outline-primary me-2">
-                    🖨️ Imprimir
-                </button>
-                <a href="<?= $pdfUrl ?>" target="_blank" class="btn btn-success">
-                    📥 Descargar PDF
-                </a>
-            </div>
+      <!-- Totales -->
+      <?php
+      $precioServicio = floatval($solicitud['precio_servicio'] ?? 0);
+      $manoObra = floatval($solicitud['precio_obra']);
+      $subtotal = $totalMat + $precioServicio + $manoObra;
+      $iva = !empty($config['iva']) ? $subtotal * ($config['iva'] / 100) : 0;
+      ?>
+      <div class="section text-end">
+        <table class="table table-sm w-auto ms-auto">
+          <tr>
+            <th>Total Materiales:</th>
+            <td><?= number_format($totalMat, 2) ?> <?= htmlspecialchars($config['moneda']) ?></td>
+          </tr>
+          <?php if ($precioServicio): ?>
+            <tr>
+              <th>Precio Servicio:</th>
+              <td><?= number_format($precioServicio, 2) ?>   <?= htmlspecialchars($config['moneda']) ?></td>
+            </tr>
+          <?php endif; ?>
+          <tr>
+            <th>Mano de Obra:</th>
+            <td><?= number_format($manoObra, 2) ?> <?= htmlspecialchars($config['moneda']) ?></td>
+          </tr>
+          <tr class="border-top">
+            <th>Subtotal:</th>
+            <td><?= number_format($subtotal, 2) ?> <?= htmlspecialchars($config['moneda']) ?></td>
+          </tr>
+          <?php if ($iva > 0): ?>
+            <tr>
+              <th>IVA (<?= htmlspecialchars($config['iva']) ?>%):</th>
+              <td><?= number_format($iva, 2) ?>   <?= htmlspecialchars($config['moneda']) ?></td>
+            </tr>
+            <tr>
+              <th>Total con IVA:</th>
+              <td class="fw-bold"><?= number_format($subtotal + $iva, 2) ?>   <?= htmlspecialchars($config['moneda']) ?>
+              </td>
+            </tr>
+          <?php endif; ?>
+        </table>
+      </div>
+      <?php if ($solicitud['adelanto'] > 0): ?>
+        <?php
+        $totalConIVA = $subtotal + $iva;
+        $adelanto = floatval($solicitud['adelanto']);
+        $restante = $totalConIVA - $adelanto;
+        ?>
+        <div class="section text-end">
+          <table class="table table-sm w-auto ms-auto">
+            <tr>
+              <th>Adelanto Pagado:</th>
+              <td class="text-success fw-semibold"><?= number_format($adelanto, 2) ?>
+                <?= htmlspecialchars($config['moneda']) ?></td>
+            </tr>
+            <tr>
+              <th>Saldo Pendiente:</th>
+              <td class="text-danger fw-semibold"><?= number_format($restante, 2) ?>
+                <?= htmlspecialchars($config['moneda']) ?></td>
+            </tr>
+          </table>
         </div>
+      <?php endif; ?>
+
+      <?php if ($solicitud['adelanto'] <= 0): ?>
+        <p class="text-muted fst-italic small section">
+          * Esta proforma no representa un compromiso definitivo. Está sujeta a disponibilidad de materiales o
+          modificaciones del proyecto.
+        </p>
+      <?php else: ?>
+        <p class="text-muted fst-italic small section">
+          * Esta factura refleja un pago parcial y el saldo pendiente está sujeto a verificación al momento de entrega.
+        </p>
+      <?php endif; ?>
+
+
+      <!-- Botones -->
+      <div class="no-print justify-content-end">
+        <a href="https://wa.me/?text=Hola,%20aquí%20tienes%20tu%20proforma:%20<?= urlencode($pdfUrl) ?>"
+          class="btn btn-success"><i class="bi bi-whatsapp me-2"></i> WhatsApp</a>
+        <button onclick="window.print()" class="btn btn-outline-primary"><i class="bi bi-printer me-2"></i>
+          Imprimir</button>
+        <a href="<?= $pdfUrl ?>" target="_blank" class="btn btn-primary"><i
+            class="bi bi-file-earmark-pdf-fill me-2"></i> PDF</a>
+      </div>
+
     </div>
+  </div>
 </body>
+
 </html>

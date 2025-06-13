@@ -98,6 +98,41 @@ $rol = isset($_SESSION['usuario']['rol']) ? strtolower(trim($_SESSION['usuario']
         });
     }
 
+
+     
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.editar-tarea-btn')) {
+        const btn = e.target.closest('.editar-tarea-btn');
+        const tareaId = btn.dataset.id;
+
+        if (!confirm('¿Deseas cambiar el estado de esta tarea?')) return;
+
+        const formData = new FormData();
+        formData.append('id', tareaId);
+
+        fetch('api/actualizar_estado_tarea.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message+' : '+data.nuevo_estado);
+                // Recargar lista sin refrescar página
+                cargarTareas(); // Asegúrate de tener esta función ya hecha
+            } else {
+                alert(data.message || 'Error al actualizar');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error en la solicitud');
+        });
+    }
+}); 
+
+
+
     document.addEventListener('DOMContentLoaded', () => {
         cargarTareas();
         manejarEventosTareas();

@@ -1,32 +1,28 @@
 <?php
-if (session_status() === PHP_SESSION_NONE)
-  session_start();
+if (session_status() === PHP_SESSION_NONE) session_start();
+ 
 
-
-$rol = $_SESSION['usuario']['rol'] ?? '';
-$usuarioId = $_SESSION['usuario']['id'] ?? null;
-$clienteId = $_SESSION['usuario']['id'] ?? null; // asumiendo que usuario.id = cliente_id para rol cliente
+$rol       = $_SESSION['usuario']['rol']   ?? '';
+$usuarioId = $_SESSION['usuario']['id']    ?? null;
+$clienteId = $_SESSION['usuario']['id']    ?? null; // asumiendo que usuario.id = cliente_id para rol cliente
 
 // ========== FUNCIONES ==========
 
 // 1. Total de ventas
-function totalVentas(PDO $pdo): float
-{
-  $sql = "SELECT IFNULL(SUM(total),0) FROM ventas";
-  return (float) $pdo->query($sql)->fetchColumn();
+function totalVentas(PDO $pdo): float {
+    $sql = "SELECT IFNULL(SUM(total),0) FROM ventas";
+    return (float) $pdo->query($sql)->fetchColumn();
 }
 
 // 2. Total de compras
-function totalCompras(PDO $pdo): float
-{
-  $sql = "SELECT IFNULL(SUM(total),0) FROM compras";
-  return (float) $pdo->query($sql)->fetchColumn();
+function totalCompras(PDO $pdo): float {
+    $sql = "SELECT IFNULL(SUM(total),0) FROM compras";
+    return (float) $pdo->query($sql)->fetchColumn();
 }
 
 // 3. Tareas del operario en el día
-function tareasOperario(PDO $pdo, int $empleadoId): array
-{
-  $sql = "
+function tareasOperario(PDO $pdo, int $empleadoId): array {
+    $sql = "
       SELECT 
         tp.id,
         tp.descripcion,
@@ -39,15 +35,14 @@ function tareasOperario(PDO $pdo, int $empleadoId): array
         AND DATE(tp.fecha_inicio) = CURDATE()
       ORDER BY tp.fecha_inicio DESC
     ";
-  $stmt = $pdo->prepare($sql);
-  $stmt->execute([$empleadoId]);
-  return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$empleadoId]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 // 4. Producciones asignadas al operario
-function produccionesAsignadas(PDO $pdo, int $empleadoId): array
-{
-  $sql = "
+function produccionesAsignadas(PDO $pdo, int $empleadoId): array {
+    $sql = "
       SELECT 
         pr.id,
         e.nombre AS estado,
@@ -59,15 +54,14 @@ function produccionesAsignadas(PDO $pdo, int $empleadoId): array
       WHERE pr.responsable_id = ?
       ORDER BY pr.created_at DESC
     ";
-  $stmt = $pdo->prepare($sql);
-  $stmt->execute([$empleadoId]);
-  return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$empleadoId]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 // 5. Pedidos de un cliente
-function pedidosCliente(PDO $pdo, int $clienteId): array
-{
-  $sql = "
+function pedidosCliente(PDO $pdo, int $clienteId): array {
+    $sql = "
       SELECT 
         p.proyecto,
         p.piezas,
@@ -79,25 +73,25 @@ function pedidosCliente(PDO $pdo, int $clienteId): array
       WHERE p.cliente_id = ?
       ORDER BY p.fecha_solicitud DESC
     ";
-  $stmt = $pdo->prepare($sql);
-  $stmt->execute([$clienteId]);
-  return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$clienteId]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 // Ejemplo de uso:
-if ($rol === 'Administrador') {
-  echo "Ventas: S/" . totalVentas($pdo) . "<br>";
-  echo "Compras: S/" . totalCompras($pdo) . "<br>";
+if ($rol === 'administrador') {
+    echo "Ventas: S/".totalVentas($pdo)."<br>";
+    echo "Compras: S/".totalCompras($pdo)."<br>";
 }
 
-if ($rol === 'Operario' && $usuarioId) {
-  $tareas = tareasOperario($pdo, $usuarioId);
-  // Pintar tareas...
+if ($rol === 'operario' && $usuarioId) {
+    $tareas = tareasOperario($pdo, $usuarioId);
+    // Pintar tareas...
 }
 
 if ($rol === 'cliente' && $clienteId) {
-  $pedidos = pedidosCliente($pdo, $clienteId);
-  // Pintar pedidos...
+    $pedidos = pedidosCliente($pdo, $clienteId);
+    // Pintar pedidos...
 }
 
 
@@ -117,7 +111,7 @@ while ($row = $stmt->fetch()) {
 }
 
 $labelsOperarios = [];
-$dataTareas = [];
+$dataTareas     = [];
 
 $sql = "
   SELECT 
@@ -135,13 +129,13 @@ $sql = "
 
 $stmt = $pdo->query($sql);
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-  $labelsOperarios[] = $row['operario'];
-  $total = (int) $row['total_tareas'];
-  $done = (int) $row['completadas'];
-  $porcentaje = $total > 0
-    ? round($done / $total * 100)
-    : 0;
-  $dataTareas[] = $porcentaje;
+    $labelsOperarios[] = $row['operario'];
+    $total = (int)$row['total_tareas'];
+    $done  = (int)$row['completadas'];
+    $porcentaje = $total > 0
+      ? round($done / $total * 100)
+      : 0;
+    $dataTareas[] = $porcentaje;
 }
 $hoy = date('Y-m-d');
 
@@ -175,14 +169,13 @@ $pedidosAtrasados = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <h2 class="mb-4">Panel de Control</h2>
 
     <?php if ($rol === 'Administrador'): ?>
-  
-<!-- Estilo de tarjetas contables -->
+      <!-- Estilo de tarjetas contables -->
 <div class="row g-4">
   <!-- Total Ventas -->
   <div class="col-md-4">
     <div class="card border-0 shadow-sm rounded-4 bg-light">
       <div class="card-body d-flex align-items-center gap-3">
-        <i class="bi bi-currency-dollar display-5 text-success"></i>
+        <i class="bi bi-currency-dollar display-6 text-success"></i>
         <div>
           <h6 class="text-muted mb-1">Total Ventas</h6>
           <h4 class="fw-bold text-success">S/ <?= number_format(totalVentas($pdo), 2) ?></h4>
@@ -195,7 +188,7 @@ $pedidosAtrasados = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <div class="col-md-4">
     <div class="card border-0 shadow-sm rounded-4 bg-light">
       <div class="card-body d-flex align-items-center gap-3">
-        <i class="bi bi-cart-check display-5 text-primary"></i>
+        <i class="bi bi-cart-check display-6 text-primary"></i>
         <div>
           <h6 class="text-muted mb-1">Total Compras</h6>
           <h4 class="fw-bold text-primary">S/ <?= number_format(totalCompras($pdo), 2) ?></h4>
@@ -208,7 +201,7 @@ $pedidosAtrasados = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <div class="col-md-4">
     <div class="card border-0 shadow-sm rounded-4 bg-light">
       <div class="card-body d-flex align-items-center gap-3">
-        <i class="bi bi-bar-chart-line display-5 text-dark"></i>
+        <i class="bi bi-bar-chart-line display-6 text-dark"></i>
         <div>
           <h6 class="text-muted mb-1">Balance Neto</h6>
           <h4 class="fw-bold text-dark">
@@ -225,9 +218,7 @@ $pedidosAtrasados = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <div class="col-12">
     <div class="card shadow-sm rounded-4 border-0">
       <div class="card-header bg-white border-bottom-0">
-        <h6 class="mb-0 text-secondary">
-          <i class="bi bi-graph-up-arrow me-2"></i>Balance Mensual (Ventas vs Compras)
-        </h6>
+        <h6 class="mb-0 text-secondary"><i class="bi bi-graph-up-arrow me-2"></i>Balance Mensual (Ventas vs Compras)</h6>
       </div>
       <div class="card-body">
         <canvas id="graficoBalance" height="100"></canvas>
@@ -236,66 +227,56 @@ $pedidosAtrasados = $stmt->fetchAll(PDO::FETCH_ASSOC);
   </div>
 </div>
 
+
 <!-- Google Charts Gantt -->
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <div class="card shadow-sm border-0 rounded-4 mt-4">
   <div class="card-header bg-white border-bottom-0">
-    <h6 class="mb-0 text-secondary">
-      <i class="bi bi-kanban me-2"></i>Diagrama de Gantt - Producción
-    </h6>
+    <h6 class="mb-0 text-secondary"><i class="bi bi-kanban me-2"></i>Diagrama de Gantt - Producción</h6>
   </div>
   <div class="card-body">
     <div id="gantt_chart" style="height: 400px;"></div>
   </div>
 </div>
 
-<!-- Materiales más usados -->
+
+<!-- materiales mas usados -->
 <div class="card mt-4 shadow-sm border-0 rounded-4">
   <div class="card-header bg-white border-bottom-0">
-    <h6 class="mb-0 text-secondary">
-      <i class="bi bi-box-seam me-2"></i>Materiales Más Utilizados
-    </h6>
+    <h6 class="mb-0 text-secondary"><i class="bi bi-box-seam me-2"></i>Materiales Más Utilizados</h6>
   </div>
   <div class="card-body">
     <canvas id="materialesMasUsados" height="250"></canvas>
   </div>
 </div>
-
-<!-- Avance general -->
+<!-- avances genera'l -->
 <div class="card mt-4 shadow-sm border-0 rounded-4">
   <div class="card-header bg-white border-bottom-0">
-    <h6 class="mb-0 text-secondary">
-      <i class="bi bi-speedometer2 me-2"></i>Avance General de Producción
-    </h6>
+    <h6 class="mb-0 text-secondary"><i class="bi bi-speedometer2 me-2"></i>Avance General de Producción</h6>
   </div>
   <div class="card-body">
     <div class="progress rounded-pill" style="height: 25px;">
-      <div class="progress-bar bg-success fw-bold" role="progressbar" style="width: <?= $avanceGlobal ?>%"
-        aria-valuenow="<?= $avanceGlobal ?>" aria-valuemin="0" aria-valuemax="100">
+      <div class="progress-bar bg-success fw-bold" role="progressbar"
+        style="width: <?= $avanceGlobal ?>%" aria-valuenow="<?= $avanceGlobal ?>"
+        aria-valuemin="0" aria-valuemax="100">
         <?= $avanceGlobal ?>%
       </div>
     </div>
   </div>
 </div>
 
-<!-- Avance por operario -->
+
 <div class="card mt-4 shadow-sm border-0 rounded-4">
   <div class="card-header bg-white border-bottom-0">
-    <h6 class="mb-0 text-secondary">
-      <i class="bi bi-person-check me-2"></i>Avance de Tareas por Operario
-    </h6>
+    <h6 class="mb-0 text-secondary"><i class="bi bi-person-check me-2"></i>Avance de Tareas por Operario</h6>
   </div>
   <div class="card-body">
     <canvas id="avanceOperarios" height="250"></canvas>
   </div>
 </div>
-
-<!-- Pedidos atrasados -->
 <div class="card mt-4 shadow-sm border-0 rounded-4">
   <div class="card-header bg-white border-bottom-0">
-    <h6 class="mb-0 text-danger">
-      <i class="bi bi-exclamation-triangle-fill me-2"></i>Pedidos Atrasados
-    </h6>
+    <h6 class="mb-0 text-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>Pedidos Atrasados</h6>
   </div>
   <div class="card-body p-0">
     <div class="table-responsive">
@@ -321,9 +302,7 @@ $pedidosAtrasados = $stmt->fetchAll(PDO::FETCH_ASSOC);
               </tr>
             <?php endforeach; ?>
           <?php else: ?>
-            <tr>
-              <td colspan="5" class="text-center text-muted">Sin pedidos atrasados.</td>
-            </tr>
+            <tr><td colspan="5" class="text-center text-muted">Sin pedidos atrasados.</td></tr>
           <?php endif; ?>
         </tbody>
       </table>
@@ -331,11 +310,7 @@ $pedidosAtrasados = $stmt->fetchAll(PDO::FETCH_ASSOC);
   </div>
 </div>
 
-<!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
-  // Avance de tareas por operario
   const ctxOperarios = document.getElementById('avanceOperarios').getContext('2d');
   new Chart(ctxOperarios, {
     type: 'bar',
@@ -363,8 +338,9 @@ $pedidosAtrasados = $stmt->fetchAll(PDO::FETCH_ASSOC);
       }
     }
   });
+</script>
 
-  // Materiales más usados
+<script>
   const ctxMateriales = document.getElementById('materialesMasUsados').getContext('2d');
   new Chart(ctxMateriales, {
     type: 'bar',
@@ -386,9 +362,10 @@ $pedidosAtrasados = $stmt->fetchAll(PDO::FETCH_ASSOC);
       }
     }
   });
+</script>
 
-  // Google Charts Gantt
-  google.charts.load('current', { 'packages': ['gantt'] });
+<script type="text/javascript">
+  google.charts.load('current', {'packages':['gantt']});
   google.charts.setOnLoadCallback(drawChart);
 
   function daysToMilliseconds(days) {
@@ -409,10 +386,10 @@ $pedidosAtrasados = $stmt->fetchAll(PDO::FETCH_ASSOC);
     data.addRows([
       <?php
       $stmt = $pdo->query("SELECT p.id, pe.proyecto, p.fecha_inicio, p.fecha_fin, COALESCE(SUM(a.porcentaje)/COUNT(a.id), 0) AS progreso
-          FROM producciones p
-          JOIN pedidos pe ON pe.id = p.solicitud_id
-          LEFT JOIN avances_produccion a ON a.produccion_id = p.id
-          GROUP BY p.id, pe.proyecto");
+        FROM producciones p
+        JOIN pedidos pe ON pe.id = p.solicitud_id
+        LEFT JOIN avances_produccion a ON a.produccion_id = p.id
+        GROUP BY p.id, pe.proyecto");
       while ($row = $stmt->fetch()) {
         echo "[
           'P{$row['id']}',
@@ -440,9 +417,17 @@ $pedidosAtrasados = $stmt->fetchAll(PDO::FETCH_ASSOC);
     const chart = new google.visualization.Gantt(document.getElementById('gantt_chart'));
     chart.draw(data, options);
   }
+</script>
 
-  // Gráfico balance mensual
-  (function () {
+<!-- Bootstrap Icons CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Script del gráfico -->
+<script>
+  (function(){
     const ctx = document.getElementById('graficoBalance').getContext('2d');
     new Chart(ctx, {
       type: 'bar',
@@ -451,12 +436,12 @@ $pedidosAtrasados = $stmt->fetchAll(PDO::FETCH_ASSOC);
         datasets: [
           {
             label: 'Ventas (S/)',
-            data: <?= json_encode(totalVentas($pdo)) ?>,
+            data: <?= json_encode($datosVentas) ?>,
             backgroundColor: 'rgba(25, 135, 84, 0.7)'
           },
           {
             label: 'Compras (S/)',
-            data: <?= json_encode(totalCompras($pdo)) ?>,
+            data: <?= json_encode($datosCompras) ?>,
             backgroundColor: 'rgba(13, 110, 253, 0.7)'
           }
         ]
@@ -478,10 +463,14 @@ $pedidosAtrasados = $stmt->fetchAll(PDO::FETCH_ASSOC);
         scales: {
           y: {
             beginAtZero: true,
-            ticks: { color: '#555' }
+            ticks: {
+              color: '#555'
+            }
           },
           x: {
-            ticks: { color: '#555' }
+            ticks: {
+              color: '#555'
+            }
           }
         }
       }
@@ -499,8 +488,7 @@ $pedidosAtrasados = $stmt->fetchAll(PDO::FETCH_ASSOC);
               <?php foreach (tareasOperario($pdo, $usuarioId) as $t): ?>
                 <li class="list-group-item">
                   <strong><?= htmlspecialchars($t['descripcion']) ?></strong><br>
-                  Estado: <?= htmlspecialchars($t['estado']) ?> <small
-                    class="text-muted">(<?= $t['fecha_inicio'] ?>)</small>
+                  Estado: <?= htmlspecialchars($t['estado']) ?> <small class="text-muted">(<?= $t['fecha_inicio'] ?>)</small>
                 </li>
               <?php endforeach; ?>
               <?php if (empty(tareasOperario($pdo, $usuarioId))): ?>
@@ -529,43 +517,43 @@ $pedidosAtrasados = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
       </div>
       <div class="card mt-4 shadow-sm border-0 rounded-4">
-        <div class="card-header bg-white border-bottom-0">
-          <h6 class="mb-0 text-secondary"><i class="bi bi-person-check me-2"></i>Avance de Tareas por Operario</h6>
-        </div>
-        <div class="card-body">
-          <canvas id="avanceOperarios" height="250"></canvas>
-        </div>
-      </div>
+  <div class="card-header bg-white border-bottom-0">
+    <h6 class="mb-0 text-secondary"><i class="bi bi-person-check me-2"></i>Avance de Tareas por Operario</h6>
+  </div>
+  <div class="card-body">
+    <canvas id="avanceOperarios" height="250"></canvas>
+  </div>
+</div>
 
-      <script>
-        const ctxOperarios = document.getElementById('avanceOperarios').getContext('2d');
-        new Chart(ctxOperarios, {
-          type: 'bar',
-          data: {
-            labels: <?= json_encode($labelsOperarios) ?>,
-            datasets: [{
-              label: '% Tareas Completadas',
-              data: <?= json_encode($dataTareas) ?>,
-              backgroundColor: 'rgba(54, 162, 235, 0.7)',
-              borderRadius: 6
-            }]
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              tooltip: { enabled: true },
-              legend: { display: false }
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                max: 100,
-                title: { display: true, text: '%' }
-              }
-            }
-          }
-        });
-      </script>
+<script>
+  const ctxOperarios = document.getElementById('avanceOperarios').getContext('2d');
+  new Chart(ctxOperarios, {
+    type: 'bar',
+    data: {
+      labels: <?= json_encode($labelsOperarios) ?>,
+      datasets: [{
+        label: '% Tareas Completadas',
+        data: <?= json_encode($dataTareas) ?>,
+        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        tooltip: { enabled: true },
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100,
+          title: { display: true, text: '%' }
+        }
+      }
+    }
+  });
+</script>
 
     <?php elseif ($rol === 'cliente'): ?>
       <div class="row">
@@ -590,9 +578,7 @@ $pedidosAtrasados = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </tr>
               <?php endforeach; ?>
               <?php if (empty(pedidosCliente($pdo, $clienteId))): ?>
-                <tr>
-                  <td colspan="4" class="text-center text-muted">No tienes pedidos registrados.</td>
-                </tr>
+                <tr><td colspan="4" class="text-center text-muted">No tienes pedidos registrados.</td></tr>
               <?php endif; ?>
             </tbody>
           </table>

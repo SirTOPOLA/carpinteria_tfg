@@ -22,7 +22,8 @@ if (session_status() == PHP_SESSION_NONE) {
          SELECT 
              u.*, 
              r.nombre AS rol, 
-             e.nombre AS nombre_empleado
+             e.nombre AS nombre_empleado,
+             e.id AS empleado_id
 
          FROM usuarios u
          INNER JOIN empleados e ON u.empleado_id = e.id
@@ -42,7 +43,8 @@ if (session_status() == PHP_SESSION_NONE) {
                      'id'      => $user['id'],
                      'nombre'  => $user['nombre_empleado'],
                      'usuario' => $user['username'], 
-                     'rol'     => $user['rol']
+                     'rol'     => $user['rol'],
+                     'empleado_id'     => $user['empleado_id']
                  ];
                  $_SESSION['alerta'] = "Inicio de sesión exitoso.";
                  return true;

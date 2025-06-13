@@ -7,6 +7,8 @@ require_once 'config/conexion.php';
 require_once 'auth/permisos.php'; 
 require_once 'auth/auth.php'; 
 require_once 'components/alerta.php'; 
+/* require_once 'components/dashboard.php';   */
+
  
 
 
