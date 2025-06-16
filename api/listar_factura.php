@@ -74,7 +74,7 @@ foreach ($facturas as $factura) {
     $esPagada = $factura['estado_factura'] === 'pagada';
 $estadoClase = $esPagada ? 'btn-success' : 'btn-warning';
 $disabled = $esPagada ? 'disabled' : '';
-
+$estado = $factura['estado_factura'] != 'pagada' ? 'pendiente' : 'pagada';
 $btnEstado = "
 <button 
     class='btn btn-sm $estadoClase btn-registrar-pago' 
@@ -83,9 +83,9 @@ $btnEstado = "
     data-pendiente='{$factura['saldo_pendiente']}'
     data-cliente='{$clienteNombre}'
     title='Registrar pago o actualizar estado'
-    $disabled
->
-    {$factura['estado_factura']}
+    $disabled>
+    
+    {$estado}
 </button>";
  
 

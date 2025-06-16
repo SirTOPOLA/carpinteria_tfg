@@ -32,7 +32,7 @@ CREATE TABLE `avances_produccion` (
   `produccion_id` int(11) NOT NULL,
   `descripcion` text DEFAULT NULL,
   `imagen` text NOT NULL,
-  porcentaje int DEFAULT 0,
+  `porcentaje` int DEFAULT 0,
   `fecha` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -518,11 +518,11 @@ CREATE TABLE `tareas_produccion` (
 
 
 CREATE TABLE detalles_produccion (
-  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  produccion_id INT UNSIGNED NOT NULL,
-  producto_id INT UNSIGNED NOT NULL,
-  descripcion TEXT,
-  cantidad INT DEFAULT 1,
+  `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `produccion_id` INT UNSIGNED NOT NULL,
+  `producto_id` INT UNSIGNED NOT NULL,
+  `descripcion` TEXT,
+  `cantidad` INT DEFAULT 1,
   FOREIGN KEY (produccion_id) REFERENCES producciones(id),
   FOREIGN KEY (producto_id) REFERENCES productos(id)
 );
