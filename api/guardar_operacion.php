@@ -27,7 +27,7 @@ if (!$estadoPendiente) {
 $estado_id_pendiente = $estadoPendiente['id'];
 
 // Obtener el ID del estado "en_proceso" para producción
-$stmtEstadoProceso = $pdo->prepare("SELECT id FROM estados WHERE nombre = 'en_proceso' AND entidad = 'tareas' LIMIT 1");
+$stmtEstadoProceso = $pdo->prepare("SELECT id FROM estados WHERE nombre = 'en_proceso' AND entidad = 'produccion' LIMIT 1");
 $stmtEstadoProceso->execute();
 $estadoEnProceso = $stmtEstadoProceso->fetch(PDO::FETCH_ASSOC);
 

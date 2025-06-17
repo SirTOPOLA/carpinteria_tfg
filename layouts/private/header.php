@@ -10,15 +10,32 @@
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+
+<style>
+  :root {
+    --primary-color: #8B4513;
+    --secondary-color: #D2691E;
+    --accent-color: #F4A460;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #17a2b8;
+    --dark-color: #343a40;
+    --light-color: #f8f9fa;
+  }
 
 
-    <style>
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-            overflow: hidden;
-            background-color: #f8f9fa;
+    
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden; 
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 
         }
 
@@ -27,6 +44,262 @@
             height: 100vh;
             overflow: hidden;
         }
+  
+/* ------sECCION DE DASHBOARD ----------- */
+  .card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  }
+
+  .stat-card {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-radius: 20px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    animation: pulse 2s infinite;
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin: 0;
+  }
+
+  .stat-icon {
+    font-size: 3rem;
+    opacity: 0.3;
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .chart-container {
+    position: relative;
+    height: 300px;
+    padding: 1rem;
+  }
+
+  .progress-custom {
+    height: 10px;
+    border-radius: 10px;
+    background: #e9ecef;
+    overflow: visible;
+  }
+
+  .progress-bar-custom {
+    border-radius: 10px;
+    position: relative;
+    animation: progressAnimation 2s ease-in-out;
+  }
+
+  .alert-custom {
+    border: none;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border-left: 4px solid;
+  }
+
+  .alert-danger-custom {
+    background: linear-gradient(90deg, rgba(220, 53, 69, 0.1), rgba(220, 53, 69, 0.05));
+    border-left-color: var(--danger-color);
+    color: var(--danger-color);
+  }
+
+  .alert-warning-custom {
+    background: linear-gradient(90deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
+    border-left-color: var(--warning-color);
+    color: #856404;
+  }
+
+  .table-custom {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .table-custom thead {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+  }
+
+  .table-custom tbody tr:hover {
+    background-color: rgba(139, 69, 19, 0.05);
+    transform: scale(1.01);
+    transition: all 0.2s ease;
+  }
+
+  .badge-custom {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .search-box {
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  .search-box input {
+    border-radius: 25px;
+    padding: 0.7rem 1rem 0.7rem 3rem;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+  }
+
+  .search-box input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(139, 69, 19, 0.25);
+  }
+
+  .search-box i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+  }
+
+  .filter-tabs {
+    background: white;
+    border-radius: 25px;
+    padding: 0.3rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .filter-tab {
+    border: none;
+    background: transparent;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    color: #6c757d;
+  }
+
+  .filter-tab.active {
+    background: var(--primary-color);
+    color: white;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    50% {
+      transform: scale(1.05);
+      opacity: 0.7;
+    }
+
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes progressAnimation {
+    0% {
+      width: 0%;
+    }
+
+    100% {
+      width: var(--progress-width);
+    }
+  }
+
+  .dashboard-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    border-radius: 0 0 25px 25px;
+  }
+
+  .quick-action-btn {
+    background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
+    border: none;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .quick-action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    color: white;
+  }
+
+  .notification-dot {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 20px;
+    height: 20px;
+    background: var(--danger-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: white;
+    font-weight: bold;
+  }
+
+  .section-title {
+    color: var(--primary-color);
+    font-weight: bold;
+    margin-bottom: 1rem;
+    position: relative;
+    padding-left: 1rem;
+  }
+
+  .section-title::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+    border-radius: 2px;
+  }
+ 
+
 
         /* ---------------- SIDEBAR ---------------- */
         .sidebar {
