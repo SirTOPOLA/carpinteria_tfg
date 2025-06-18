@@ -1,10 +1,6 @@
-2025-05-30 15:39:44 | Nombre: sir | Código: 00124578 | Teléfono: 555214780 | Dirección: vicatana | Email: admin@gmail.com | Descripción: necesito una vitrina
-2025-05-31 03:57:07 | Nombre: jesus | Código: 00145478 | Teléfono: 55120456 | Dirección: begoña 2 | Email: mar@gmail.com | Descripción: hola, buenas tardes, pro favor necesito un aparador
-2025-05-31 04:11:46 | Nombre: manuel ela | Código: 000124578 | Teléfono: 222001122 | Dirección: begoña 2 | Email: jeny@gmail.com | Descripción: necesito el servicion de instalacion de una puerta y compra de dos puertas
 Nombre: lucas moreno | Código: 0001454788 | Teléfono: 222001122 | Dirección: lamper | Email: lucas@gmail.com | Descripción: necesito un aparador de pared
 Nombre: Marieta manga | Código: 1445785245641 | Teléfono: 55120456 | Dirección: banapa | Email: la@gmail.com | Descripción: mueble
 Nombre: Rufina Batapa | Código: 000121323 | Teléfono: 555908967 | Dirección: lampert | Email: rufina@gmail.com | Descripción: necesito una mecita
 2025-06-03 12:56:14 | Nombre: Felipe | Código: 0014578 | Teléfono: 222141517 | Dirección: los angeles | Email:  | Descripción: estoy interesado en un adaptador
 2025-06-06 08:55:29 | Nombre: carmina | Código: 0014578 | Teléfono: 222547895 | Dirección: begoña 1 | Email:  | Descripción: necesito un aparador
 2025-06-07 11:03:41 | Nombre: carlos mete | Código: 000123456 | Teléfono: 222474569 | Dirección: elanguema | Email:  | Descripción: necesitas un aparador
-2025-06-14 15:10:28 | Nombre: Diosdado | Código: 000175362 | Teléfono: 55120450 | Dirección: begoña 2 | Email: mar@gmail.com | Descripción: necesito un aparador moderno

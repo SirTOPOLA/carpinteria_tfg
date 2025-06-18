@@ -94,7 +94,7 @@ $menu = [
 
 ];
 ?>
-  <div class="wrapper">
+
   <div id="sidebar" class="sidebar position-fixed scroll-box overflow-auto h-100 p-3">
   <h5 class="mb-4"><i class="bi bi-hammer me-2"></i>Menú</h5>
   <ul class="nav nav-pills flex-column">

@@ -470,7 +470,19 @@
 
         }
 
-
+@media (max-width: 575.98px) {
+    #navbar .btn {
+        width: 100%;
+        background-color: #f8f9fa; /* bg-light */
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        justify-content: center;
+        text-align: center;
+    }
+    #navbar .btn i {
+        font-size: 1.2rem;
+    }
+}
 
         /* ---------------- BOTÓN TOGGLE ---------------- */
         #sidebarToggle {

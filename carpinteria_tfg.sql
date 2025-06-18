@@ -173,6 +173,33 @@ CREATE TABLE detalles_pedido_material (
     ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
+
+CREATE TABLE detalle_pedido_producto (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  pedido_id INT NOT NULL,
+  producto_id INT NOT NULL,
+  cantidad INT NOT NULL,
+  precio_unitario DECIMAL(10,2),
+  desde_stock TINYINT(1) DEFAULT 1,
+  FOREIGN KEY (pedido_id) REFERENCES pedidos(id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (producto_id) REFERENCES productos(id)
+    ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+CREATE TABLE detalle_pedido_producto (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  pedido_id INT NOT NULL,
+  producto_id INT NOT NULL,
+  cantidad INT NOT NULL,
+  precio_unitario DECIMAL(10,2),
+  desde_stock TINYINT(1) DEFAULT 1,
+  FOREIGN KEY (pedido_id) REFERENCES pedidos(id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (producto_id) REFERENCES productos(id)
+    ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
 -- PRODUCCIONES
 CREATE TABLE producciones (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -247,27 +274,23 @@ CREATE TABLE movimientos_material (
     ON DELETE SET NULL ON UPDATE CASCADE
 );
 
--- VENTAS
+-- VENTAS 
 CREATE TABLE ventas (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  cliente_id INT,
-  nombre_cliente VARCHAR(100),
-  dni_cliente VARCHAR(20),
-  direccion_cliente VARCHAR(255),
+  cliente_id INT, 
   fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   total DECIMAL(10,2),
   metodo_pago VARCHAR(50),
+  observaciones TEXT, -- posi existen entregas parciales
+  estado_id INT NOT NULL, --  ENUM('pendiente','pagada','anulada') DEFAULT 'pendiente',
   FOREIGN KEY (cliente_id) REFERENCES clientes(id)
     ON DELETE SET NULL ON UPDATE CASCADE
 );
 
--- DETALLES VENTA
-CREATE TABLE detalles_venta (
+CREATE TABLE detalles_venta_producto (
   id INT AUTO_INCREMENT PRIMARY KEY,
   venta_id INT NOT NULL,
-  tipo ENUM('producto','servicio') NOT NULL,
-  producto_id INT,
-  servicio_id INT,
+  producto_id INT NOT NULL,
   cantidad INT DEFAULT 1,
   precio_unitario DECIMAL(10,2) NOT NULL,
   descuento DECIMAL(10,2) DEFAULT 0.00,
@@ -275,24 +298,42 @@ CREATE TABLE detalles_venta (
   FOREIGN KEY (venta_id) REFERENCES ventas(id)
     ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (producto_id) REFERENCES productos(id)
-    ON DELETE SET NULL ON UPDATE CASCADE,
+    ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+CREATE TABLE detalles_venta_servicio (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  venta_id INT NOT NULL,
+  servicio_id INT NOT NULL,
+  cantidad INT DEFAULT 1,
+  precio_unitario DECIMAL(10,2) NOT NULL,
+  descuento DECIMAL(10,2) DEFAULT 0.00,
+  subtotal DECIMAL(10,2),
+  FOREIGN KEY (venta_id) REFERENCES ventas(id)
+    ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (servicio_id) REFERENCES servicios(id)
     ON DELETE SET NULL ON UPDATE CASCADE
 );
+ 
 
 -- FACTURAS
 CREATE TABLE facturas (
   id INT AUTO_INCREMENT PRIMARY KEY,
   venta_id INT NOT NULL,
+  numero_factura VARCHAR(20) UNIQUE,
   fecha_emision DATE NOT NULL,
+  fecha_vencimiento DATE,
   monto_total DECIMAL(10,2) NOT NULL,
   saldo_pendiente DECIMAL(10,2) DEFAULT 0.00,
+  iva DECIMAL(10,2) DEFAULT 0.00,
   estado_id INT NOT NULL,
   FOREIGN KEY (venta_id) REFERENCES ventas(id)
     ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (estado_id) REFERENCES estados(id)
     ON DELETE RESTRICT ON UPDATE CASCADE
 );
+
+
 
 -- PAGOS
 CREATE TABLE pagos (
@@ -302,6 +343,11 @@ CREATE TABLE pagos (
   fecha_pago DATE NOT NULL,
   metodo_pago VARCHAR(50),
   observaciones TEXT,
+  usuario_id INT,
   FOREIGN KEY (factura_id) REFERENCES facturas(id)
-    ON DELETE CASCADE ON UPDATE CASCADE
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    ON DELETE SET NULL ON UPDATE CASCADE
 );
+
+

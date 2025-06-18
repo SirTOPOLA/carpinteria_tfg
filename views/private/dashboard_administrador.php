@@ -202,7 +202,7 @@ $stock_bajo = $stmt3->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
             <div class="text-center mt-3">
-              <a href="#" class="quick-action-btn">Ver Reporte Completo</a>
+              <a href="index.php?vista=ventas" class="quick-action-btn">Ver Reporte Completo</a>
             </div>
           </div>
         </div>

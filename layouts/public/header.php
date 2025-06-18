@@ -33,10 +33,22 @@ try {
   $stmt->execute();
   $usuario = $stmt->fetchAll();
 
-  $stmt = $pdo->prepare("SELECT imagen FROM avances_produccion  ORDER BY RAND() LIMIT 1");
-  $stmt->execute();
-  $heroImg = $stmt->fetchColumn();
-  $heroRuta = $heroImg ? "api/" . $heroImg : "img/hero-default.jpg";
+$maxIntentos = 5;
+$heroRuta = "img/hero-default.jpg"; // valor por defecto
+$basePath = "api/";
+
+for ($i = 0; $i < $maxIntentos; $i++) {
+    $stmt = $pdo->prepare("SELECT imagen FROM avances_produccion 
+                           WHERE imagen IS NOT NULL AND TRIM(imagen) != '' 
+                           ORDER BY RAND() LIMIT 1");
+    $stmt->execute();
+    $heroImg = $stmt->fetchColumn();
+
+    if ($heroImg && file_exists($basePath . $heroImg)) {
+        $heroRuta = $basePath . $heroImg;
+        break; // imagen válida encontrada, salimos del bucle
+    }
+}
 
 
   $sql = "
@@ -112,6 +124,13 @@ $equipo = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <!-- Animaciones AOS -->
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
 
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    
   <!-- Theme color para navegadores móviles -->
   <meta name="theme-color" content="#8B4513" /> <!-- Marrón madera, puedes cambiar -->
 

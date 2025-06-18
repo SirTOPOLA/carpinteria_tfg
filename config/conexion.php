@@ -7,7 +7,7 @@
 
 // Parámetros de conexión
 $host = 'localhost';           // o 127.0.0.1
-$dbname = 'carpinteria_tfg'; // nombre de la base de datos
+$dbname = 'carpinteria'; // nombre de la base de datos
 $usuario = 'root';             // usuario MySQL
 $contrasena = '';              // contraseña MySQL (vacía por defecto en XAMPP)
 
