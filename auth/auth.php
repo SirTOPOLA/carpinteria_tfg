@@ -23,8 +23,7 @@ if (session_status() == PHP_SESSION_NONE) {
              u.*, 
              r.nombre AS rol, 
              e.nombre AS nombre_empleado,
-             e.id AS empleado_id
-
+             e.id AS empleado_id 
          FROM usuarios u
          INNER JOIN empleados e ON u.empleado_id = e.id
          INNER JOIN roles r ON u.rol_id = r.id

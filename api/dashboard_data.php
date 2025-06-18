@@ -14,6 +14,7 @@ $response = [
   'rendimiento_equipo' => [],
   'resumen_financiero' => [],
   'clientes_mes' => [],
+  'beneficios_produccion' => [],
 ];
 
 // 🟢 1. Ventas del mes actual
@@ -160,10 +161,13 @@ $response['alertas_stock'] = intval($pdo->query($sql)->fetchColumn());
 $stmt = $pdo->query("
 SELECT
 -- Ingresos del mes
-  (SELECT IFNULL(SUM(v.total), 0)
-   FROM ventas v
-   WHERE MONTH(v.fecha) = MONTH(CURRENT_DATE())
-   AND YEAR(v.fecha) = YEAR(CURRENT_DATE())) AS ingresos_mes,
+  (
+  SELECT IFNULL(SUM(p.monto_pagado), 0)
+  FROM pagos p
+  WHERE MONTH(p.fecha_pago) = MONTH(CURRENT_DATE())
+    AND YEAR(p.fecha_pago) = YEAR(CURRENT_DATE())
+) AS ingresos_mes,
+
 
   -- Gastos del mes
   (SELECT IFNULL(SUM(c.total), 0)
@@ -221,6 +225,29 @@ LIMIT 5;
 
 $cliente = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $response['clientes_mes'] = $cliente;
+
+
+/*  clientes del mes -- */
+$stmt = $pdo->query("
+SELECT 
+  p.id AS produccion_id,
+  ped.id AS pedido_id,
+  ped.proyecto,
+  p.fecha_inicio,
+  ped.estimacion_total,
+  IFNULL(SUM(dm.cantidad * dc.precio_unitario), 0) AS costo_materiales,
+  (ped.estimacion_total - IFNULL(SUM(dm.cantidad * dc.precio_unitario), 0)) AS beneficio_estimado
+FROM producciones p
+JOIN pedidos ped ON p.solicitud_id = ped.id
+LEFT JOIN movimientos_material dm ON dm.produccion_id = p.id AND dm.tipo_movimiento = 'salida'
+LEFT JOIN detalles_compra dc ON dc.material_id = dm.material_id
+GROUP BY p.id, ped.id, ped.proyecto, ped.estimacion_total
+ORDER BY p.id DESC;
+
+     ");
+
+$beneficios_produccion = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$response['beneficios_produccion'] = $beneficios_produccion;
 
 
 // Devolver JSON
