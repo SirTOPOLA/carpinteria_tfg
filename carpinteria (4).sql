@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-06-2025 a las 16:58:14
+-- Tiempo de generación: 02-07-2025 a las 17:06:06
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -31,18 +31,22 @@ CREATE TABLE `avances_produccion` (
   `id` int(11) NOT NULL,
   `produccion_id` int(11) NOT NULL,
   `descripcion` text DEFAULT NULL,
-  `imagen` text NOT NULL,
-  `porcentaje` int DEFAULT 0,
-  `fecha` timestamp NOT NULL DEFAULT current_timestamp()
+  `imagen` text DEFAULT NULL,
+  `fecha` timestamp NOT NULL DEFAULT current_timestamp(),
+  `porcentaje` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `avances_produccion`
 --
 
-INSERT INTO `avances_produccion` (`id`, `produccion_id`, `descripcion`, `imagen`, `fecha`) VALUES
-(1, 8, 'mod', 'img_6842faf428d2e7.70904481_istockphoto-628110806-1024x1024.jpg', '2025-06-06 14:28:04'),
-(2, 6, 'un modelo trivial', 'uploads/produccion/img_6842fb4533e8a5.70162564_istockphoto-628110806-1024x1024.jpg', '2025-06-06 14:29:25');
+INSERT INTO `avances_produccion` (`id`, `produccion_id`, `descripcion`, `imagen`, `fecha`, `porcentaje`) VALUES
+(1, 8, 'mod', 'img_6842faf428d2e7.70904481_istockphoto-628110806-1024x1024.jpg', '2025-06-06 14:28:04', 0),
+(2, 6, 'un modelo trivial', 'uploads/produccion/img_6842fb4533e8a5.70162564_istockphoto-628110806-1024x1024.jpg', '2025-06-06 14:29:25', 0),
+(5, 7, 'Avance automático para completar producción.', NULL, '2025-06-17 10:21:30', 100),
+(6, 8, 'mejoramos la madera', NULL, '2025-06-17 14:06:29', 27),
+(7, 8, 'montando todo', NULL, '2025-06-17 14:07:24', 62),
+(8, 8, 'Avance automático para completar producción.', NULL, '2025-07-02 14:57:40', 11);
 
 -- --------------------------------------------------------
 
@@ -121,7 +125,7 @@ CREATE TABLE `configuracion` (
 --
 
 INSERT INTO `configuracion` (`id`, `nombre_empresa`, `direccion`, `telefono`, `correo`, `logo`, `iva`, `nif`, `moneda`, `imagen`, `vision`, `mision`, `historia`) VALUES
-(1, 'CARPINTERIA SIXBOKU SL', 'PERES MERCAMAR', '551718822', 'sixboku@carpinteria.net', 'uploads/configuracion/logo_1748791116.jpg', 15.00, NULL, 'XAF', 'uploads/configuracion/imagen_1748791116.jpg', 'fgs', 'gfhd', 'sfgs');
+(1, 'CARPINTERIA SIXBOKU SL', 'PERES MERCAMAR', '551718822', 'sixboku@carpinteria.net', 'uploads/configuracion/logo_6852743c38d23_WhatsApp Image 2025-05-16 at 22.17.25.jpeg', 15.00, NULL, 'XAF', 'uploads/configuracion/imagen_1748791116.jpg', 'Ser una referencia en el sector de la carpintería \r\nen Guinea Ecuatorial, destacando por la calidad, \r\nla creatividad y el trato cercano.', 'Crear muebles y soluciones de carpintería de alta calidad, \r\ncombinando tradición artesanal con innovación, para mejorar los \r\nespacios de nuestros clientes.', 'Nacimos como un pequeño taller en Ela-Nguema, fruto del esfuerzo \r\ny la pasión de nuestro fundador. Con el tiempo y gracias a la confianza \r\nde nuestros clientes, nos consolidamos en el Barrio Pérez, donde hoy \r\ntrabajamos con maquinaria moderna y un equipo profesional comprometido \r\ncon la excelencia.');
 
 -- --------------------------------------------------------
 
@@ -181,7 +185,24 @@ INSERT INTO `detalles_pedido_material` (`id`, `pedido_id`, `material_id`, `canti
 (29, 14, 2, 2),
 (30, 14, 3, 3),
 (32, 16, 6, 7),
-(33, 17, 6, 7);
+(33, 17, 6, 7),
+(34, 18, 2, 1),
+(35, 18, 1, 3),
+(36, 18, 6, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `detalles_produccion`
+--
+
+CREATE TABLE `detalles_produccion` (
+  `id` int(11) NOT NULL,
+  `produccion_id` int(11) NOT NULL,
+  `producto_id` int(11) NOT NULL,
+  `descripcion` text DEFAULT NULL,
+  `cantidad` int(11) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -200,6 +221,20 @@ CREATE TABLE `detalles_venta` (
   `descuento` decimal(10,2) DEFAULT 0.00,
   `subtotal` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `detalles_venta`
+--
+
+INSERT INTO `detalles_venta` (`id`, `venta_id`, `tipo`, `producto_id`, `servicio_id`, `cantidad`, `precio_unitario`, `descuento`, `subtotal`) VALUES
+(16, 15, '', NULL, NULL, 2, 58000.00, 0.00, 58000.00),
+(17, 16, 'producto', 1, NULL, 2, 120000.00, 0.00, 240000.00),
+(18, 17, 'producto', 1, NULL, 1, 120000.00, 0.00, 120000.00),
+(19, 17, 'servicio', NULL, 3, 1, 5000.00, 0.00, 5000.00),
+(20, 18, '', NULL, NULL, 1, 71000.00, 0.00, 71000.00),
+(21, 19, 'producto', 9, NULL, 1, 170000.00, 0.00, 170000.00),
+(22, 20, 'producto', 10, NULL, 3, 250000.00, 0.00, 750000.00),
+(23, 20, 'servicio', NULL, 3, 5, 5000.00, 0.00, 25000.00);
 
 -- --------------------------------------------------------
 
@@ -241,7 +276,7 @@ INSERT INTO `empleados` (`id`, `nombre`, `apellido`, `fecha_nacimiento`, `codigo
 CREATE TABLE `estados` (
   `id` int(11) NOT NULL,
   `nombre` varchar(50) NOT NULL,
-  `entidad` enum('produccion','proyecto','pedido','venta','factura', 'tareas') NOT NULL
+  `entidad` enum('produccion','proyecto','pedido','venta','factura','tareas') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -259,7 +294,10 @@ INSERT INTO `estados` (`id`, `nombre`, `entidad`) VALUES
 (8, 'pendiente', 'produccion'),
 (9, 'finalizado', 'produccion'),
 (10, 'finalizado', 'pedido'),
-(11, 'entregado', 'pedido');
+(11, 'entregado', 'pedido'),
+(12, 'pendiente', 'tareas'),
+(13, 'en_progreso', 'tareas'),
+(14, 'completado', 'tareas');
 
 -- --------------------------------------------------------
 
@@ -275,6 +313,18 @@ CREATE TABLE `facturas` (
   `saldo_pendiente` decimal(10,2) DEFAULT 0.00,
   `estado_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `facturas`
+--
+
+INSERT INTO `facturas` (`id`, `venta_id`, `fecha_emision`, `monto_total`, `saldo_pendiente`, `estado_id`) VALUES
+(11, 15, '2025-06-17', 58000.00, 0.00, 2),
+(12, 16, '2025-06-17', 240000.00, 0.00, 2),
+(13, 17, '2025-06-17', 125000.00, 0.00, 2),
+(14, 18, '2025-07-02', 71000.00, 0.00, 2),
+(15, 19, '2025-07-02', 170000.00, 0.00, 2),
+(16, 20, '2025-07-02', 775000.00, 0.00, 2);
 
 -- --------------------------------------------------------
 
@@ -297,12 +347,13 @@ CREATE TABLE `materiales` (
 --
 
 INSERT INTO `materiales` (`id`, `nombre`, `descripcion`, `unidad_medida`, `stock_actual`, `stock_minimo`, `creado_en`) VALUES
-(1, 'Madera Pino', 'Madera blanda y económica para estructuras y muebles básicos.', 'metro cúbico', 140, 5, '2025-06-01 16:30:42'),
-(2, 'Madera Cedro', 'Madera resistente y aromática, ideal para muebles finos.', 'metro cúbico', 116, 5, '2025-06-01 16:31:16'),
+(1, 'Madera Pino', 'Madera blanda y económica para estructuras y muebles básicos.', 'metro cúbico', 137, 5, '2025-06-01 16:30:42'),
+(2, 'Madera Cedro', 'Madera resistente y aromática, ideal para muebles finos.', 'metro cúbico', 115, 5, '2025-06-01 16:31:16'),
 (3, 'Madera MDF', 'Tablero de fibra de densidad media, ideal para interiores.', 'hoja', 100, 5, '2025-06-01 16:31:55'),
-(4, 'Cola de carpintero', 'Adhesivo blanco para unión de madera.', 'litro', 15, 2, '2025-06-01 16:32:31'),
+(4, 'Cola de carpintero', 'Adhesivo blanco para unión de madera.', 'litro', 12, 2, '2025-06-01 16:32:31'),
 (5, 'Tornillos para madera 100mm', 'Tornillos galvanizados para fijaciones pequeñas.', 'kg', 16, 5, '2025-06-01 16:34:06'),
-(6, 'Barniz transparente', 'Barniz protector con acabado brillante o mate.', 'litro', 3, 2, '2025-06-01 16:35:32');
+(6, 'Barniz transparente', 'Barniz protector con acabado brillante o mate.', 'litro', 2, 2, '2025-06-01 16:35:32'),
+(7, 'aceite cola', 'liquido transparente útil para la madera', 'litro', 0, 2, '2025-06-17 10:30:43');
 
 -- --------------------------------------------------------
 
@@ -330,7 +381,11 @@ INSERT INTO `movimientos_material` (`id`, `material_id`, `tipo_movimiento`, `can
 (16, 6, 'entrada', 3, '2025-06-06 14:08:02', 'red', 6),
 (17, 6, 'salida', 4, '2025-06-06 14:11:39', 'cag', 7),
 (18, 6, 'salida', 1, '2025-06-06 14:15:27', 'mov', 7),
-(19, 4, 'salida', 5, '2025-06-06 14:16:15', 'vmov', 8);
+(19, 4, 'salida', 5, '2025-06-06 14:16:15', 'vmov', 8),
+(20, 2, 'salida', 1, '2025-06-17 12:16:12', 'salida', 9),
+(21, 1, 'salida', 3, '2025-06-17 12:16:32', 'sa', 9),
+(22, 6, 'salida', 1, '2025-06-17 12:16:43', 'sa', 9),
+(23, 4, 'salida', 3, '2025-07-02 14:56:21', 'sa', 8);
 
 -- --------------------------------------------------------
 
@@ -346,6 +401,18 @@ CREATE TABLE `pagos` (
   `metodo_pago` varchar(50) DEFAULT NULL,
   `observaciones` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `pagos`
+--
+
+INSERT INTO `pagos` (`id`, `factura_id`, `monto_pagado`, `fecha_pago`, `metodo_pago`, `observaciones`) VALUES
+(21, 11, 58000.00, '2025-06-17', 'efectivo', ''),
+(22, 12, 240000.00, '2025-06-17', 'efectivo', ''),
+(23, 13, 125000.00, '2025-06-18', 'efectivo', ''),
+(24, 14, 71000.00, '2025-07-02', 'efectivo', ''),
+(25, 15, 170000.00, '2025-07-02', 'efectivo', ''),
+(26, 16, 775000.00, '2025-07-02', 'efectivo', '');
 
 -- --------------------------------------------------------
 
@@ -373,12 +440,13 @@ CREATE TABLE `pedidos` (
 --
 
 INSERT INTO `pedidos` (`id`, `cliente_id`, `proyecto`, `piezas`, `servicio_id`, `descripcion`, `fecha_solicitud`, `fecha_entrega`, `precio_obra`, `estimacion_total`, `adelanto`, `estado_id`) VALUES
-(11, 4, 'aparador moderno', 1, NULL, 'un elgante articulo', '2025-06-06', 20, 80000.00, 140000.00, 0.00, 4),
-(12, 4, 'aparador moderno', 1, NULL, 'un elgante articulo', '2025-06-06', 2, 15000.00, 71000.00, 50000.00, 6),
-(13, 2, 'aparador moderno', 1, NULL, 'un elgante articulo', '2025-06-06', 0, 15000.00, 28500.00, 10000.00, 5),
-(14, 3, 'aparador moderno', 1, 2, 'un elgante articulo', '2025-06-06', 15, 45000.00, 61500.00, 50000.00, 5),
-(16, 1, 'aparador moderno', 0, NULL, 'un elgante articulo', '2025-06-06', 15, 30000.00, 58000.00, 0.00, 4),
-(17, 1, 'aparador moderno', 2, NULL, 'un elgante articulo', '2025-06-06', 15, 30000.00, 58000.00, 29000.00, 5);
+(11, 4, 'aparador moderno', 1, NULL, 'un elgante articulo', '2025-06-06', 20, 80000.00, 140000.00, 0.00, 11),
+(12, 4, 'aparador moderno', 1, NULL, 'un elgante articulo', '2025-06-06', 2, 15000.00, 71000.00, 50000.00, 11),
+(13, 2, 'aparador moderno', 1, NULL, 'un elgante articulo', '2025-06-06', 0, 15000.00, 28500.00, 10000.00, 11),
+(14, 3, 'aparador moderno', 1, 2, 'un elgante articulo', '2025-06-06', 15, 45000.00, 61500.00, 50000.00, 11),
+(16, 1, 'aparador moderno', 0, NULL, 'un elgante articulo', '2025-06-06', 15, 30000.00, 58000.00, 0.00, 11),
+(17, 1, 'aparador moderno', 2, NULL, 'un elgante articulo', '2025-06-06', 15, 30000.00, 58000.00, 29000.00, 11),
+(18, 3, 'porta vinos de paret', 1, NULL, 'buen lujo', '2025-06-17', 10, 17000.00, 35000.00, 20000.00, 11);
 
 -- --------------------------------------------------------
 
@@ -402,8 +470,9 @@ CREATE TABLE `producciones` (
 
 INSERT INTO `producciones` (`id`, `solicitud_id`, `responsable_id`, `fecha_inicio`, `fecha_fin`, `estado_id`, `created_at`) VALUES
 (6, 17, 3, '2025-06-07', '2025-06-22', 7, '2025-06-06 12:20:49'),
-(7, 17, 4, '2025-06-08', '2025-06-23', 7, '2025-06-06 14:11:21'),
-(8, 12, 3, '2025-06-11', '2025-06-13', 7, '2025-06-06 14:15:59');
+(7, 17, 4, '2025-06-08', '2025-06-17', 9, '2025-06-06 14:11:21'),
+(8, 12, 3, '2025-06-11', '2025-07-02', 9, '2025-06-06 14:15:59'),
+(9, 18, 4, '2025-06-14', '2025-06-24', 7, '2025-06-17 12:15:39');
 
 -- --------------------------------------------------------
 
@@ -425,7 +494,9 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`id`, `nombre`, `descripcion`, `imagen`, `precio_unitario`, `stock`) VALUES
-(1, 'aparador moderno', 'un elgante articulo', 'uploads/productos/img_683d2a31893d7.jpg', 120000.00, 0);
+(1, 'aparador moderno', 'un elgante articulo', 'uploads/productos/img_683d2a31893d7.jpg', 120000.00, 2),
+(9, 'Mesa de Comedor Rústica', 'Mesa grande de madera maciza ideal para reuniones familiares. Hecha a mano con acabado envejecido', 'uploads/productos/img_68528805cf0c5.webp', 170000.00, 1),
+(10, 'Puerta Artesanal', 'Un modelo un más perfeccionado adaptable a marcos frances', 'uploads/productos/img_6852a5903d369.jpeg', 250000.00, 0);
 
 -- --------------------------------------------------------
 
@@ -496,7 +567,8 @@ INSERT INTO `servicios` (`id`, `nombre`, `descripcion`, `precio_base`, `unidad`,
 (1, 'Corte de madera', 'Corte de madera con maquinaria especializada según medidas requeridas.', 1500.00, 'por corte', 1, '2025-06-01 16:17:59'),
 (2, 'Cepillado de madera', 'Alisado y nivelado de tablas o piezas de madera', 2000.00, 'por metro', 1, '2025-06-01 16:18:39'),
 (3, 'Barnizado', 'Aplicación de barniz protector y decorativo sobre superficies de madera.', 5000.00, 'por metro cuadrado', 1, '2025-06-01 16:19:25'),
-(4, 'Revestimiento en madera', 'Colocación de paneles o láminas decorativas de madera.', 15000.00, 'por metro cuadrado', 1, '2025-06-01 16:20:58');
+(4, 'Revestimiento en madera', 'Colocación de paneles o láminas decorativas de madera.', 15000.00, 'por metro cuadrado', 1, '2025-06-01 16:20:58'),
+(5, 'Diseño y fabricación de mueble a medida', 'Fabricación personalizada según medidas del cliente', 125000.00, 'por pieza', 1, '2025-06-18 11:49:53');
 
 -- --------------------------------------------------------
 
@@ -515,25 +587,15 @@ CREATE TABLE `tareas_produccion` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
-
-
-CREATE TABLE detalles_produccion (
-  `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  `produccion_id` INT UNSIGNED NOT NULL,
-  `producto_id` INT UNSIGNED NOT NULL,
-  `descripcion` TEXT,
-  `cantidad` INT DEFAULT 1,
-  FOREIGN KEY (produccion_id) REFERENCES producciones(id),
-  FOREIGN KEY (producto_id) REFERENCES productos(id)
-);
-
-
 -- Volcado de datos para la tabla `tareas_produccion`
 --
 
 INSERT INTO `tareas_produccion` (`id`, `produccion_id`, `descripcion`, `responsable_id`, `estado_id`, `fecha_inicio`, `fecha_fin`) VALUES
-(1, 6, 'realiza dos manos de barnizado para el corte 4x8', 3, 8, '2025-06-06', '2025-06-06'),
-(2, 8, 'haga un corte en la madera de 4x7', 4, 8, '2025-06-06', '2025-06-06');
+(1, 6, 'realiza dos manos de barnizado para el corte 4x8', 3, 14, '2025-06-06', '2025-06-06'),
+(2, 8, 'haga un corte en la madera de 4x7', 4, 14, '2025-06-06', '2025-06-06'),
+(3, 8, 'marca 05cm', 3, 14, '2025-06-17', '2025-06-17'),
+(4, 6, 'fadsa', 3, 14, '2025-06-17', '2025-06-18'),
+(5, 9, 'cartame madera de 2m', 4, 14, '2025-06-17', '2025-06-18');
 
 -- --------------------------------------------------------
 
@@ -556,7 +618,9 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `empleado_id`, `username`, `password`, `imagen`, `rol_id`, `activo`) VALUES
-(1, 2, 'admin', '$2y$10$3vdW2OU0E56D4mjPYrrsQu3oc4qmDYv4VoCh9EM6PIGoBrD4YpkjG', 'uploads/usuarios/usuario_1748791171.jpg', 6, 1);
+(1, 2, 'admin', '$2y$10$3vdW2OU0E56D4mjPYrrsQu3oc4qmDYv4VoCh9EM6PIGoBrD4YpkjG', 'uploads/usuarios/usuario_1748791171.jpg', 6, 1),
+(2, 3, 'operario1', '$2y$10$i7wTTaXCtVEYHQFcBq55A.dKiqV5S5BPatDUuU7AQ.JtS/kT4vdGS', 'uploads/usuarios/usuario_1750166065.jpg', 10, 1),
+(3, 4, 'operario2', '$2y$10$F2Vi53tpwwMJMSCmx.4uVujz7wyhrrbggMJyGFNS.O8yQrxMd46HS', 'uploads/usuarios/usuario_1750166091.png', 10, 1);
 
 -- --------------------------------------------------------
 
@@ -574,6 +638,18 @@ CREATE TABLE `ventas` (
   `total` decimal(10,2) DEFAULT NULL,
   `metodo_pago` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `ventas`
+--
+
+INSERT INTO `ventas` (`id`, `cliente_id`, `nombre_cliente`, `dni_cliente`, `direccion_cliente`, `fecha`, `total`, `metodo_pago`) VALUES
+(15, 1, NULL, NULL, NULL, '2025-06-17 10:22:46', 58000.00, 'efectivo'),
+(16, 2, '', '', '', '2025-06-17 13:38:44', 240000.00, 'efectivo'),
+(17, 4, '', '', '', '2025-06-17 14:47:35', 125000.00, 'efectivo'),
+(18, 4, NULL, NULL, NULL, '2025-07-02 14:58:37', 71000.00, 'efectivo'),
+(19, 3, '', '', '', '2025-07-02 15:00:05', 170000.00, 'efectivo'),
+(20, 2, '', '', '', '2025-07-02 15:01:24', 775000.00, 'efectivo');
 
 --
 -- Índices para tablas volcadas
@@ -621,6 +697,14 @@ ALTER TABLE `detalles_pedido_material`
   ADD PRIMARY KEY (`id`),
   ADD KEY `pedido_id` (`pedido_id`),
   ADD KEY `material_id` (`material_id`);
+
+--
+-- Indices de la tabla `detalles_produccion`
+--
+ALTER TABLE `detalles_produccion`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `produccion_id` (`produccion_id`),
+  ADD KEY `producto_id` (`producto_id`);
 
 --
 -- Indices de la tabla `detalles_venta`
@@ -747,7 +831,7 @@ ALTER TABLE `ventas`
 -- AUTO_INCREMENT de la tabla `avances_produccion`
 --
 ALTER TABLE `avances_produccion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `clientes`
@@ -777,13 +861,19 @@ ALTER TABLE `detalles_compra`
 -- AUTO_INCREMENT de la tabla `detalles_pedido_material`
 --
 ALTER TABLE `detalles_pedido_material`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+
+--
+-- AUTO_INCREMENT de la tabla `detalles_produccion`
+--
+ALTER TABLE `detalles_produccion`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `detalles_venta`
 --
 ALTER TABLE `detalles_venta`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de la tabla `empleados`
@@ -795,49 +885,49 @@ ALTER TABLE `empleados`
 -- AUTO_INCREMENT de la tabla `estados`
 --
 ALTER TABLE `estados`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `facturas`
 --
 ALTER TABLE `facturas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de la tabla `materiales`
 --
 ALTER TABLE `materiales`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `movimientos_material`
 --
 ALTER TABLE `movimientos_material`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `producciones`
 --
 ALTER TABLE `producciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedores`
@@ -855,25 +945,25 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT de la tabla `servicios`
 --
 ALTER TABLE `servicios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `tareas_produccion`
 --
 ALTER TABLE `tareas_produccion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `ventas`
 --
 ALTER TABLE `ventas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- Restricciones para tablas volcadas
@@ -904,6 +994,13 @@ ALTER TABLE `detalles_compra`
 ALTER TABLE `detalles_pedido_material`
   ADD CONSTRAINT `detalles_pedido_material_ibfk_1` FOREIGN KEY (`pedido_id`) REFERENCES `pedidos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `detalles_pedido_material_ibfk_2` FOREIGN KEY (`material_id`) REFERENCES `materiales` (`id`) ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `detalles_produccion`
+--
+ALTER TABLE `detalles_produccion`
+  ADD CONSTRAINT `detalles_produccion_ibfk_1` FOREIGN KEY (`produccion_id`) REFERENCES `producciones` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `detalles_produccion_ibfk_2` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`) ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `detalles_venta`
