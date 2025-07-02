@@ -27,23 +27,31 @@ try {
 
 
 <style>
- :root {
-    --wood-primary: #2c3e50;        /* Azul petróleo profundo */
-    --wood-secondary: #7f8c8d;      /* Gris medio elegante */
-    --wood-accent: #c49b66;         /* Marrón claro suave, tono madera refinada */
-    --wood-light: #fdfaf6;          /* Crema claro, casi blanco cálido */
-    --wood-dark: #1a252f;           /* Azul muy oscuro para contrastes */
-    --gold-accent: #bfa77a;         /* Oro viejo, elegante y sutil */
-    --cream: #f5f0e6;               /* Crema suave para fondos */
-    --charcoal: #ecf0f1;            /* Gris claro profesional */
-}
+    :root {
+        --wood-primary: #2c3e50;
+        /* Azul petróleo profundo */
+        --wood-secondary: #7f8c8d;
+        /* Gris medio elegante */
+        --wood-accent: #c49b66;
+        /* Marrón claro suave, tono madera refinada */
+        --wood-light: #fdfaf6;
+        /* Crema claro, casi blanco cálido */
+        --wood-dark: #1a252f;
+        /* Azul muy oscuro para contrastes */
+        --gold-accent: #bfa77a;
+        /* Oro viejo, elegante y sutil */
+        --cream: #f5f0e6;
+        /* Crema suave para fondos */
+        --charcoal: #ecf0f1;
+        /* Gris claro profesional */
+    }
 
 
-   
+
 
     .hero-section {
-        background: 
-           linear-gradient(to right, #111827cc, #1f2937cc), url('<?= htmlspecialchars($heroRuta) ?>') center/cover no-repeat;
+        background:
+            linear-gradient(to right, #111827cc, #1f2937cc), url('<?= htmlspecialchars($heroRuta) ?>') center/cover no-repeat;
         position: relative;
         min-height: 60vh;
         display: flex;
@@ -235,7 +243,7 @@ try {
     }
 
     .service-card {
-        background: linear-gradient(145deg, var(--wood-light) 0%,rgb(223, 223, 223) 100%);
+        background: linear-gradient(145deg, var(--wood-light) 0%, rgb(223, 223, 223) 100%);
         border: 2px solid var(--wood-accent);
     }
 
@@ -345,6 +353,77 @@ try {
             gap: 1.5rem;
         }
     }
+
+    /* modal para zoom */
+    .modal {
+    display: none; /* Oculto por defecto */
+    position: fixed; /* Permanece en su lugar */
+    z-index: 9999; /* Z-index alto para que esté encima de todo */
+    padding-top: 50px; /* Ubicación de la caja */
+    left: 0;
+    top: 0;
+    width: 100%; /* Ancho completo */
+    height: 100%; /* Alto completo */
+    overflow: auto; /* Habilitar scroll si es necesario */
+    background-color: rgba(58, 56, 56, 0.2); /* Fondo negro con opacidad */
+    animation: fadeIn 0.3s forwards; /* Animación de entrada */
+}
+
+/* Contenido del modal (imagen) */
+.modal-content {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+    object-fit: contain; /* Asegura que la imagen se ajuste bien */
+    max-height: 90vh; /* Para que la imagen no sea más grande que la ventana visible */
+    animation: zoomIn 0.3s forwards; /* Animación de zoom para la imagen */
+}
+
+/* Botón de cerrar */
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes zoomIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Opcional: Cursor de puntero en las imágenes para indicar que son clickeables */
+.zoomable-image {
+    cursor: pointer;
+}
 </style>
 
 <main class="min-vh-100 d-flex flex-column">
@@ -368,33 +447,28 @@ try {
         </div>
 
         <!-- Catalog Grid -->
-        <div class="catalog-grid" id="catalogo"> <!-- Productos -->
-
-            <?php foreach ($productos as $producto): ?>
+        <div class="catalog-grid" id="catalogo"> <?php foreach ($productos as $producto): ?>
                 <div class="item-card" data-tipo="producto"
                     data-nombre="<?= htmlspecialchars(strtolower($producto['nombre'])) ?>"
                     data-descripcion="<?= htmlspecialchars(strtolower($producto['descripcion'])) ?>" data-aos="zoom-in">
 
                     <div class="product-card">
-                        <!-- Imagen del producto -->
                         <div class="product-image">
-                            <img src="<?= $producto['imagen'] ? 'api/' . htmlspecialchars($producto['imagen']) : 'img/no-image.png' ?>"
+                            <img class="zoomable-image"
+                                src="<?= $producto['imagen'] ? 'api/' . htmlspecialchars($producto['imagen']) : 'img/no-image.png' ?>"
+                                data-full-image="<?= $producto['imagen'] ? 'api/' . htmlspecialchars($producto['imagen']) : 'img/no-image.png' ?>"
                                 alt="<?= htmlspecialchars($producto['nombre']) ?>">
                         </div>
 
-                        <!-- Cuerpo de la tarjeta -->
                         <div class="p-4 d-flex flex-column h-100">
-                            <!-- Título -->
                             <h5 class="product-title">
                                 <?= htmlspecialchars($producto['nombre']) ?>
                             </h5>
 
-                            <!-- Descripción -->
                             <p class="product-description mb-3">
                                 <?= htmlspecialchars(mb_strimwidth($producto['descripcion'], 0, 100, '...')) ?>
                             </p>
 
-                            <!-- Precio y stock -->
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <span class="price-tag">
                                     FCFA <?= number_format($producto['precio_unitario'], 0, ',', '.') ?>
@@ -404,7 +478,6 @@ try {
                                 </span>
                             </div>
 
-                            <!-- Botón de consultar -->
                             <button class="btn btn-consultar w-100 mt-auto btn-solicitar"
                                 data-nombre="<?= htmlspecialchars($producto['nombre']) ?>" data-tipo="Producto">
                                 <i class="bi bi-chat-dots me-1"></i> Consultar Pieza
@@ -414,9 +487,12 @@ try {
                 </div>
             <?php endforeach; ?>
 
-
         </div>
 
+        <div id="imageModal" class="modal">
+            <span class="close-button">&times;</span>
+            <img class="modal-content" id="img01">
+        </div>
         <!-- Section Divider -->
         <hr class="section-divider">
 
@@ -489,17 +565,18 @@ try {
 </main>
 
 
- <!-- Modal Contacto -->
+<!-- Modal Contacto -->
 <div class="modal fade" id="modalContacto" tabindex="-1" aria-labelledby="modalContactoLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-md">
         <div class="modal-content rounded-4 shadow border-0">
-            
+
             <!-- Header -->
             <div class="modal-header bg-primary text-white rounded-top-4 py-2 px-3">
                 <h6 class="modal-title fw-semibold mb-0" id="modalContactoLabel">
                     <i class="bi bi-envelope-plus-fill me-2"></i>Solicitar Información
                 </h6>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Cerrar"></button>
             </div>
 
             <!-- Formulario -->
@@ -514,7 +591,8 @@ try {
                             <span class="input-group-text bg-light text-primary border border-1 rounded-start-2">
                                 <i class="bi bi-person-fill"></i>
                             </span>
-                            <input type="text" class="form-control form-control-sm border border-1 rounded-end-2" id="nombre" name="nombre" placeholder="Ej. Juan Pérez" required>
+                            <input type="text" class="form-control form-control-sm border border-1 rounded-end-2"
+                                id="nombre" name="nombre" placeholder="Ej. Juan Pérez" required>
                         </div>
                         <div class="invalid-feedback">Por favor ingresa tu nombre.</div>
                     </div>
@@ -526,7 +604,8 @@ try {
                             <span class="input-group-text bg-light text-primary border border-1 rounded-start-2">
                                 <i class="bi bi-upc-scan"></i>
                             </span>
-                            <input type="text" class="form-control form-control-sm border border-1 rounded-end-2" id="codigo" name="codigo" placeholder="Ej. DIP-123456" required>
+                            <input type="text" class="form-control form-control-sm border border-1 rounded-end-2"
+                                id="codigo" name="codigo" placeholder="Ej. DIP-123456" required>
                         </div>
                         <div class="invalid-feedback">El DIP es obligatorio.</div>
                     </div>
@@ -538,7 +617,8 @@ try {
                             <span class="input-group-text bg-light text-primary border border-1 rounded-start-2">
                                 <i class="bi bi-telephone-fill"></i>
                             </span>
-                            <input type="tel" class="form-control form-control-sm border border-1 rounded-end-2" id="telefono" name="telefono" pattern="^\+?\d{7,15}$" placeholder="Ej. +240123456789">
+                            <input type="tel" class="form-control form-control-sm border border-1 rounded-end-2"
+                                id="telefono" name="telefono" pattern="^\+?\d{7,15}$" placeholder="Ej. +240123456789">
                         </div>
                         <div class="invalid-feedback">Número inválido. Solo números y opcional "+".</div>
                     </div>
@@ -550,26 +630,32 @@ try {
                             <span class="input-group-text bg-light text-primary border border-1 rounded-start-2">
                                 <i class="bi bi-geo-alt-fill"></i>
                             </span>
-                            <input type="text" class="form-control form-control-sm border border-1 rounded-end-2" id="direccion" name="direccion" placeholder="Ej. Calle Principal, N° 123">
+                            <input type="text" class="form-control form-control-sm border border-1 rounded-end-2"
+                                id="direccion" name="direccion" placeholder="Ej. Calle Principal, N° 123">
                         </div>
                     </div>
 
                     <!-- Email -->
                     <div class="mb-2">
-                        <label for="email" class="form-label small">Correo electrónico <span class="text-muted small">(opcional)</span></label>
+                        <label for="email" class="form-label small">Correo electrónico <span
+                                class="text-muted small">(opcional)</span></label>
                         <div class="input-group input-group-sm">
                             <span class="input-group-text bg-light text-primary border border-1 rounded-start-2">
                                 <i class="bi bi-envelope-fill"></i>
                             </span>
-                            <input type="email" class="form-control form-control-sm border border-1 rounded-end-2" id="email" name="email" placeholder="Ej. usuario@correo.com">
+                            <input type="email" class="form-control form-control-sm border border-1 rounded-end-2"
+                                id="email" name="email" placeholder="Ej. usuario@correo.com">
                         </div>
                         <div class="invalid-feedback">Correo inválido.</div>
                     </div>
 
                     <!-- Descripción -->
                     <div class="mb-2">
-                        <label for="descripcion" class="form-label small">Descripción <span class="text-danger">*</span></label>
-                        <textarea class="form-control form-control-sm border border-1 rounded-2" id="descripcion" name="descripcion" rows="2" placeholder="Describe tu consulta o solicitud" required></textarea>
+                        <label for="descripcion" class="form-label small">Descripción <span
+                                class="text-danger">*</span></label>
+                        <textarea class="form-control form-control-sm border border-1 rounded-2" id="descripcion"
+                            name="descripcion" rows="2" placeholder="Describe tu consulta o solicitud"
+                            required></textarea>
                         <div class="invalid-feedback">La descripción es obligatoria.</div>
                     </div>
                 </div>
@@ -735,5 +821,37 @@ try {
                 console.error(err);
             });
     });
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('img01');
+    const closeButton = document.querySelector('.close-button');
+    const zoomableImages = document.querySelectorAll('.zoomable-image');
 
+    // Abre el modal cuando se hace clic en una imagen
+    zoomableImages.forEach(img => {
+        img.addEventListener('click', function() {
+            modal.style.display = 'block';
+            modalImg.src = this.dataset.fullImage; // Usa el atributo data-full-image
+        });
+    });
+
+    // Cierra el modal cuando se hace clic en la 'x'
+    closeButton.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    // Cierra el modal cuando se hace clic fuera de la imagen
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+    // Cierra el modal con la tecla ESC
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            modal.style.display = 'none';
+        }
+    });
+});
 </script>
