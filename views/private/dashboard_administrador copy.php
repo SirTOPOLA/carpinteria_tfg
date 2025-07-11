@@ -377,213 +377,238 @@ $stock_bajo = $stmt3->fetchAll(PDO::FETCH_ASSOC);
 
 
 
- 
-document.addEventListener("DOMContentLoaded", () => {
-  fetch('api/dashboard_data.php')
-    .then(res => {
-      if (!res.ok) throw new Error(`Error del servidor: ${res.status}`);
-      return res.json();
-    })
-    .then(data => {
-      if (!data || typeof data !== 'object') throw new Error('Datos inválidos');
 
-      // Ventas
-      const monto = parseFloat(data.ventas_mes || 0).toLocaleString('es-ES', { currency: 'XAF', style: 'currency' });
-      const variacion = parseFloat(data.variacion_ventas || 0);
-      const signo = variacion >= 0 ? '+' : '-';
-      const variacionFormateada = `${signo}${Math.abs(variacion).toLocaleString('es-ES', { minimumFractionDigits: 1 })}% vs mes anterior`;
 
-      document.getElementById("variacion").textContent = variacionFormateada;
-      document.getElementById("ventas-mes").textContent = monto;
+  document.addEventListener("DOMContentLoaded", () => {
+    fetch('api/dashboard_data.php')
+      .then(res => res.json())
+      .then(data => {
+        // Ventas
+        const monto = parseFloat(data.ventas_mes).toLocaleString('es-ES', { currency: 'XAF', style: 'currency' });
+        const variacion = parseFloat(data.variacion_ventas);
+        const signo = variacion >= 0 ? '+' : '-';
+        const variacionFormateada = `${signo}${Math.abs(variacion).toLocaleString('es-ES', { minimumFractionDigits: 1 })}% vs mes anterir`;
 
-      // Pedidos
-      document.getElementById("pedidos-activos").textContent = data.pedidos_activos ?? 0;
-      document.querySelector("#pedidos-activos").parentNode.querySelector("small").innerHTML =
-        `<i class="fas fa-clock me-1"></i>${data.pedidos_proximos_vencer ?? 0} próximos a vencer`;
+        document.getElementById("variacion").textContent = variacionFormateada;
+        document.getElementById("ventas-mes").textContent = monto;
 
-      // Producciones
-      document.getElementById("producciones").textContent = data.producciones ?? 0;
-      document.querySelector("#producciones").parentNode.querySelector("small").innerHTML =
-        `<i class="fas fa-tools me-1"></i>Promedio ${data.producciones_promedio ?? 0}% completado`;
+        // Pedidos activos
+        document.getElementById("pedidos-activos").textContent = data.pedidos_activos;
+        document.querySelector("#pedidos-activos").parentNode.querySelector("small").innerHTML =
+          `<i class="fas fa-clock me-1"></i>${data.pedidos_proximos_vencer} próximos a vencer`;
 
-      // Alertas
-      document.getElementById("alertas").textContent = data.alertas_stock ?? 0;
-      document.querySelector("#alertas").parentNode.querySelector("small").innerHTML =
-        `<i class="fas fa-exclamation-triangle me-1"></i>Stock bajo y vencimientos`;
+        // Producción
 
-      // Producciones activas
-      if (Array.isArray(data.producciones_activas)) {
-        const contenedor = document.querySelector('#contenedor-producciones');
-        contenedor.innerHTML = '';
+        // document.getElementById("promedioProduccion").textContent = data.producciones;
+
+        document.getElementById("producciones").textContent = data.producciones;
+        document.querySelector("#producciones").parentNode.querySelector("small").innerHTML =
+          `<i class="fas fa-tools me-1"></i>Promedio ${data.producciones_promedio}% completado`;
+
+        // Alertas
+        document.getElementById("alertas").textContent = data.alertas_stock;
+        document.querySelector("#alertas").parentNode.querySelector("small").innerHTML =
+          `<i class="fas fa-exclamation-triangle me-1"></i>Stock bajo y vencimientos`;
+
+        console.log(data.rendimiento_equipo)
+
         data.producciones_activas.forEach(p => {
-          const icono = seleccionarIcono(p.pedido_desc);
-          const bg = seleccionarColor(p.porcentaje);
-          contenedor.innerHTML += `
-            <div class="col-md-6 mb-3">
-              <div class="d-flex align-items-center mb-2">
-                <div class="me-3">
-                  <div class="rounded-circle ${bg} d-flex align-items-center justify-content-center"
-                    style="width: 50px; height: 50px;">
-                    <i class="fas ${icono} text-white"></i>
+          const icono = seleccionarIcono(p.pedido_desc); // función opcional
+          const bg = seleccionarColor(p.porcentaje); // ej: verde si > 80
+          document.querySelector('#contenedor-producciones').innerHTML += `
+              <div class="col-md-6 mb-3">
+                <div class="d-flex align-items-center mb-2">
+                  <div class="me-3">
+                    <div class="rounded-circle ${bg} d-flex align-items-center justify-content-center"
+                      style="width: 50px; height: 50px;">
+                      <i class="fas ${icono} text-white"></i>
+                    </div>
                   </div>
-                </div>
-                <div class="flex-grow-1">
-                  <h6 class="mb-1">${p.pedido_desc} - ${obtenerIniciales(p.responsable_nombre)}</h6>
-                  <div class="progress" style="height: 8px;">
-                    <div class="progress-bar-custom ${bg}" style="width: ${p.porcentaje}%;"></div>
+                  <div class="flex-grow-1">
+                    <h6 class="mb-1">${p.pedido_desc} - ${obtenerIniciales(p.responsable_nombre)}</h6>
+                    <div class="progress" style="height: 8px;">
+                      <div class="progress-bar-custom ${bg}" style="width: ${p.porcentaje}%;"></div>
+                    </div>
+                    <small class="text-muted">${p.porcentaje}% - ${p.avance_desc}</small>
                   </div>
-                  <small class="text-muted">${p.porcentaje}% - ${p.avance_desc}</small>
                 </div>
               </div>
-            </div>
-          `;
+            `;
         });
-      }
-
-      // Rendimiento equipo
-      if (Array.isArray(data.rendimiento_equipo)) {
         const equipoContainer = document.getElementById('rendimientoEquipo');
         equipoContainer.innerHTML = '';
+
         data.rendimiento_equipo.forEach((emp, index) => {
           const badgeColor = emp.rendimiento >= 95 ? 'success' :
             emp.rendimiento >= 85 ? 'primary' :
-            emp.rendimiento >= 60 ? 'warning' : 'danger';
+              emp.rendimiento >= 60 ? 'warning' : 'danger';
 
-          equipoContainer.insertAdjacentHTML('beforeend', `
-            <div class="accordion-item border rounded mb-3 shadow-sm">
-              <h2 class="accordion-header" id="heading${index}">
-                <button class="accordion-button collapsed d-flex align-items-center gap-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index}" aria-expanded="false" aria-controls="collapse${index}">
-                  <img src="api/${emp.imagen}" class="rounded-circle" alt="Avatar" style="width: 45px; height: 45px; object-fit: cover;">
-                  <div class="flex-grow-1">
-                    <h6 class="mb-0">${emp.nombre_completo}</h6>
-                    <small class="text-muted">${emp.rol}</small>
-                  </div>
-                  <span class="badge bg-${badgeColor}">${emp.rendimiento}%</span>
-                </button>
-              </h2>
-              <div id="collapse${index}" class="accordion-collapse collapse" aria-labelledby="heading${index}" data-bs-parent="#rendimientoEquipo">
-                <div class="accordion-body">
-                  <div class="mb-2">
-                    <label class="form-label mb-1">Progreso de tareas</label>
-                    <div class="progress" style="height: 8px;">
-                      <div class="progress-bar bg-${badgeColor}" role="progressbar" style="width: ${emp.rendimiento}%;" aria-valuenow="${emp.rendimiento}" aria-valuemin="0" aria-valuemax="100"></div>
+          const accordionItem = `
+                <div class="accordion-item border rounded mb-3 shadow-sm">
+                  <h2 class="accordion-header" id="heading${index}">
+                    <button class="accordion-button collapsed d-flex align-items-center gap-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index}" aria-expanded="false" aria-controls="collapse${index}">
+                      <img src="api/${emp.imagen}" class="rounded-circle" alt="Avatar" style="width: 45px; height: 45px; object-fit: cover;">
+                      <div class="flex-grow-1">
+                        <h6 class="mb-0">${emp.nombre_completo}</h6>
+                        <small class="text-muted">${emp.rol}</small>
+                      </div>
+                      <span class="badge bg-${badgeColor}">${emp.rendimiento}%</span>
+                    </button>
+                  </h2>
+                  <div id="collapse${index}" class="accordion-collapse collapse" aria-labelledby="heading${index}" data-bs-parent="#rendimientoEquipo">
+                    <div class="accordion-body">
+                      <div class="mb-2">
+                        <label class="form-label mb-1">Progreso de tareas</label>
+                        <div class="progress" style="height: 8px;">
+                          <div class="progress-bar bg-${badgeColor}" role="progressbar" style="width: ${emp.rendimiento}%;" aria-valuenow="${emp.rendimiento}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                      </div>
+                      <div>
+                        <small class="text-muted">Avance producción: <strong>${emp.produccion}%</strong></small>
+                      </div>
                     </div>
                   </div>
-                  <div>
-                    <small class="text-muted">Avance producción: <strong>${emp.produccion}%</strong></small>
-                  </div>
                 </div>
-              </div>
-            </div>
-          `);
+              `;
+          equipoContainer.insertAdjacentHTML('beforeend', accordionItem);
         });
-      }
 
-      // Resumen financiero
-      const resumen = data.resumen_financiero || {};
-      document.querySelector('#ingresosMes').textContent = `CFA ${parseFloat(resumen.ingresos_mes || 0).toLocaleString()}`;
-      document.querySelector('#gastosMes').textContent = `CFA ${parseFloat(resumen.gastos_mes || 0).toLocaleString()}`;
-      document.querySelector('#gananciaMes').textContent = `CFA ${parseFloat(resumen.ganancia || 0).toLocaleString()}`;
-      document.querySelector('#facturasPagadas').textContent = `CFA ${parseFloat(resumen.facturas_pagadas || 0).toLocaleString()}`;
-      document.querySelector('#facturasPendientes').textContent = `CFA ${parseFloat(resumen.facturas_pendientes || 0).toLocaleString()}`;
 
-      const totalFacturado = parseFloat(resumen.facturas_pagadas || 0) + parseFloat(resumen.facturas_pendientes || 0);
-      const porcentajePagado = totalFacturado > 0 ? (resumen.facturas_pagadas / totalFacturado * 100) : 0;
-      const porcentajePendiente = 100 - porcentajePagado;
 
-      document.getElementById('progress-bar-facturasPagadas').style.width = `${porcentajePagado}%`;
-      document.getElementById('progress-bar-facturasPendientes').style.width = `${porcentajePendiente}%`;
+        /* --- resumen financiero ------ */
+        const resumen = data.resumen_financiero;
+        document.querySelector('#ingresosMes').textContent = `CFA ${parseFloat(resumen.ingresos_mes).toLocaleString()}`;
+        document.querySelector('#gastosMes').textContent = `CFA ${parseFloat(resumen.gastos_mes).toLocaleString()}`;
+        document.querySelector('#gananciaMes').textContent = `CFA ${parseFloat(resumen.ganancia).toLocaleString()}`;
+        document.querySelector('#facturasPagadas').textContent = `CFA ${parseFloat(resumen.facturas_pagadas).toLocaleString()}`;
+        document.querySelector('#facturasPendientes').textContent = `CFA ${parseFloat(resumen.facturas_pendientes).toLocaleString()}`;
 
-      // Clientes del mes
-      const clientes = data.clientes_mes || [];
-      const topClientesContainer = document.querySelector('#clienteDelMes');
-      const bgColors = ['rgba(139,69,19,0.05)', 'rgba(139,69,19,0.03)', 'rgba(139,69,19,0.02)'];
-      const circleClasses = ['bg-warning', 'bg-secondary', 'bg-info'];
 
-      topClientesContainer.innerHTML = clientes.map((cliente, i) => {
-        const pedidosText = cliente.cantidad_ventas + (cliente.cantidad_ventas > 1 ? ' pedidos completados' : ' pedido completado');
-        const totalFormatted = Number(cliente.total_gastado).toLocaleString('es-ES', { style: 'currency', currency: 'CFA' });
-        return `
-          <div class="d-flex justify-content-between align-items-center mb-3 p-2 rounded" style="background-color: ${bgColors[i % 3]};">
-            <div class="d-flex align-items-center">
-              <div class="rounded-circle ${circleClasses[i] || 'bg-secondary'} d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                <span class="text-white fw-bold">${i + 1}</span>
-              </div>
-              <div>
-                <h6 class="mb-0">${cliente.nombre_cliente}</h6>
-                <small class="text-muted">${pedidosText}</small>
-              </div>
+
+        const totalFacturado = parseFloat(resumen.facturas_pagadas) + parseFloat(resumen.facturas_pendientes);
+        const porcentajePagado = totalFacturado > 0 ? (resumen.facturas_pagadas / totalFacturado * 100) : 0;
+        const porcentajePendiente = 100 - porcentajePagado;
+
+        const barraPagadas = document.getElementById('progress-bar-facturasPagadas');
+        const barraPendientes = document.getElementById('progress-bar-facturasPendientes');
+
+        barraPagadas.style.width = `${porcentajePagado}%`;
+        barraPendientes.style.width = `${porcentajePendiente}%`;
+
+
+        /* document.querySelector('.progress-bar-custom.bg-success').style.width = `${porcentajePagado}% ${seleccionarColor(porcentajePagado)}`;
+        document.querySelector('.progress-bar-custom.bg-warning').style.width = `${porcentajePendiente}% ${seleccionarColor(porcentajePendiente)}`;
+ */
+        /* cliente del mes */
+        const topClientesContainer = document.querySelector('#clienteDelMes');
+
+        const bgColors = [
+          'rgba(139,69,19,0.05)',
+          'rgba(139,69,19,0.03)',
+          'rgba(139,69,19,0.02)'
+        ];
+
+        const circleClasses = ['bg-warning', 'bg-secondary', 'bg-info'];
+        let html = '';
+        data.clientes_mes.forEach((cliente, i) => {
+          const bgColor = bgColors[i % 3];
+          const circleClass = circleClasses[i] || 'bg-secondary';
+          const pedidosText = cliente.cantidad_ventas + (cliente.cantidad_ventas > 1 ? ' pedidos completados' : ' pedido completado');
+          const totalFormatted = Number(cliente.total_gastado).toLocaleString('es-ES', { style: 'currency', currency: 'CFA' });
+
+          html += `
+        <div class="d-flex justify-content-between align-items-center mb-3 p-2 rounded" style="background-color: ${bgColor};">
+          <div class="d-flex align-items-center">
+            <div class="rounded-circle ${circleClass} d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+              <span class="text-white fw-bold">${i + 1}</span>
             </div>
             <div>
-              <span class="h5 text-success mb-0">${totalFormatted}</span>
+              <h6 class="mb-0">${cliente.nombre_cliente}</h6>
+              <small class="text-muted">${pedidosText}</small>
             </div>
           </div>
-        `;
-      }).join('');
+          <div>
+            <span class="h5 text-success mb-0">${totalFormatted}</span>
+          </div>
+        </div>
+      `;
+        });
 
-      // Beneficio por producción
-      const produccionesOriginales = data.beneficios_produccion || [];
-      let produccionesFiltradas = [...produccionesOriginales];
-      let ordenDescendente = true;
+        topClientesContainer.innerHTML = html;
 
-      const tbody = document.getElementById('bodyBeneficios');
-      const filtroMes = document.getElementById('filtroMes');
-      const ordenarBtn = document.getElementById('ordenarBeneficio');
 
-      function renderTabla(lista) {
-        tbody.innerHTML = '';
-        lista.forEach(p => {
-          const estimacion = parseFloat(p.estimacion_total);
-          const materiales = parseFloat(p.costo_materiales);
-          const beneficio = parseFloat(p.beneficio_estimado);
-          const margen = estimacion > 0 ? ((beneficio / estimacion) * 100).toFixed(1) : '0';
-          tbody.innerHTML += `
-            <tr>
-              <td class="text-start"><i class="bi bi-briefcase-fill text-primary me-1"></i> ${p.proyecto}</td>
-              <td>${p.fecha_inicio || '-'}</td>
-              <td><span class="text-info">CFA ${estimacion.toLocaleString()}</span></td>
-              <td><span class="text-warning">CFA ${materiales.toLocaleString()}</span></td>
-              <td><span class="text-success fw-bold">CFA ${beneficio.toLocaleString()}</span></td>
-              <td>
-                <div class="progress" style="height: 8px;">
-                  <div class="progress-bar bg-success" role="progressbar" style="width: ${margen}%;" aria-valuenow="${margen}" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-                <small>${margen}%</small>
-              </td>
-            </tr>
+        /* ****** Grafico de beneficios por produccion ******* */
+
+        let produccionesOriginales = data.beneficios_produccion;
+        let produccionesFiltradas = [...produccionesOriginales];
+        let ordenDescendente = true;
+
+        const tbody = document.getElementById('bodyBeneficios');
+        const filtroMes = document.getElementById('filtroMes');
+        const ordenarBtn = document.getElementById('ordenarBeneficio');
+
+        // Renderizar tabla
+        function renderTabla(lista) {
+          tbody.innerHTML = '';
+          lista.forEach(p => {
+            const estimacion = parseFloat(p.estimacion_total);
+            const materiales = parseFloat(p.costo_materiales);
+            const beneficio = parseFloat(p.beneficio_estimado);
+            const margen = estimacion > 0 ? ((beneficio / estimacion) * 100).toFixed(1) : '0';
+
+            const fila = document.createElement('tr');
+            fila.innerHTML = `
+            <td class="text-start"><i class="bi bi-briefcase-fill text-primary me-1"></i> ${p.proyecto}</td>
+            <td>${p.fecha_inicio || '-'}</td>
+            <td><span class="text-info">CFA ${estimacion.toLocaleString()}</span></td>
+            <td><span class="text-warning">CFA ${materiales.toLocaleString()}</span></td>
+            <td><span class="text-success fw-bold">CFA ${beneficio.toLocaleString()}</span></td>
+            <td>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-success" role="progressbar" 
+                    style="width: ${margen}%;" 
+                    aria-valuenow="${margen}" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+              <small>${margen}%</small>
+            </td>
           `;
-        });
-      }
+            tbody.appendChild(fila);
+          });
+        }
 
-      filtroMes.addEventListener('change', () => {
-        const mesSeleccionado = filtroMes.value;
-        produccionesFiltradas = produccionesOriginales.filter(p => p.fecha_inicio?.startsWith(mesSeleccionado));
+        // Filtrar por mes
+        filtroMes.addEventListener('change', () => {
+          const mesSeleccionado = filtroMes.value; // YYYY-MM
+          produccionesFiltradas = produccionesOriginales.filter(p => {
+            return p.fecha_inicio && p.fecha_inicio.startsWith(mesSeleccionado);
+          });
+          renderTabla(produccionesFiltradas);
+        });
+
+        // Ordenar por beneficio
+        ordenarBtn.addEventListener('click', () => {
+          produccionesFiltradas.sort((a, b) => {
+            const beneficioA = parseFloat(a.beneficio_estimado);
+            const beneficioB = parseFloat(b.beneficio_estimado);
+            return ordenDescendente ? beneficioB - beneficioA : beneficioA - beneficioB;
+          });
+          ordenDescendente = !ordenDescendente;
+          renderTabla(produccionesFiltradas);
+        });
+
+        // Render inicial
         renderTabla(produccionesFiltradas);
+
       });
 
-      ordenarBtn.addEventListener('click', () => {
-        produccionesFiltradas.sort((a, b) => {
-          const beneficioA = parseFloat(a.beneficio_estimado);
-          const beneficioB = parseFloat(b.beneficio_estimado);
-          return ordenDescendente ? beneficioB - beneficioA : beneficioA - beneficioB;
-        });
-        ordenDescendente = !ordenDescendente;
-        renderTabla(produccionesFiltradas);
-      });
 
-      renderTabla(produccionesFiltradas);
 
-    })
-    .catch(err => {
-      console.error('Error al cargar datos del dashboard:', err);
-      const errorBox = document.getElementById('contenedor-errores');
-      if (errorBox) {
-        errorBox.classList.remove('d-none');
-        errorBox.textContent = "⚠️ No se pudo cargar el panel. Intente más tarde.";
-      }
-    });
-});
- 
+
+
+
+  });
+
+
 
 
 
