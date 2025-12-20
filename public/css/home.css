@@ -1,0 +1,26 @@
+ 
+body {
+  font-family: "Segoe UI", sans-serif;
+}
+.hero {
+  background: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)), url('https://images.unsplash.com/photo-1581092160615-ee22621dd758') center/cover;
+  min-height: 90vh;
+  color: #fff;
+}
+.badge-trust {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+.feature-icon {
+  font-size: 2.5rem;
+  color: #8b5a2b;
+}
+.cta {
+  background: #8b5a2b;
+  color: #fff;
+}
+.cta:hover {
+  background: #6f451f;
+  color: #fff;
+}
+ 
