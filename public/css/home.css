@@ -1,26 +1,62 @@
- 
 body {
-  font-family: "Segoe UI", sans-serif;
+    font-family: "Segoe UI", sans-serif;
 }
+
+/* HERO */
 .hero {
-  background: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)), url('https://images.unsplash.com/photo-1581092160615-ee22621dd758') center/cover;
-  min-height: 90vh;
-  color: #fff;
+    min-height: 90vh;
+    color: #fff;
+    overflow: hidden;
 }
+
+/* CAROUSEL FULL HEIGHT */
+#heroCarousel,
+.carousel-inner,
+.carousel-item,
+.carousel-bg {
+    height: 90vh;
+}
+
+/* IMAGEN DE CADA SLIDE */
+.carousel-bg {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* CONTENIDO SUPERPUESTO */
+.hero-content {
+    z-index: 2;
+}
+
+/* OVERLAY OPCIONAL (si lo necesitas aparte) */
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 1;
+}
+
+/* BADGE */
 .badge-trust {
-  background-color: #f8f9fa;
-  color: #212529;
+    background-color: #f8f9fa;
+    color: #212529;
 }
+
+/* ICONOS */
 .feature-icon {
-  font-size: 2.5rem;
-  color: #8b5a2b;
+    font-size: 2.5rem;
+    color: #8b5a2b;
 }
+
+/* CTA */
 .cta {
-  background: #8b5a2b;
-  color: #fff;
+    background: #8b5a2b;
+    color: #fff;
 }
+
 .cta:hover {
-  background: #6f451f;
-  color: #fff;
+    background: #6f451f;
+    color: #fff;
 }
- 
