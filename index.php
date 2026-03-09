@@ -25,8 +25,8 @@ switch ($page) {
         require "controllers/loginController.php";
         LoginController::logout();
         break;
-    case 'admin':
-        require "views/admin/dashboard.php";
+    case 'dashboard':
+        require "views/dashboard/dashboard.php";
         break;
 
     default:

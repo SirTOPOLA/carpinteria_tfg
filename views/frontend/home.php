@@ -27,104 +27,130 @@
     </nav>
 
     <!-- Hero: Carrusel dinámico desde BD -->
-    <section class="hero position-relative">
+    <!-- ======================= HERO ======================= -->
+
+    <section class="hero">
+
         <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
 
-
-            <?php
-            // $obras debe venir desde el controlador (MVC)
-            // Ejemplo: $obras = [ ['imagen'=>'obra1.jpg'], ... ];
-            $obras = [
-                ['imagen' => 'public/img/img-1.jpg'],
-                ['imagen' => 'public/img/img-2.jpeg'],
-
-            ];
-
-            ?>
-
-
             <div class="carousel-inner">
-                <?php if (!empty($obras)): ?>
-                    <div class="carousel-inner">
-                        <?php foreach ($obras as $index => $obra): ?>
-                            <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
-                                <div class="carousel-bg" style="background-image: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)), 
-                                        url('<?= urlsite . htmlspecialchars($obra['imagen']) ?>');">
-                                </div>
+
+                <?php foreach ($obras as $index => $obra): ?>
+
+                    <div class="carousel-item <?= $index == 0 ? 'active' : '' ?>">
+
+                        <img src="<?= urlsite . $obra['imagen'] ?>" class="d-block w-100"
+                            style="height:90vh; object-fit:cover;">
+
+                        <div class="carousel-caption d-flex flex-column justify-content-center h-100">
+
+                            <h1 class="display-4 fw-bold">
+                                Muebles a medida con alma artesanal
+                            </h1>
+
+                            <p class="lead">
+                                Diseñamos y fabricamos piezas únicas en madera
+                            </p>
+
+                            <div class="mt-3">
+
+                                <a href="#contacto" class="btn btn-lg btn-primary me-2">
+                                    Solicitar presupuesto
+                                </a>
+
+                                <a href="#proyectos" class="btn btn-lg btn-outline-light">
+                                    Ver trabajos
+                                </a>
+
                             </div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php else: ?>
-                    <div class="carousel-item active">
-                        <div class="carousel-bg"
-                            style="background-image: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)), url('<?= urlsite ?> public/img/img-2.jpeg');">
+
                         </div>
+
                     </div>
-                <?php endif; ?>
+
+                <?php endforeach; ?>
+
             </div>
 
 
-
-            <!-- Controles -->
             <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+
                 <span class="carousel-control-prev-icon"></span>
+
             </button>
+
             <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+
                 <span class="carousel-control-next-icon"></span>
+
             </button>
+
         </div>
 
-
-        <!-- Contenido superpuesto -->
-        <div class="hero-content position-absolute top-50 start-50 translate-middle text-center text-white container">
-            <span class="badge badge-trust mb-3">
-                <i class="bi bi-award"></i> Más de 15 años creando muebles únicos
-            </span>
-            <h1 class="display-4 fw-bold mt-3">Muebles a medida con alma artesanal</h1>
-            <p class="lead mt-3">Diseñamos y fabricamos piezas únicas en madera, cuidando cada detalle.</p>
-            <div class="mt-4">
-                <a href="#contacto" class="btn btn-lg cta me-2">
-                    <i class="bi bi-chat-dots"></i> Solicitar presupuesto
-                </a>
-                <a href="#proyectos" class="btn btn-lg btn-outline-light">
-                    <i class="bi bi-images"></i> Ver trabajos
-                </a>
-            </div>
-        </div>
     </section>
-
-
     <!-- Principios de Cialdini: Autoridad / Prueba Social / Escasez -->
-    <section class="py-5" id="servicios">
+    <!-- ======================= Servicios ======================= -->
+
+    <section class="py-5 bg-light" id="servicios">
         <div class="container">
-            <div class="row text-center mb-4">
+
+            <div class="row text-center mb-5">
                 <div class="col">
-                    <h2 class="fw-bold">¿Por qué elegirnos?</h2>
-                    <p class="text-muted">Razones que nos convierten en tu mejor opción</p>
+                    <h2 class="fw-bold">Nuestros Servicios</h2>
+                    <p class="text-muted">Diseñamos y fabricamos muebles de madera a medida</p>
                 </div>
             </div>
+
             <div class="row g-4">
+
                 <div class="col-md-4">
                     <div class="card h-100 shadow-sm text-center p-4">
-                        <i class="bi bi-shield-check feature-icon"></i>
-                        <h5 class="mt-3">Autoridad</h5>
-                        <p>Profesionales certificados en carpintería artesanal y diseño en madera.</p>
+                        <i class="bi bi-door-open display-5 text-primary"></i>
+                        <h5 class="mt-3">Puertas y Ventanas</h5>
+                        <p>Fabricación de puertas y ventanas de madera con acabados duraderos y elegantes.</p>
                     </div>
                 </div>
+
                 <div class="col-md-4">
                     <div class="card h-100 shadow-sm text-center p-4">
-                        <i class="bi bi-people feature-icon"></i>
-                        <h5 class="mt-3">Prueba social</h5>
-                        <p>Más de 300 clientes satisfechos avalan nuestro trabajo.</p>
+                        <i class="bi bi-house-door display-5 text-primary"></i>
+                        <h5 class="mt-3">Muebles a Medida</h5>
+                        <p>Armarios, camas, mesas, cocinas y muebles personalizados según tu espacio.</p>
                     </div>
                 </div>
+
                 <div class="col-md-4">
                     <div class="card h-100 shadow-sm text-center p-4">
-                        <i class="bi bi-hourglass-split feature-icon"></i>
-                        <h5 class="mt-3">Escasez</h5>
-                        <p>Aceptamos cupos limitados por mes para garantizar máxima calidad.</p>
+                        <i class="bi bi-tools display-5 text-primary"></i>
+                        <h5 class="mt-3">Restauración</h5>
+                        <p>Restauramos muebles antiguos devolviendo su belleza y funcionalidad.</p>
                     </div>
                 </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm text-center p-4">
+                        <i class="bi bi-grid-3x3-gap display-5 text-primary"></i>
+                        <h5 class="mt-3">Cocinas de Madera</h5>
+                        <p>Diseño e instalación de cocinas modernas o clásicas en madera.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm text-center p-4">
+                        <i class="bi bi-columns-gap display-5 text-primary"></i>
+                        <h5 class="mt-3">Closets</h5>
+                        <p>Closets y armarios empotrados optimizados para tu espacio.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm text-center p-4">
+                        <i class="bi bi-palette display-5 text-primary"></i>
+                        <h5 class="mt-3">Diseño Personalizado</h5>
+                        <p>Convertimos tus ideas en piezas únicas adaptadas a tu estilo.</p>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
@@ -153,6 +179,45 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- ======================= Proyectos ======================= -->
+    <section class="py-5" id="proyectos">
+        <div class="container">
+
+            <div class="row text-center mb-5">
+                <div class="col">
+                    <h2 class="fw-bold">Nuestros Proyectos</h2>
+                    <p class="text-muted">Algunos de nuestros trabajos recientes</p>
+                </div>
+            </div>
+
+
+
+            <div class="row g-4">
+
+                <?php foreach ($proyectos as $p): ?>
+
+                    <div class="col-md-4">
+                        <div class="card shadow-sm border-0">
+
+                            <img src="<?= urlsite . $p['imagen'] ?>" class="card-img-top"
+                                style="height:250px;object-fit:cover;">
+
+                            <div class="card-body text-center">
+                                <h6 class="fw-bold">
+                                    <?= htmlspecialchars($p['titulo']) ?>
+                                </h6>
+                            </div>
+
+                        </div>
+                    </div>
+
+                <?php endforeach; ?>
+
+            </div>
+
         </div>
     </section>
 
