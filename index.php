@@ -25,7 +25,7 @@ $router->post('usuarioGuardar', 'UsuarioController@guardar');
 $router->get('usuarioEditar', 'UsuarioController@editar');
 $router->post('usuarioActualizar', 'UsuarioController@actualizar');
 $router->get('usuarioEliminar', 'UsuarioController@eliminar');
-
+$router->get('usuarioEstadoAjax', 'UsuarioController@estadoAjax');
 
 /* ROLES */
 $router->get('roles', 'RolController@index');

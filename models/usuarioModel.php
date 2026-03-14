@@ -3,7 +3,6 @@ require_once "conexion.php";
 
 class UsuarioModel
 {
-
     public static function listar()
     {
         $conexion = new Conexion();
@@ -70,6 +69,28 @@ class UsuarioModel
             $datos["activo"],
             $datos["id"]
         ]);
+    }
+
+    /**
+     * Alterna el acceso al sistema (Prueba Social de Control)
+     */
+    public static function actualizarEstado($id)
+    {
+        $conexion = new Conexion();
+        $conexion->conectar();
+
+        $sqlActual = "SELECT activo FROM usuarios WHERE id_usuario = ?";
+        $stmtActual = $conexion->pdo->prepare($sqlActual);
+        $stmtActual->execute([$id]);
+        $user = $stmtActual->fetch();
+
+        if ($user) {
+            $nuevoEstado = $user['activo'] == 1 ? 0 : 1;
+            $sql = "UPDATE usuarios SET activo = ? WHERE id_usuario = ?";
+            $stmt = $conexion->pdo->prepare($sql);
+            return $stmt->execute([$nuevoEstado, $id]);
+        }
+        return false;
     }
 
     public static function eliminar($id)
