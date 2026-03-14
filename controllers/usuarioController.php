@@ -38,13 +38,6 @@ class UsuarioController {
         }
     }
 
-    public static function estado() {
-        if (isset($_GET["id"])) {
-            $id = filter_var($_GET["id"], FILTER_VALIDATE_INT);
-            UsuarioModel::actualizarEstado($id);
-            header("Location: ?page=usuarios&success=estado_actualizado");
-        }
-    }
 
     public static function actualizar() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {

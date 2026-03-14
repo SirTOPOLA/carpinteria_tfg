@@ -53,16 +53,14 @@
                             </td>
 
                             <td class="text-center">
-                                <div class="d-flex flex-column align-items-center">
-                                    <div class="form-check form-switch mb-1">
-                                        <input class="form-check-input custom-switch pointer" type="checkbox" role="switch"
-                                            <?= $u["activo"] ? 'checked' : '' ?>
-                                            onchange="cambiarEstado(<?= $u['id_usuario'] ?>, this)">
-                                    </div>
-                                    <small class="fw-bold estado-texto <?= $u['activo'] ? 'text-success' : 'text-danger' ?>"
-                                        style="font-size: 0.65rem;">
+
+                                <div class="form-check form-switch mb-1">
+                                    <input class="form-check-input custom-switch pointer" type="checkbox" role="switch"
+                                        <?= $u["activo"] ? 'checked' : '' ?>
+                                        onchange="cambiarEstado(<?= $u['id_usuario'] ?>, this)">
+                                    <label class="<?= $u['activo'] ? 'text-success' : 'text-danger' ?>">
                                         <?= $u['activo'] ? 'ACTIVO' : 'SUSPENDIDO' ?>
-                                    </small>
+                                    </label>
                                 </div>
                             </td>
 
@@ -176,33 +174,37 @@
         timerProgressBar: true
     });
 
-    // Detectar parámetros en la URL para operaciones normales
-    document.addEventListener('DOMContentLoaded', () => {
-        const urlParams = new URLSearchParams(window.location.search);
+    // Detectar parámetros en la URL para operaciones normales 
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
 
-        if (urlParams.has('success')) {
-            const accion = urlParams.get('success');
-            let mensaje = "Operación realizada con éxito";
+    if (urlParams.has('success')) {
+        const accion = urlParams.get('success');
+        let mensaje = "Operación realizada con éxito";
 
-            if (accion === 'creado') mensaje = "¡Usuario registrado correctamente!";
-            if (accion === 'actualizado') mensaje = "Datos actualizados en el sistema";
-            if (accion === 'eliminado') mensaje = "Acceso eliminado definitivamente";
+        if (accion === 'creado') mensaje = "¡Usuario registrado correctamente!";
+        if (accion === 'actualizado') mensaje = "Datos actualizados en el sistema";
+        if (accion === 'eliminado') mensaje = "Acceso eliminado definitivamente";
 
-            Toast.fire({
-                icon: 'success',
-                title: mensaje
-            });
-        }
+        Toast.fire({
+            icon: 'success',
+            title: mensaje
+        });
 
-        if (urlParams.has('error')) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error de validación',
-                text: 'Por favor, verifica los datos ingresados (mínimo 6 caracteres en clave).',
-                confirmButtonColor: '#0d6efd'
-            });
-        }
-    });
+        // LIMPIEZA DE URL: Quita los parámetros para que no salga la alerta al recargar
+        window.history.replaceState({}, document.title, window.location.pathname + "?page=usuarios");
+    }
+
+    if (urlParams.has('error')) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Atención',
+            text: 'Hubo un problema al procesar los datos. Revisa los campos obligatorios.',
+            confirmButtonColor: '#0d6efd'
+        });
+        window.history.replaceState({}, document.title, window.location.pathname + "?page=usuarios");
+    }
+});
 
     function abrirEditar(id, username, rol, activo) {
         document.getElementById('edit_id').value = id;
@@ -231,13 +233,17 @@
         });
     }
     function cambiarEstado(id, element) {
-        // Bloqueamos el switch momentáneamente para evitar doble click
+
+        // Bloqueamos el switch momentáneamente
         element.disabled = true;
 
         fetch(`?page=usuarioEstadoAjax&id=${id}`)
             .then(response => response.json())
             .then(data => {
+
                 if (data.status === 'success') {
+
+                    // Toast de éxito
                     const Toast = Swal.mixin({
                         toast: true,
                         position: 'top-end',
@@ -251,29 +257,42 @@
                         title: data.message
                     });
 
-                    // Actualizar el texto visual (ACTIVO/SUSPENDIDO)
+                    // Actualizar texto y color del label
                     const label = element.nextElementSibling;
                     if (element.checked) {
                         label.textContent = 'ACTIVO';
-                        label.classList.replace('text-danger', 'text-success');
+                        label.classList.remove('text-danger');
+                        label.classList.add('text-success');
+
+                        // Cambiar color del switch
+                        element.style.backgroundColor = '#198754';
+                        element.style.borderColor = '#198754';
+
                     } else {
                         label.textContent = 'SUSPENDIDO';
-                        label.classList.replace('text-success', 'text-danger');
+                        label.classList.remove('text-success');
+                        label.classList.add('text-danger');
+
+                        // Cambiar color del switch
+                        element.style.backgroundColor = '#dc3545';
+                        element.style.borderColor = '#dc3545';
                     }
+
                 } else {
                     Swal.fire('Error', data.message, 'error');
-                    element.checked = !element.checked; // Revertir si falló
+                    element.checked = !element.checked; // Revertir
                 }
+
             })
             .catch(error => {
                 console.error('Error:', error);
-                element.checked = !element.checked;
+                element.checked = !element.checked; // Revertir
             })
             .finally(() => {
                 element.disabled = false;
             });
-    }
 
+    }
 
 </script>
 

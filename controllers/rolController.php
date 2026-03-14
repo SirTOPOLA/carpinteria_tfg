@@ -1,93 +1,74 @@
 <?php
 require_once "models/rolModel.php";
+require_once "models/usuarioModel.php"; // Importante para verificar integridad
 
-class RolController
-{
-    /**
-     * Muestra la lista principal de roles (Jerarquía de Seguridad)
-     */
-    public static function index()
-    {
-        // Aplicando el principio de Maestría (Pink): Control total del flujo
+class RolController {
+    
+    public static function index() {
         $roles = RolModel::listar();
-        require "views/roles/index.php";
+        require "views/dashboard/roles.php";
     }
 
-    /**
-     * Carga la interfaz para definir un nuevo nivel de autoridad
-     */
-    public static function crear()
-    {
-        require "views/roles/crear.php";
-    }
-
-    /**
-     * Procesa y protege la persistencia del nuevo rol
-     */
-    public static function guardar()
-    {
+    public static function guardar() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // Estructura de datos basada en tu tabla 'roles'
-            $datos = [
-                "nombre"      => $_POST["nombre"],
-                "descripcion" => $_POST["descripcion"]
-            ];
+            // Limpieza de datos (Evita inyección de scripts HTML)
+            $nombre = trim(filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_SPECIAL_CHARS));
+            $descripcion = trim(filter_input(INPUT_POST, 'descripcion', FILTER_SANITIZE_SPECIAL_CHARS));
 
-            RolModel::crear($datos);
+            if (empty($nombre)) {
+                header("Location: ?page=roles&error=campo_vacio");
+                exit();
+            }
 
-            // Redirección estratégica (Cialdini: Consistencia en el flujo operativo)
-            header("Location: ?page=roles");
+            $datos = ["nombre" => $nombre, "descripcion" => $descripcion];
+            $resultado = RolModel::crear($datos);
+
+            $status = $resultado ? "creado" : "db_error";
+            header("Location: ?page=roles&success=$status");
             exit();
         }
     }
 
-    /**
-     * Obtiene los datos de un rol específico para su ajuste
-     */
-    public static function editar()
-    {
-        if (isset($_GET["id"])) {
-            $id = $_GET["id"];
-            $rol = RolModel::obtener($id);
-            require "views/roles/editar.php";
-        } else {
-            header("Location: ?page=roles");
-        }
-    }
-
-    /**
-     * Actualiza la estructura de permisos del activo empresarial
-     */
-    public static function actualizar()
-    {
+    public static function actualizar() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $datos = [
-                "id_rol"      => $_POST["id_rol"],
-                "nombre"      => $_POST["nombre"],
-                "descripcion" => $_POST["descripcion"]
-            ];
+            $id = filter_input(INPUT_POST, 'id_rol', FILTER_VALIDATE_INT);
+            $nombre = trim(filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_SPECIAL_CHARS));
+            $descripcion = trim(filter_input(INPUT_POST, 'descripcion', FILTER_SANITIZE_SPECIAL_CHARS));
 
+            if (!$id || empty($nombre)) {
+                header("Location: ?page=roles&error=datos_invalidos");
+                exit();
+            }
+
+            $datos = ["id_rol" => $id, "nombre" => $nombre, "descripcion" => $descripcion];
             RolModel::actualizar($datos);
 
-            header("Location: ?page=roles");
+            header("Location: ?page=roles&success=actualizado");
             exit();
         }
     }
 
-    /**
-     * Elimina un rol del sistema (Requiere validación de integridad referencial)
-     */
-    public static function eliminar()
-    {
-        if (isset($_GET["id"])) {
-            $id = $_GET["id"];
-            
-            // Sugerencia: RolModel debe validar que no existan usuarios 
-            // vinculados antes de proceder (Hill: Mente Maestra / Prevención)
-            RolModel::eliminar($id);
+    public static function eliminar() {
+        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+
+        if (!$id) {
+            header("Location: ?page=roles&error=id_invalido");
+            exit();
         }
 
-        header("Location: ?page=roles");
+        // VALIDACIÓN DE INTEGRIDAD: ¿Hay usuarios usando este rol?
+        // Necesitas crear el método 'contarPorRol' en tu UsuarioModel
+        $totalUsuarios = UsuarioModel::contarPorRol($id);
+
+        if ($totalUsuarios > 0) {
+            // Bloqueamos el borrado porque el rol no está huérfano
+            header("Location: ?page=roles&error=rol_en_uso");
+            exit();
+        }
+
+        $resultado = RolModel::eliminar($id);
+        $status = $resultado ? "eliminado" : "db_error";
+        header("Location: ?page=roles&success=$status");
         exit();
     }
 }

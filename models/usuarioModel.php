@@ -104,4 +104,24 @@ class UsuarioModel
 
         return $stmt->execute([$id]);
     }
+    /**
+     * Verifica la dependencia de usuarios antes de eliminar un rol
+     * (Principio de Prevención de Errores)
+     */
+    public static function contarPorRol($id_rol)
+    {
+        $conexion = new Conexion();
+        $conexion->conectar();
+
+        // Usamos COUNT(*) para optimizar la consulta
+        $sql = "SELECT COUNT(*) as total FROM usuarios WHERE id_rol = ?";
+
+        $stmt = $conexion->pdo->prepare($sql);
+        $stmt->execute([$id_rol]);
+
+        $resultado = $stmt->fetch();
+        
+        // Retornamos el número entero
+        return (int) $resultado['total'];
+    }
 }

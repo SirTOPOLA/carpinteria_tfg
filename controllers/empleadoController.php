@@ -9,7 +9,7 @@ class EmpleadoController
     public static function index()
     {
         $empleados = EmpleadoModel::listar();
-        require "views/empleados/index.php";
+        require "views/dashboard/empleados.php";
     }
 
     /**
@@ -34,27 +34,28 @@ class EmpleadoController
 
             // 2. VALIDACIÓN ROBUSTA (Cialdini: Autoridad a través de la precisión)
             if (empty($datos["nombre"]) || empty($datos["documento"])) {
-                header("Location: ?page=empleadoCrear&error=campos_obligatorios");
+                header("Location: ?page=empleados&error=campos_obligatorios");
                 exit();
             }
 
             if (!filter_var($datos["correo"], FILTER_VALIDATE_EMAIL)) {
-                header("Location: ?page=empleadoCrear&error=email_invalido");
+                header("Location: ?page=empleados&error=email_invalido");
                 exit();
             }
 
             if (!is_numeric($datos["salario_base"]) || $datos["salario_base"] < 0) {
-                header("Location: ?page=empleadoCrear&error=salario_invalido");
+                header("Location: ?page=empleados&error=salario_invalido");
                 exit();
             }
 
             // 3. PERSISTENCIA
             $resultado = EmpleadoModel::crear($datos);
 
+            $resultado = EmpleadoModel::crear($datos);
             if ($resultado) {
                 header("Location: ?page=empleados&success=creado");
             } else {
-                header("Location: ?page=empleadoCrear&error=db_error");
+                header("Location: ?page=empleados&error=db_error");
             }
             exit();
         }
@@ -63,16 +64,11 @@ class EmpleadoController
     /**
      * Gestión del Switch de Estado (Bandura: Control Instantáneo)
      */
-    public static function estado()
-    {
+    public static function estadoAjax() {
         if (isset($_GET["id"])) {
-            $id = filter_var($_GET["id"], FILTER_SANITIZE_NUMBER_INT);
-            
-            if (EmpleadoModel::actualizarEstado($id)) {
-                header("Location: ?page=empleados&success=estado_actualizado");
-            } else {
-                header("Location: ?page=empleados&error=error_estado");
-            }
+            $id = filter_var($_GET["id"], FILTER_VALIDATE_INT);
+            $resultado = EmpleadoModel::actualizarEstado($id);
+            echo json_encode(['status' => $resultado ? 'success' : 'error']);
             exit();
         }
     }
