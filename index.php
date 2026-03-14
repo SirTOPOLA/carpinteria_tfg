@@ -1,38 +1,33 @@
 <?php
-require 'config/config.php';
-$page = '';
-if (isset($_GET['page']))
-    $page = $_GET['page'];
 
-switch ($page) {
-    case 'home':
-        require "controllers/homeController.php";
-        HomeController::home();
-        break;
-    case '':
-        require "controllers/homeController.php";
-        HomeController::home();
-        break;
-    case 'login':
-        require "controllers/loginController.php";
-        LoginController::index();
-        break;
-    case 'loginAuth':
-        require "controllers/loginController.php";
-        LoginController::login();
-        break;
-    case 'logout':
-        require "controllers/loginController.php";
-        LoginController::logout();
-        break;
-    case 'dashboard':
-        require "views/dashboard/dashboard.php";
-        break;
+require "config/config.php";
+require "core/Router.php";
 
-    default:
-        echo "<a href='" . urlsite . "?page=login'> LOGIN </a>";
-        break;
-}
+session_start();
 
+$router = new Router();
 
+/* AUTH */
 
+$router->get('login', 'LoginController@index');
+$router->post('loginAuth', 'LoginController@login');
+$router->get('logout', 'LoginController@logout');
+
+/* DASHBOARD */
+
+$router->get('dashboard', 'HomeController@dashboard');
+
+/* USUARIOS */
+
+$router->get('usuarios', 'UsuarioController@index');
+$router->get('usuarioCrear', 'UsuarioController@crear');
+$router->post('usuarioGuardar', 'UsuarioController@guardar');
+$router->get('usuarioEditar', 'UsuarioController@editar');
+$router->post('usuarioActualizar', 'UsuarioController@actualizar');
+$router->get('usuarioEliminar', 'UsuarioController@eliminar');
+
+/* DEFAULT */
+
+$router->get('home', 'HomeController@home');
+
+$router->dispatch();

@@ -37,6 +37,20 @@
 
         <hr>
 
+        <!-- ADMINISTRACION -->
+
+        <a href="<?= urlsite ?>?page=usuarios" class="nav-link">
+            <i class="bi bi-person-gear"></i>
+            <span>Usuarios</span>
+        </a>
+
+        <a href="<?= urlsite ?>?page=roles" class="nav-link">
+            <i class="bi bi-shield-lock"></i>
+            <span>Roles</span>
+        </a>
+
+        <hr>
+
         <a href="<?= urlsite ?>?page=logout" class="nav-link text-danger">
             <i class="bi bi-box-arrow-right"></i>
             Salir

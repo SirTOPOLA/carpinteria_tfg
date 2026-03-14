@@ -1,38 +1,78 @@
 <?php
+
 session_start();
 require "models/loginModel.php";
 
 class LoginController
 {
+
     public static function index()
     {
-      /*   if (isset($_SESSION['usuario'])) 
-            header('location:' . urlsite); */
-        
-        require  "views/frontend/login.php";
+        if (isset($_SESSION['usuario'])) {
+            header("location:?page=dashboard");
+            exit;
+        }
+
+        require "views/frontend/login.php";
     }
+
     public static function login()
     {
-        $_modelo = new Login();
-        $_username = trim($_POST['username']);
-        $_pass = trim($_POST['password_hash']);
 
-        /* Validamos desde el modelo */
-        $_resultado = $_modelo->login($_username, $_pass);
-        if ($_resultado) {
-            $_SESSION['usuario'] = $_username;
-            header('location:' . urlsite."?page=admin");
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("location:?page=login");
+            exit;
+        }
+
+        $modelo = new Login();
+
+        $username = trim($_POST['username'] ?? '');
+        $password = trim($_POST['password'] ?? '');
+
+        if (!$username || !$password) {
+
+            $_SESSION['msg'] = "Debe completar todos los campos";
+            header("location:?page=login");
+            exit;
+
+        }
+
+        $usuario = $modelo->login($username, $password);
+
+        if ($usuario) {
+
+            /* seguridad */
+
+            session_regenerate_id(true);
+
+            $_SESSION['usuario'] = $usuario['username'];
+            $_SESSION['rol'] = $usuario['id_rol'];
+            $_SESSION['id_usuario'] = $usuario['id_usuario'];
+
+            header("location:?page=dashboard");
+            exit;
+
         } else {
-            $_SESSION['msg'] = "No coinciden las credenciales";
-            header('location:' . urlsite . "?page=login");
+
+            $_SESSION['msg'] = "Credenciales incorrectas";
+            header("location:?page=login");
+            exit;
+
         }
     }
-    public static function logout(){
-        if(!isset($_SESSION['usuario'])){
-            header("location: ".urlsite);
+
+    public static function logout()
+    {
+
+        if (!isset($_SESSION['usuario'])) {
+            header("location:?page=login");
+            exit;
         }
-        unset($_SESSION['usuario']);
+
+        session_unset();
         session_destroy();
-        header('location: '.urlsite);
+
+        header("location:?page=login");
+        exit;
     }
 }

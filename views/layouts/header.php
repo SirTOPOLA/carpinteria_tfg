@@ -35,12 +35,11 @@
     <!-- CSS GLOBAL -->
     <link rel="stylesheet" href="<?= urlsite ?>public/css/main.css">
 
-
+    
     <!-- CSS VISTAS -->
-    <?php if (isset($page) && $page == "dashboard"): ?>
-        <link rel="stylesheet" href="<?= urlsite ?>public/css/dashboard.css">
-        <link rel="stylesheet" href="<?= urlsite ?>public/css/footer.css">
-    <?php endif; ?>
+    <link rel="stylesheet" href="<?= urlsite ?>public/css/dashboard.css">
+    <link rel="stylesheet" href="<?= urlsite ?>public/css/footer.css">
+    <!--  -->
 
     <?php if (isset($page) && $page == "home"): ?>
         <link rel="stylesheet" href="<?= urlsite ?>public/css/home.css">

@@ -31,63 +31,113 @@
 
     <section class="hero">
 
-        <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+<div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
 
-            <div class="carousel-inner">
+    <div class="carousel-inner">
 
-                <?php foreach ($obras as $index => $obra): ?>
+        <?php if (!empty($obras)): ?>
 
-                    <div class="carousel-item <?= $index == 0 ? 'active' : '' ?>">
+            <?php foreach ($obras as $index => $obra): ?>
 
-                        <img src="<?= urlsite . $obra['imagen'] ?>" class="d-block w-100"
-                            style="height:90vh; object-fit:cover;">
+                <div class="carousel-item <?= $index == 0 ? 'active' : '' ?>">
 
-                        <div class="carousel-caption d-flex flex-column justify-content-center h-100">
+                    <img src="<?= urlsite . $obra['imagen'] ?>" 
+                         class="d-block w-100"
+                         style="height:90vh; object-fit:cover;">
 
-                            <h1 class="display-4 fw-bold">
-                                Muebles a medida con alma artesanal
-                            </h1>
+                    <div class="carousel-caption d-flex flex-column justify-content-center h-100">
 
-                            <p class="lead">
-                                Diseñamos y fabricamos piezas únicas en madera
-                            </p>
+                        <h1 class="display-4 fw-bold">
+                            Muebles a medida con alma artesanal
+                        </h1>
 
-                            <div class="mt-3">
+                        <p class="lead">
+                            Diseñamos y fabricamos piezas únicas en madera
+                        </p>
 
-                                <a href="#contacto" class="btn btn-lg btn-primary me-2">
-                                    Solicitar presupuesto
-                                </a>
+                        <div class="mt-3">
 
-                                <a href="#proyectos" class="btn btn-lg btn-outline-light">
-                                    Ver trabajos
-                                </a>
+                            <a href="#contacto" class="btn btn-lg btn-primary me-2">
+                                Solicitar presupuesto
+                            </a>
 
-                            </div>
+                            <a href="#proyectos" class="btn btn-lg btn-outline-light">
+                                Ver trabajos
+                            </a>
 
                         </div>
 
                     </div>
 
-                <?php endforeach; ?>
+                </div>
+
+            <?php endforeach; ?>
+
+        <?php else: ?>
+
+            <!-- CAROUSEL SOLO TEXTO SI NO HAY OBRAS -->
+
+            <div class="carousel-item active">
+
+                <div class="d-flex align-items-center justify-content-center text-center text-white"
+                     style="height:90vh; background:#222;">
+
+                    <div>
+
+                        <h1 class="display-4 fw-bold">
+                            Creamos muebles únicos
+                        </h1>
+
+                        <p class="lead">
+                            Diseño, calidad y tradición artesanal en cada pieza
+                        </p>
+
+                        <a href="#contacto" class="btn btn-lg btn-primary mt-3">
+                            Solicitar información
+                        </a>
+
+                    </div>
+
+                </div>
 
             </div>
 
+            <div class="carousel-item">
 
-            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                <div class="d-flex align-items-center justify-content-center text-center text-white"
+                     style="height:90vh; background:#333;">
 
-                <span class="carousel-control-prev-icon"></span>
+                    <div>
 
-            </button>
+                        <h1 class="display-4 fw-bold">
+                            Fabricación a medida
+                        </h1>
 
-            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                        <p class="lead">
+                            Adaptamos cada diseño a tu espacio y necesidades
+                        </p>
 
-                <span class="carousel-control-next-icon"></span>
+                    </div>
 
-            </button>
+                </div>
 
-        </div>
+            </div>
 
-    </section>
+        <?php endif; ?>
+
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+
+</div>
+
+</section>
     <!-- Principios de Cialdini: Autoridad / Prueba Social / Escasez -->
     <!-- ======================= Servicios ======================= -->
 
