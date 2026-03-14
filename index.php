@@ -26,6 +26,13 @@ $router->get('usuarioEditar', 'UsuarioController@editar');
 $router->post('usuarioActualizar', 'UsuarioController@actualizar');
 $router->get('usuarioEliminar', 'UsuarioController@eliminar');
 
+
+/* ROLES */
+$router->get('roles', 'RolController@index');
+
+/* EMPLEADOS */
+$router->get('empleados', 'EmpleadoController@index');
+
 /* DEFAULT */
 
 $router->get('home', 'HomeController@home');

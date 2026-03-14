@@ -1,7 +1,7 @@
 <?php
 // footer.php — Componente reutilizable para todo el sistema
 ?>
-
+ </div>
 <footer class="footer mt-auto py-3 bg-dark text-white">
     <div class="container text-center">
         <div class="d-flex flex-column align-items-center gap-1">
@@ -22,3 +22,9 @@
 
 </body>
 </html>
+
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html> -->
